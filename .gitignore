@@ -1,0 +1,8 @@
+/node_modules
+./index.php
+.DS_Store
+.idea
+vendor
+build
+.lock
+composer.lock

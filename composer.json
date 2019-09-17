@@ -1,0 +1,54 @@
+{
+    "name": "t2g/common",
+    "description": "An package of common things in T2G web apps",
+    "keywords": ["t2g", "laravel", "voyager"],
+    "license": "MIT",
+    "homepage": "https://gitlab.com/t2game",
+    "authors": [
+        {
+            "name": "Trung Tran",
+            "email": "trungtran@t2gcorp.com"
+        }
+    ],
+    "require": {
+        "tcg/voyager": "dev-dev",
+        "guzzlehttp/guzzle": "^6.3",
+        "miraris/monolog-discord-handler": "^0.2.0",
+        "symfony/dom-crawler": "^4.3",
+        "webklex/laravel-imap": "^1.4",
+        "ext-json": "*",
+        "ext-imap": "*"
+    },
+    "require-dev": {
+        "phpunit/phpcov": "~3.0|~4.0",
+        "phpunit/phpunit": "~5.7.14|~6.1|~7.0",
+        "laravel/framework": "~5.4.36|~5.5.0|~5.6.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "T2G\\Common\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "T2G\\Common\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "repositories": {
+        "voyager": {
+            "type": "vcs",
+            "url": "https://github.com/trungtnm/voyager"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "T2G\\Common\\ServiceProvider"
+            ]
+        }
+    }
+}
