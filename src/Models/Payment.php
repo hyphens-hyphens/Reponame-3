@@ -1,7 +1,6 @@
 <?php
 namespace T2G\Common\Models;
 
-use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Util\MobileCard;
 
 /**
@@ -87,14 +86,17 @@ class Payment extends BaseEloquentModel
 
     public function info()
     {
-        return view('partials.admin.payment_info', [
+        return view('t2g_common::voyager.payments.payment_info', [
             'item'    => $this
         ]);
     }
 
     public static function displayStatus($statusCode, $isAdmin = false, $withExtraText = true)
     {
-        return view('partials.payments.status', ['isAdmin' => $isAdmin, 'statusCode' => $statusCode, 'withExtraText' => $withExtraText]);
+        return view(
+            't2g_common::voyager.payments.partials.status_text',
+            ['isAdmin' => $isAdmin, 'statusCode' => $statusCode, 'withExtraText' => $withExtraText]
+        );
     }
 
     /**
@@ -103,8 +105,8 @@ class Payment extends BaseEloquentModel
     public static function getPaymentTypes()
     {
         return [
-            self::PAYMENT_TYPE_CARD => 'Thẻ cào',
-            self::PAYMENT_TYPE_MOMO => 'MoMo',
+            self::PAYMENT_TYPE_CARD          => 'Thẻ cào',
+            self::PAYMENT_TYPE_MOMO          => 'MoMo',
             self::PAYMENT_TYPE_BANK_TRANSFER => 'Chuyển khoản',
             self::PAYMENT_TYPE_ADVANCE_DEBT  => self::PAY_METHOD_ADVANCE_DEBT,
         ];
@@ -234,26 +236,5 @@ class Payment extends BaseEloquentModel
     public function isInDebt()
     {
         return self::getPaymentStatus($this) == self::PAYMENT_STATUS_ADVANCE_DEBT_SUCCESS;
-    }
-
-    /**
-     * @param $value
-     */
-    public function setPaymentTypeAttribute($value)
-    {
-        $this->attributes['payment_type'] = $value;
-        if (self::PAYMENT_TYPE_CARD == $value) {
-            if ($this->attributes['card_type'] == MobileCard::TYPE_ZING) {
-                $this->attributes['pay_method'] = self::PAY_METHOD_ZING_CARD;
-            } else {
-                $this->attributes['pay_method'] = env('CARD_PAYMENT_PARTNER') == CardPaymentInterface::PARTNER_NAPTHENHANH ? self::PAY_METHOD_NAPTHENHANH : self::PAY_METHOD_RECARD;
-            }
-        } elseif(self::PAYMENT_TYPE_MOMO == $value) {
-            $this->attributes['pay_method'] = self::PAY_METHOD_MOMO;
-        } elseif(self::PAYMENT_TYPE_BANK_TRANSFER == $value) {
-            $this->attributes['pay_method'] = self::PAY_METHOD_BANK_TRANSFER;
-        } elseif(self::PAYMENT_TYPE_ADVANCE_DEBT == $value) {
-            $this->attributes['pay_method'] = self::PAY_METHOD_ADVANCE_DEBT;
-        }
     }
 }

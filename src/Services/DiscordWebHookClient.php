@@ -53,7 +53,7 @@ class DiscordWebHookClient
         $content = [
             'content' => $message,
         ];
-        if(env('APP_ENV') != 'prod') {
+        if(env('APP_ENV') == 'local') {
             $this->logger->debug("DiscordWebhook message sent.", $content);
             return null;
         }

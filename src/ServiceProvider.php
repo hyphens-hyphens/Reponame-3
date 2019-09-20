@@ -32,20 +32,19 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function boot()
     {
-        $this->registerHelpers();
         $this->publishes([
             __DIR__.'/../resources/config/t2g_common.php' => config_path('t2g_common.php'),
         ]);
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 't2g_common');
 
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MoMoTransactionNotifierCommand::class,
-                MysqlBackupCommand::class,
-                UpdatePaymentStatusCodeCommand::class
-            ]);
-        }
+        $this->registerHelpers();
+        $this->registerCommands();
+
+        // register observers
         t2g_model('user')->observe(UserObserver::class);
         t2g_model('payment')->observe(PaymentObserver::class);
+
+        // Add Voyager actions for Payment
         voyager()->addAction(AcceptPaymentAction::class);
         voyager()->addAction(RejectPaymentAction::class);
 
@@ -70,8 +69,8 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->app->singleton(RecardPayment::class, function ($app) {
             $service = new RecardPayment(
-                env('RECARD_MERCHANT_ID'),
-                env('RECARD_SECRET_KEY')
+                config('t2g_common.payment.recard.merchant_id'),
+                config('t2g_common.payment.recard.secret_key')
             );
             $service->setLogger($this->getLogger());
 
@@ -80,8 +79,8 @@ class ServiceProvider extends LaravelServiceProvider
 
         $this->app->singleton(NapTheNhanhPayment::class, function ($app) {
             $service = new NapTheNhanhPayment(
-                env('NAPTHENHANH_PARTNER_ID'),
-                env('NAPTHENHANH_PARTNER_KEY')
+                config('t2g_common.payment.napthenhanh.partner_id'),
+                config('t2g_common.payment.napthenhanh.partner_key')
             );
             $service->setLogger($this->getLogger());
 
@@ -91,7 +90,7 @@ class ServiceProvider extends LaravelServiceProvider
         $this->app->singleton(CardPaymentInterface::class, function($app) {
             /** @var \TCG\Voyager\Voyager $voyager */
             $voyager = app('voyager');
-            $partnerSetting = $voyager->setting('site.card_payment_partner', env('CARD_PAYMENT_PARTNER'));
+            $partnerSetting = $voyager->setting('site.card_payment_partner', config('t2g_common.payment.card_payment_partner'));
             if (CardPaymentInterface::PARTNER_NAPTHENHANH == $partnerSetting) {
                 return app(NapTheNhanhPayment::class);
             } else {
@@ -115,8 +114,8 @@ class ServiceProvider extends LaravelServiceProvider
     private function registerGameApiClient()
     {
         $this->app->singleton(JXApiClient::class, function ($app) {
-            $baseUrl = env('GAME_API_BASE_URL', '');
-            $apiKey = env('GAME_API_KEY', '');
+            $baseUrl = config('t2g_common.game_api.base_url');
+            $apiKey = config('t2g_common.game_api.api_key');
 
             return new JXApiClient($baseUrl, $apiKey);
         });
@@ -131,6 +130,20 @@ class ServiceProvider extends LaravelServiceProvider
         if (file_exists($file = __DIR__ . "/helpers.php"))
         {
             require_once $file;
+        }
+    }
+
+    /**
+     * Register console commands
+     */
+    private function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MoMoTransactionNotifierCommand::class,
+                MysqlBackupCommand::class,
+                UpdatePaymentStatusCodeCommand::class
+            ]);
         }
     }
 }

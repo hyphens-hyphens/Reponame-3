@@ -29,7 +29,7 @@ abstract class AbstractCardPayment implements CardPaymentInterface
      */
     public function __construct()
     {
-        $this->gateway = env('CARD_PAYMENT_PARTNER');
+        $this->gateway = config('t2g_common.payment.card_payment_partner');
     }
 
     /**

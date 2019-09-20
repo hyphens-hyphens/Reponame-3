@@ -63,7 +63,7 @@ class CardPaymentApiClientMocked
         if (self::$mockedResponse instanceof ResponseInterface) {
             $response = self::$mockedResponse;
         } else {
-            if (env('CARD_PAYMENT_PARTNER') == CardPaymentInterface::PARTNER_NAPTHENHANH) {
+            if (config('t2g_common.payment.card_payment_partner') == CardPaymentInterface::PARTNER_NAPTHENHANH) {
                 $response = new Response(200, [], json_encode([
                     'tranid'  => time(),
                     'status'  => NapTheNhanhResponse::RESPONSE_STATUS_SUCCESS,

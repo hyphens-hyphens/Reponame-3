@@ -25,7 +25,7 @@ class PaymentController extends BaseFrontController
     public function __construct()
     {
         parent::__construct();
-        $this->discord = new DiscordWebHookClient(env('DISCORD_ZING_WEBHOOK_URL'));
+        $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.payment_alert'));
     }
 
     public function index()
@@ -180,8 +180,8 @@ class PaymentController extends BaseFrontController
         if (!$message) {
             exit();
         }
-        $stkDongA = env('BANKING_ACCOUNT_DONGA');
-        $stkVCB = env('BANKING_ACCOUNT_VIETCOMBANK');
+        $stkDongA = config('t2g_common.payment.banking_account_dong_a');
+        $stkVCB = config('t2g_common.payment.banking_account_vietcombank');
         if ($stkDongA && strpos($message, "TK {$stkDongA}") !== false) {
             $alert = $parser->parseDongABankSms($message, $createdAt);
         } elseif ($stkVCB && strpos($message, "TK {$stkVCB}") !== false) {
@@ -216,7 +216,7 @@ class PaymentController extends BaseFrontController
         // auto switch handle
         $hour = intval(date('G'));
         if ($autoSwitch && ($hour > 21 || $hour < 9)) {
-            return app(env('CARD_PAYMENT_PARTNER_POS2', NapTheNhanhPayment::class));
+            return app(config('t2g_common.payment.card_payment_partner_pos2', NapTheNhanhPayment::class));
         }
 
         return app(CardPaymentInterface::class);

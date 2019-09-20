@@ -15,6 +15,10 @@ interface CardPaymentInterface
     const PARTNER_NAPTHENHANH = 'napthenhanh';
 
     /**
+     * @return string
+     */
+    public function getPartnerName();
+    /**
      * @param \Psr\Log\LoggerInterface $logger
      *
      * @return $this

@@ -34,7 +34,7 @@ class JXApiClient
 
     public function __construct($baseUrl, $apiKey)
     {
-        if (env('GAME_API_MOCK', false)) {
+        if (config('t2g_common.game_api.is_mocked', false)) {
             $this->client = new MockedJXApiClient();
         } else {
             $this->client = new Client([

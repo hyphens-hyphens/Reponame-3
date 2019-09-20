@@ -2,6 +2,7 @@
 - huong dan setup mailbox config for MoMo alert with Webklex\IMAP
 - register commands in cronjobs c02
 - config middleware
+- config logging channel
 ```php
 // app/Http/Kernel.php
 't2g' => \T2G\Common\Middleware\T2GMiddleware::class,

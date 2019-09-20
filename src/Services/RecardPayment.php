@@ -2,6 +2,7 @@
 
 namespace T2G\Common\Services;
 
+use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Util\MobileCard;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,7 @@ class RecardPayment extends AbstractCardPayment
         parent::__construct();
         $this->merchantId = $merchantId;
         $this->secretKey = $secretKey;
-        if (env('CARD_PAYMENT_API_MOCK', false)) {
+        if (config('t2g_common.payment.card_payment_mocked')) {
             $this->client = new CardPaymentApiClientMocked();
         } else {
             $this->client = new \GuzzleHttp\Client([
@@ -60,6 +61,14 @@ class RecardPayment extends AbstractCardPayment
                 'http_errors' => false,
             ]);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartnerName()
+    {
+        return CardPaymentInterface::PARTNER_RECARD;
     }
 
     /**
@@ -147,5 +156,4 @@ class RecardPayment extends AbstractCardPayment
 
         return [$status, $amount, $reason];
     }
-
 }

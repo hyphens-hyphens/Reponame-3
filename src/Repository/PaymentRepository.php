@@ -192,9 +192,9 @@ class PaymentRepository extends AbstractEloquentRepository
     public function exchangeGamecoin($moneyAmount, $paymentType)
     {
         $knb = $xu = 0;
-        $gameCoinAmount = round($moneyAmount / config('t2g_common.env.GOLD_EXCHANGE_RATE', 1000));
+        $gameCoinAmount = round($moneyAmount / config('t2g_common.payment.game_gold.exchange_rate', 1000));
         if (in_array($paymentType, [Payment::PAYMENT_TYPE_BANK_TRANSFER, Payment::PAYMENT_TYPE_MOMO, Payment::PAYMENT_TYPE_ADVANCE_DEBT])) {
-            $xu = $gameCoinAmount + ceil($gameCoinAmount * config('t2g_common.env.GOLD_EXCHANGE_BONUS', 10) / 100);
+            $xu = $gameCoinAmount + ceil($gameCoinAmount * config('t2g_common.payment.game_gold.bonus_rate', 10) / 100);
         } else {
             $knb = $gameCoinAmount;
         }
@@ -321,11 +321,11 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         switch ($name) {
             case Payment::PAY_METHOD_RECARD:
-                return $money * ( 100 - config('t2g_common.env.REVENUE_RATE_CARD_RECARD', 32)) / 100;
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.recard', 32)) / 100;
             case Payment::PAY_METHOD_NAPTHENHANH:
-                return $money * ( 100 - config('t2g_common.env.REVENUE_RATE_CARD_NAPTHENHANH', 28)) / 100;
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh', 28)) / 100;
             case Payment::PAY_METHOD_ZING_CARD:
-                return $money * ( 100 - config('t2g_common.env.REVENUE_RATE_CARD_ZING', 30)) / 100;
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.zing', 30)) / 100;
             case Payment::PAYMENT_TYPE_BANK_TRANSFER:
             case Payment::PAYMENT_TYPE_MOMO:
                 return $money;

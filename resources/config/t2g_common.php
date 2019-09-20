@@ -1,33 +1,70 @@
 <?php
 
 return [
-    'site' => [
-        'domains' => [], // example.com, example.net...
-        'seo' => [
-            'meta_description' => '',
-            'meta_keywords' => '',
-            'meta_image' => '',
-        ]
+    'asset' => [
+        'version' => ''
     ],
-    'models' => [
-        'user_model_class' => 'App\User',
+    'site'     => [
+        'domains' => [], // example.com, example.net...
+        'seo'     => [
+            'meta_description' => '',
+            'meta_keywords'    => '',
+            'meta_image'       => '',
+        ],
+    ],
+    'models'   => [
+        'user_model_class'    => 'App\User',
         'payment_model_class' => 'T2G\Common\Models\Payment',
     ],
-    'momo' => [
-        'mailbox' => 'momo_mailbox'
+    'game_api' => [
+        'base_url'  => env('GAME_API_BASE_URL'),
+        'api_key'   => env('GAME_API_KEY'),
+        'is_mocked' => env('GAME_API_MOCK', true),
     ],
-    'discord' => [
+    'payment'  => [
+        'card_payment_partner'        => env(
+            'CARD_PAYMENT_PARTNER',
+            \T2G\Common\Contract\CardPaymentInterface::PARTNER_RECARD
+        ),
+        'card_payment_mocked'         => env('CARD_PAYMENT_API_MOCK', true),
+        'card_payment_partner_pos2'   => env(
+            'CARD_PAYMENT_PARTNER_POS2',
+            \T2G\Common\Contract\CardPaymentInterface::PARTNER_NAPTHENHANH
+        ),
+        'recard'                      => [
+            'merchant_id' => env('RECARD_MERCHANT_ID'),
+            'secret_key'  => env('RECARD_SECRET_KEY'),
+        ],
+        'napthenhanh'                 => [
+            'partner_id'  => env('NAPTHENHANH_PARTNER_ID'),
+            'partner_key' => env('NAPTHENHANH_PARTNER_KEY'),
+        ],
+        'banking_account_dong_a'      => '',
+        'banking_account_vietcombank' => '',
+        // tỉ lệ quy đổi vàng từ VND
+        'game_gold'                   => [
+            'exchange_rate' => 1000, // $gold = round($money / {exchange_rate})
+            'bonus_rate'    => 10, // $bonusGold = ceil($gold * {bonus_rate} / 100)
+        ],
+        // tỉ lệ chia lợi nhuận cho đối tác (%)
+        'revenue_rate'                => [
+            'recard'      => 32,
+            'napthenhanh' => 32,
+            'zing'        => 30,
+        ],
+    ],
+    'momo'     => [
+        'mailbox' => 'momo_mailbox', // mailbox name as configured in webklex/laravel-imap package config file
+    ],
+    'discord'  => [
         'webhooks' => [
-            'payment_alert' => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL', ''),
-            'add_gold' => env('DISCORD_ADD_GOLD_WEBHOOK_URL', ''),
-        ]
+            // thông báo giao dịch từ email (MoMo), SMS webhook
+            'payment_alert' => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
+            // thông báo khi QTV add vàng từ admincp
+            'add_gold'      => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
+        ],
     ],
-    'env' => [
-        'GOLD_EXCHANGE_RATE'            => env('GOLD_EXCHANGE_RATE', 1000),
-        'GOLD_EXCHANGE_BONUS'           => env('GOLD_EXCHANGE_BONUS', 10),
-        'REVENUE_RATE_CARD_RECARD'      => env('REVENUE_RATE_CARD_RECARD', 32),
-        'REVENUE_RATE_CARD_NAPTHENHANH' => env('REVENUE_RATE_CARD_NAPTHENHANH', 32),
-        'REVENUE_RATE_CARD_ZING'        => env('REVENUE_RATE_CARD_ZING', 30),
-    ]
-
+    'log'      => [
+        'jx_api_channel' => 'game_api_request',
+    ],
 ];

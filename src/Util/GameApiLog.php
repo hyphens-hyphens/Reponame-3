@@ -22,7 +22,7 @@ class GameApiLog
     public function __construct()
     {
         $this->logger = app(LogManager::class);
-        $this->logger->channel(env('GAME_API_MOCK') ? 'game_api_request' : 'game_api');
+        $this->logger->channel(config('t2g_common.game_api.is_mocked') ? config('t2g_common.log.jx_api_channel') : 'game_api');
     }
 
     /**
@@ -32,6 +32,6 @@ class GameApiLog
     public function notify($message, $data = [])
     {
         $message = "[" . time() . "] " . $message;
-        $this->logger->critical($message, $data);
+        $this->logger->notice($message, $data);
     }
 }

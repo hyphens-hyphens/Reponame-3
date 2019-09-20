@@ -329,6 +329,9 @@ class PaymentBreadController extends VoyagerBaseController
         ]);
     }
 
+    /**
+     * @param \T2G\Common\Models\Payment $payment
+     */
     private function sendPaymentNotification(Payment $payment)
     {
         $paymentTypes = Payment::getPaymentTypes();
