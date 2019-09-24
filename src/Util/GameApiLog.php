@@ -22,7 +22,7 @@ class GameApiLog
     public function __construct()
     {
         $this->logger = app(LogManager::class);
-        $this->logger->channel(config('t2g_common.game_api.is_mocked') ? config('t2g_common.log.jx_api_channel') : 'game_api');
+        $this->logger->channel(config('t2g_common.game_api.is_mocked') ? 'game_api_request' : 'game_api');
     }
 
     /**

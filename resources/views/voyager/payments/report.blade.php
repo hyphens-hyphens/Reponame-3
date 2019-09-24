@@ -21,12 +21,12 @@
                         <tr>
                             <td>Hôm nay</td>
                             <td>{{ number_format($todayRevenue['total']) }}</td>
-                            <td><span class="h5 label label-success">{{ number_format($todayRevenue['revenue']) }}</span></td>
+                            <td><span class="h5 label label-success">{{ number_format($todayRevenue['profit']) }}</span></td>
                         </tr>
                         <tr>
                             <td>Tháng này</td>
                             <td>{{ number_format($thisMonthRevenue['total']) }}</td>
-                            <td><span class="h5 label label-success">{{ number_format($thisMonthRevenue['revenue']) }}</span></td>
+                            <td><span class="h5 label label-success">{{ number_format($thisMonthRevenue['profit']) }}</span></td>
                         </tr>
                         </tbody>
                     </table>
@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-xs-9">
                                 <div class="form-group">
-                                    @include('admin.partials.input_daterange')
+                                    @include('t2g_common::voyager.partials.input_daterange')
                                 </div>
                             </div>
                             <div class="col-xs-3">
@@ -69,10 +69,10 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="revenue_chart">
-                                @include('admin.payments.revenue_chart')
+                                @include('t2g_common::voyager.payments.revenue_chart')
                             </div>
                             {{--<div role="tabpanel" class="tab-pane" id="users_paid_chart">--}}
-                            {{--@include('admin.payments.users_paid_chart')--}}
+                            {{--@include('t2g_common::voyager.payments.users_paid_chart')--}}
                             {{--</div>--}}
                         </div>
                     </div>

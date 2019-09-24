@@ -24,7 +24,7 @@ class CardPaymentApiClientMocked
     public function __construct()
     {
         $this->logger = app(LogManager::class);
-        $this->logger->channel('card_payment_mocked');
+        $this->logger = $this->logger->channel('card_payment_mocked');
     }
 
     /**

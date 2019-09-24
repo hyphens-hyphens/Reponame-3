@@ -72,12 +72,12 @@ class PaymentBreadController extends VoyagerBaseController
         $toDate = $request->get('toDate', date('Y-m-d', strtotime('today')));
         $revenue = $paymentRepository->getRevenueChartData($fromDate, $toDate);
 
-        return view('voyager::payments.report', [
+        return view('t2g_common::voyager.payments.report', [
             'fromDate' => $fromDate,
             'toDate'   => $toDate,
             'revenue'  => $revenue,
-            'todayRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-d')),
-            'thisMonthRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-01')),
+            'todayRevenue' => $paymentRepository->getProfitByPeriod(date('Y-m-d')),
+            'thisMonthRevenue' => $paymentRepository->getProfitByPeriod(date('Y-m-01')),
         ]);
     }
 

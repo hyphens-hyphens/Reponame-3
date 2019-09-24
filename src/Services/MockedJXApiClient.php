@@ -21,7 +21,7 @@ class MockedJXApiClient
     public function __construct()
     {
         $this->logger = app(LogManager::class);
-        $this->logger->channel(config('t2g_common.log.jx_api_channel'));
+        $this->logger = $this->logger->channel('game_api_request');
     }
 
     /**
