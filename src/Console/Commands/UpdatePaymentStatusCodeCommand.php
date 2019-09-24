@@ -37,7 +37,7 @@ class UpdatePaymentStatusCodeCommand extends Command
                 ->limit($perPage)
                 ->orderBy('id', 'asc')
                 ->get();
-            dd($payments);
+
             if (!$payments->count()) {
                 break;
             }

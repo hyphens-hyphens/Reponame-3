@@ -18,6 +18,7 @@ interface CardPaymentInterface
      * @return string
      */
     public function getPartnerName();
+
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *

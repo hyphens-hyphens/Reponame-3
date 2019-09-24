@@ -7,8 +7,9 @@ return [
     'site'     => [
         'domains' => [], // example.com, example.net...
         'seo'     => [
+            'title'            => '',
             'meta_description' => '',
-            'meta_keywords'    => '',
+            'meta_keyword'    => '',
             'meta_image'       => '',
         ],
     ],
@@ -63,8 +64,5 @@ return [
             // thông báo khi QTV add vàng từ admincp
             'add_gold'      => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
         ],
-    ],
-    'log'      => [
-        'jx_api_channel' => 'game_api_request',
     ],
 ];

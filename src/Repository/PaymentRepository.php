@@ -239,7 +239,10 @@ class PaymentRepository extends AbstractEloquentRepository
         $count = CommonHelper::subDate($fromDate, $toDate);
         /** @var DatabaseManager $db */
         $db = app(DatabaseManager::class);
-        $results = $db->table('payments')->selectRaw("DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`")
+        $results = $db->table('payments')->selectRaw("
+            DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`,
+            SUM(`profit`)/1000 as `total_profit`
+            ")
             ->whereRaw("`created_at` BETWEEN '{$fromDate} 00:00:00' AND '{$toDate} 23:59:59' AND `status` = 1")
             ->groupBy('pay_method', 'date')
             ->orderBy('date', 'ASC')
@@ -255,7 +258,8 @@ class PaymentRepository extends AbstractEloquentRepository
                     $payMethods[] = $value->pay_method;
                 }
                 if ($value->date == $day) {
-                    $data[$day][$value->pay_method] = $value->total;
+                    $data[$day][$value->pay_method]['total'] = $value->total;
+                    $data[$day][$value->pay_method]['profit'] = $value->total_profit;
                 }
             }
         }
@@ -264,10 +268,10 @@ class PaymentRepository extends AbstractEloquentRepository
         foreach ($data as $key => $val) {
             $series[] = "'$key'";
             foreach ($payMethods as $payMethod) {
-                $payByDay = isset($val[$payMethod]) ? $val[$payMethod] : 0;
+                $payByDay = isset($val[$payMethod]['total']) ? $val[$payMethod]['total'] : 0;
                 $seriesData[$payMethod][] = $payByDay;
                 $total += $payByDay;
-                $totalRevenue += $this->calculateRevenue($payMethod, $payByDay);
+                $totalRevenue += isset($val[$payMethod]['profit']) ? $val[$payMethod]['profit'] : 0;
             }
         }
 
@@ -285,7 +289,7 @@ class PaymentRepository extends AbstractEloquentRepository
      *
      * @return array []
      */
-    public function getRevenueByPeriod($fromDate = null, $toDate = null)
+    public function getProfitByPeriod($fromDate = null, $toDate = null)
     {
         $query = $this->query();
         if ($fromDate) {
@@ -294,18 +298,18 @@ class PaymentRepository extends AbstractEloquentRepository
         if ($toDate) {
             $query->where('created_at', '<=', $toDate);
         }
-        $results = $query->selectRaw("SUM(amount) as total, pay_method")
+        $results = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, pay_method")
             ->where('status', 1)
             ->groupBy('pay_method')
             ->get()
         ;
         $revenue = [
-            'total'   => 0,
-            'revenue' => 0,
+            'total'  => 0,
+            'profit' => 0,
         ];
         foreach ($results as $result) {
             $revenue['total'] += $result->total;
-            $revenue['revenue'] += $this->calculateRevenue($result->pay_method, $result->total);
+            $revenue['profit'] += $result->profit;
         }
 
         return $revenue;

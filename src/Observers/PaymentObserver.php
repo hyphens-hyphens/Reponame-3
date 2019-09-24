@@ -15,6 +15,7 @@ class PaymentObserver
     {
         $payment->status_code = Payment::getPaymentStatus($payment);
         $this->setPayMethod($payment);
+        $this->setProfit($payment);
     }
 
     /**
@@ -40,6 +41,17 @@ class PaymentObserver
             $payment->pay_method = Payment::PAY_METHOD_BANK_TRANSFER;
         } elseif(Payment::PAYMENT_TYPE_ADVANCE_DEBT == $payment->payment_type) {
             $payment->pay_method = Payment::PAY_METHOD_ADVANCE_DEBT;
+        }
+    }
+
+    /**
+     * @param \T2G\Common\Models\Payment $payment
+     */
+    private function setProfit(Payment $payment)
+    {
+        if ($payment->status) {
+            $profitRate = Payment::getProfitRate($payment->pay_method);
+            $payment->profit = $payment->amount * $profitRate;
         }
     }
 

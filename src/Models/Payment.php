@@ -36,7 +36,8 @@ use T2G\Common\Util\MobileCard;
  * @property string|null $note
  * @property int|null $creator_id
  * @property int|null $amount
- * @property int|null $status_code*
+ * @property int|null $status_code
+ * @property int|null profit
  * @property \T2G\Common\Models\AbstractUser    creator
 */
 class Payment extends BaseEloquentModel
@@ -236,5 +237,50 @@ class Payment extends BaseEloquentModel
     public function isInDebt()
     {
         return self::getPaymentStatus($this) == self::PAYMENT_STATUS_ADVANCE_DEBT_SUCCESS;
+    }
+
+    /**
+     * @param     $payMethod
+     * @param int $money
+     *
+     * @return float|int
+     */
+    public static function calculateRevenue($payMethod, int $money)
+    {
+        switch ($payMethod) {
+            case Payment::PAY_METHOD_RECARD:
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.recard', 32)) / 100;
+            case Payment::PAY_METHOD_NAPTHENHANH:
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh', 28)) / 100;
+            case Payment::PAY_METHOD_ZING_CARD:
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.zing', 30)) / 100;
+            case Payment::PAY_METHOD_BANK_TRANSFER:
+            case Payment::PAYMENT_TYPE_MOMO:
+                return $money;
+        }
+
+        return $money;
+    }
+
+    /**
+     * @param $payMethod
+     *
+     * @return float|1
+     */
+    public static function getProfitRate($payMethod)
+    {
+        switch ($payMethod) {
+            case Payment::PAY_METHOD_RECARD:
+                return ( 100 - config('t2g_common.payment.revenue_rate.recard')) / 100;
+            case Payment::PAY_METHOD_NAPTHENHANH:
+                return ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh')) / 100;
+            case Payment::PAY_METHOD_ZING_CARD:
+                return ( 100 - config('t2g_common.payment.revenue_rate.zing')) / 100;
+            case Payment::PAY_METHOD_BANK_TRANSFER:
+            case Payment::PAYMENT_TYPE_MOMO:
+                return 1;
+        }
+
+        return 1;
     }
 }

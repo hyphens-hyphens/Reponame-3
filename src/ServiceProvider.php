@@ -8,6 +8,7 @@ use T2G\Common\Action\AcceptPaymentAction;
 use T2G\Common\Action\RejectPaymentAction;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
 use T2G\Common\Console\Commands\MysqlBackupCommand;
+use T2G\Common\Console\Commands\UpdatePaymentProfitCommand;
 use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
 use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Event\PostCreatingEvent;
@@ -32,10 +33,17 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 't2g_common');
+
         $this->publishes([
             __DIR__.'/../resources/config/t2g_common.php' => config_path('t2g_common.php'),
-        ]);
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 't2g_common');
+        ], 'config');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/t2g_common')
+        ], 'view');
+
+        $this->loadMigrationsFrom(__DIR__.'/../resources/migrations');
 
         $this->registerHelpers();
         $this->registerCommands();
@@ -106,7 +114,7 @@ class ServiceProvider extends LaravelServiceProvider
     {
         /** @var LogManager $logger */
         $logger = app(LogManager::class);
-        $logger->channel('card_payment');
+        $logger = $logger->channel('card_payment');
 
         return $logger;
     }
@@ -142,7 +150,8 @@ class ServiceProvider extends LaravelServiceProvider
             $this->commands([
                 MoMoTransactionNotifierCommand::class,
                 MysqlBackupCommand::class,
-                UpdatePaymentStatusCodeCommand::class
+                UpdatePaymentStatusCodeCommand::class,
+                UpdatePaymentProfitCommand::class,
             ]);
         }
     }
