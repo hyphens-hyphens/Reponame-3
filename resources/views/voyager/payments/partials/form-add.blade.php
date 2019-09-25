@@ -139,7 +139,7 @@ $rowClass = 'col-xs-12 col-md-4';
     <script>
         const PAYMENT_TYPE_MOMO = {{ \T2G\Common\Models\Payment::PAYMENT_TYPE_MOMO }};
         const PAYMENT_TYPE_BANK_TRANSFER = {{ \T2G\Common\Models\Payment::PAYMENT_TYPE_BANK_TRANSFER }};
-        const PAYMENT_TYPE_ADVANCE_DEBT = {{ \\T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT }};
+        const PAYMENT_TYPE_ADVANCE_DEBT = {{ \T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT }};
         function addGoldReview() {
             let username = $('#selectUser :selected').text();
             let type = $('#payment_type').val();
