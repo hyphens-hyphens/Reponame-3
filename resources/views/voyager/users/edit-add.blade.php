@@ -142,6 +142,9 @@ $user = \Auth::user();
                             <div class="panel-body">
                                 <h4 class="title">Lịch sử giao dịch</h4>
                                 <p class="h4">Đã nạp: <span class="label h5 label-success">{{ number_format($dataTypeContent->getTotalPaid()) }}</span></p>
+                                @if($debt = $dataTypeContent->getTotalDebt())
+                                    <p class="h4">Đang ứng: <span class="label h5 label-danger">{{ number_format($debt) }}</span></p>
+                                @endif
                                 <table class="table table-hover dataTable no-footer" role="grid" aria-describedby="dataTable_info">
                                     <tr>
                                         <th>ID</th>

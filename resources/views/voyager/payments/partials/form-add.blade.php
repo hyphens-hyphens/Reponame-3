@@ -139,14 +139,15 @@ $rowClass = 'col-xs-12 col-md-4';
     <script>
         const PAYMENT_TYPE_MOMO = {{ \T2G\Common\Models\Payment::PAYMENT_TYPE_MOMO }};
         const PAYMENT_TYPE_BANK_TRANSFER = {{ \T2G\Common\Models\Payment::PAYMENT_TYPE_BANK_TRANSFER }};
+        const PAYMENT_TYPE_ADVANCE_DEBT = {{ \\T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT }};
         function addGoldReview() {
             let username = $('#selectUser :selected').text();
             let type = $('#payment_type').val();
-            let gold = Math.round(parseInt($('#moneyAmount').val()) / {{ env('GOLD_EXCHANGE_RATE', 1000) }});
-            if (type == PAYMENT_TYPE_MOMO || type == PAYMENT_TYPE_BANK_TRANSFER) {
-                gold += gold * {{ env('GOLD_EXCHANGE_BONUS', 10) / 100 }};
+            let gold = Math.round(parseInt($('#moneyAmount').val()) / {{ config('t2g_common.payment.game_gold.exchange_rate', 1000) }});
+            if (type == PAYMENT_TYPE_MOMO || type == PAYMENT_TYPE_BANK_TRANSFER || type == PAYMENT_TYPE_ADVANCE_DEBT) {
+                gold += gold * {{ config('t2g_common.payment.game_gold.bonus_rate', 10) / 100 }};
             }
-            if (!username || !gold) {
+            if (!username || !gold || !type) {
                 $('.review-container').addClass('hidden');
                 return;
             }
@@ -168,10 +169,6 @@ $rowClass = 'col-xs-12 col-md-4';
 
         let savingTimeout = null;
         $(document).ready(function () {
-            $('#support_fee').bootstrapToggle({
-                on: 'Yes',
-                off: 'No'
-            });
             $('#moneyAmount').change(addGoldReview);
             $('#moneyAmount').keyup(addGoldReview);
             $('#payment_type').change(toggleBankSelection);

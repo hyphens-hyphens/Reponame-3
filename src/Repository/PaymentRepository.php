@@ -165,7 +165,8 @@ class PaymentRepository extends AbstractEloquentRepository
     public function makeUserPaymentHistoryQuery(AbstractUser $user)
     {
         $query = $this->query();
-        $query->where('user_id', $user->id);
+        $query->where('user_id', $user->id)
+            ->orderBy('created_at', 'DESC');
 
         return $query;
     }
@@ -313,29 +314,6 @@ class PaymentRepository extends AbstractEloquentRepository
         }
 
         return $revenue;
-    }
-
-    /**
-     * @param     $name
-     * @param int $money
-     *
-     * @return float|int
-     */
-    private function calculateRevenue($name, int $money)
-    {
-        switch ($name) {
-            case Payment::PAY_METHOD_RECARD:
-                return $money * ( 100 - config('t2g_common.payment.revenue_rate.recard', 32)) / 100;
-            case Payment::PAY_METHOD_NAPTHENHANH:
-                return $money * ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh', 28)) / 100;
-            case Payment::PAY_METHOD_ZING_CARD:
-                return $money * ( 100 - config('t2g_common.payment.revenue_rate.zing', 30)) / 100;
-            case Payment::PAYMENT_TYPE_BANK_TRANSFER:
-            case Payment::PAYMENT_TYPE_MOMO:
-                return $money;
-        }
-
-        return $money;
     }
 
     /**

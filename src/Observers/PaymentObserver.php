@@ -49,7 +49,7 @@ class PaymentObserver
      */
     private function setProfit(Payment $payment)
     {
-        if ($payment->status) {
+        if ($payment->status && $payment->pay_method != Payment::PAY_METHOD_ADVANCE_DEBT) {
             $profitRate = Payment::getProfitRate($payment->pay_method);
             $payment->profit = $payment->amount * $profitRate;
         }

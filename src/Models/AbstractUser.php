@@ -76,6 +76,22 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
     }
 
     /**
+     * @return int|mixed
+     */
+    public function getTotalDebt()
+    {
+        if ($this->payments->count() > 0) {
+            $debtArray = $this->payments->map(function ($item) {
+                return $item->payment_type == Payment::PAYMENT_TYPE_ADVANCE_DEBT && $item->gold_added ? $item->amount : 0;
+            });
+
+            return $debtArray->sum();
+        }
+
+        return 0;
+    }
+
+    /**
      * @return string
      */
     public function getRawPassword()
