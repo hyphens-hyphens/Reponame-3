@@ -6,6 +6,7 @@
 // app/Http/Kernel.php
 't2g' => \T2G\Common\Middleware\T2GMiddleware::class,
 ```
+
 - config logging channel
 
 ```php
