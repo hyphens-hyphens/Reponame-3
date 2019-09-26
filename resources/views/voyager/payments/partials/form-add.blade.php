@@ -169,6 +169,10 @@ $rowClass = 'col-xs-12 col-md-4';
 
         let savingTimeout = null;
         $(document).ready(function () {
+            $('#support_fee').bootstrapToggle({
+                on: 'Yes',
+                off: 'No'
+            });
             $('#moneyAmount').change(addGoldReview);
             $('#moneyAmount').keyup(addGoldReview);
             $('#payment_type').change(toggleBankSelection);

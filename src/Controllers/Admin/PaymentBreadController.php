@@ -386,7 +386,7 @@ class PaymentBreadController extends VoyagerBaseController
         $extraData = [];
         $paymentType = $request->get('payment_type');
         $amount = $request->get('amount');
-        $isSupportFee = $request->get('support_fee');
+        $isSupportFee = $request->get('support_fee', false);
         $extraData['pay_method'] = Payment::displayPaymentType($paymentType);
         if ($paymentType == Payment::PAYMENT_TYPE_BANK_TRANSFER) {
             $extraData['pay_from'] = $request->get('pay_from');
