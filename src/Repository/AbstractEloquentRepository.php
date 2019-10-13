@@ -2,6 +2,7 @@
 
 namespace T2G\Common\Repository;
 
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use T2G\Common\Contract\RepositoryInterface;
 
@@ -18,6 +19,11 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
     protected $model;
 
     /**
+     * @var \Illuminate\Database\DatabaseManager
+     */
+    protected $db;
+
+    /**
      * AbstractEloquentRepository constructor.
      *
      * @throws \Exception
@@ -25,6 +31,7 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
     public function __construct()
     {
         $this->model = $this->makeModel();
+        $this->db = app(DatabaseManager::class);;
     }
 
     /**

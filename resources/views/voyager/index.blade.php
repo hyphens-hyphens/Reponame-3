@@ -4,6 +4,9 @@
     <div class="page-content browse container-fluid">
         @include('voyager::alerts')
         @include('voyager::dimmers')
-        @include('t2g_common::voyager.dashboard.widget_user')
+        <div class="widgets">
+            @include('t2g_common::voyager.dashboard.widgets.user')
+        </div>
+
     </div>
 @stop

@@ -8,6 +8,7 @@ use T2G\Common\Action\AcceptPaymentAction;
 use T2G\Common\Action\RejectPaymentAction;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
 use T2G\Common\Console\Commands\MysqlBackupCommand;
+use T2G\Common\Console\Commands\UpdateCCUCommand;
 use T2G\Common\Console\Commands\UpdatePaymentProfitCommand;
 use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
 use T2G\Common\Contract\CardPaymentInterface;
@@ -44,6 +45,8 @@ class ServiceProvider extends LaravelServiceProvider
         ], 'view');
 
         $this->loadMigrationsFrom(__DIR__.'/../resources/migrations');
+
+        $this->loadRoutesFrom(__DIR__.'/../resources/routes/route.php');
 
         $this->registerHelpers();
         $this->registerCommands();
@@ -152,6 +155,7 @@ class ServiceProvider extends LaravelServiceProvider
                 MysqlBackupCommand::class,
                 UpdatePaymentStatusCodeCommand::class,
                 UpdatePaymentProfitCommand::class,
+                UpdateCCUCommand::class
             ]);
         }
     }

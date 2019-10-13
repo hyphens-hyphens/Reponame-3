@@ -2,7 +2,6 @@
 
 namespace T2G\Common\Repository;
 
-use Illuminate\Database\DatabaseManager;
 use T2G\Common\Models\AbstractUser;
 
 /**
@@ -10,7 +9,6 @@ use T2G\Common\Models\AbstractUser;
  */
 class UserRepository extends AbstractEloquentRepository
 {
-
     /**
      * @return string
      */
@@ -19,17 +17,6 @@ class UserRepository extends AbstractEloquentRepository
         $userModelClass = config('t2g_common.models.user_model_class');
 
         return $userModelClass;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTodayRegistered()
-    {
-        $startOfToday = date('Y-m-d 00:00:00');
-        $query = $this->query()->where('created_at', '>', $startOfToday);
-
-        return $query->count();
     }
 
     /**
@@ -98,11 +85,10 @@ class UserRepository extends AbstractEloquentRepository
      */
     public function getUserRegisteredReport($fromDate, $toDate)
     {
-        /** @var DatabaseManager $db */
-        $db = app(DatabaseManager::class);
         $fromDate = strtotime($fromDate);
         $toDate = strtotime($toDate) + (24*3600) - 1;
-        $data = $db->table('users')->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, CONCAT(COALESCE(utm_campaign, ''), '|', COALESCE(utm_medium, ''), '|', COALESCE(utm_source, '')) as `cid`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
+        $data = $this->db->table($this->model->getTable())
+            ->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, CONCAT(COALESCE(utm_campaign, ''), '|', COALESCE(utm_medium, ''), '|', COALESCE(utm_source, '')) as `cid`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
             ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN {$fromDate} AND $toDate")
             ->groupBy('date', 'ordered_date', 'cid')
             ->orderByRaw("ordered_date ASC, total DESC")
@@ -133,5 +119,48 @@ class UserRepository extends AbstractEloquentRepository
             $reportByDate,
             $campaigns
         ];
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTodayRegisteredForWidget()
+    {
+        $startOfToday = date('Y-m-d 00:00:00', strtotime("-3 months"));
+        $query = $this->db->table($this->model->getTable())
+            ->selectRaw("COUNT(*) as total, 
+                CASE
+                WHEN utm_source > '' AND utm_medium > '' THEN 1
+                ELSE 0
+                END AS is_direct
+            ")
+            ->where('created_at', '>', $startOfToday)
+            ->groupBy('is_direct')
+        ;
+
+        return $query->get();
+    }
+
+    /**
+     * @return array
+     */
+    public function getRegisteredChartForWidget()
+    {
+        $fromDate = strtotime(date('Y-m-d 00:00:00', strtotime('-100 days')));
+        $toDate = strtotime(date('Y-m-d 23:59:59', strtotime('-90 day')));
+        $results = $this->db->table($this->model->getTable())
+            ->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
+            ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN {$fromDate} AND $toDate")
+            ->groupBy('date', 'ordered_date')
+            ->orderByRaw("ordered_date ASC, total DESC")
+            ->get()
+        ;
+        $data = [];
+        foreach ($results as $row) {
+            $data['xAxisData'][] = $row->date;
+            $data['yAxisData'][] = $row->total;
+        }
+
+        return $data;
     }
 }

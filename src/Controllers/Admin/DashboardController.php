@@ -3,6 +3,7 @@
 namespace T2G\Common\Controllers\Admin;
 
 use T2G\Common\Repository\UserRepository;
+use T2G\Common\Widget\UserWidget;
 use TCG\Voyager\Http\Controllers\Controller;
 
 /**
@@ -25,53 +26,20 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $fromDate = request('fromDate', date('Y-m-d', strtotime("-2 weeks")));
-        $toDate = request('toDate', date('Y-m-d', strtotime('today')));
         $data = [
-            'regToday'        => $this->userRepository->getTodayRegistered(),
-            'regTotal'        => t2g_model('user')->count(),
-            'fromDate'        => $fromDate,
-            'toDate'          => $toDate,
-            'registeredChart' => $this->getRegisteredChartData($fromDate, $toDate),
+            'widgetUser' => $this->getUserWidgetData(),
         ];
 
         return voyager()->view('voyager::index', $data);
     }
 
-    protected function getRegisteredChartData($fromDate, $toDate)
+    /**
+     * @return array
+     */
+    protected function getUserWidgetData()
     {
-        list($reportData, $campaigns) = $this->userRepository->getUserRegisteredReport($fromDate, $toDate);
-        // prepare chart data
-        $registeredChartData = [
-            'direct' => [],
-            'mkt' => []
-        ];
-        $dateArray = [];
-        foreach ($reportData as $date => $reportDatum) {
-            $dateArray[] = $date;
-            $direct = 0;
-            $mkt = 0;
-            foreach ($reportDatum['details'] as $cid => $total) {
-                if ($cid == 'not-set|not-set|not-set') {
-                    $direct += $total;
-                } else {
-                    $mkt += $total;
-                }
-            }
-            $registeredChartData['direct'][] = $direct;
-            $registeredChartData['mkt'][] = $mkt;
-        }
-        $data = [
-            'dateArray'                  => $dateArray,
-            'fromDate'                   => $fromDate,
-            'toDate'                     => $toDate,
-            'reportRegisteredByCampaign' => [
-                'data'      => $reportData,
-                'campaigns' => $campaigns,
-            ],
-            'registeredChartData'        => $registeredChartData,
-        ];
+        $widget = app(UserWidget::class);
 
-        return $data;
+        return $widget->getData();
     }
 }

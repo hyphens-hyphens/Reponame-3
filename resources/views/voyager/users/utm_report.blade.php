@@ -1,5 +1,4 @@
-<div>
-    <h3 class="ref-heading" style="margin:20px auto">Thống kê nguồn User đăng ký</h3>
+<div class="table table-responsive">
     <table class="table table-striped" id="tableUtmReport">
         <thead>
         <th>Campaign</th>
@@ -21,7 +20,7 @@
         <tr>
             <td><?php echo $campaign ?></td>
             <?php foreach ($campaigns[$campaign] as $group): ?>
-            <td><?php echo str_replace('|', ' / ', $group) ?> <span class="label label-primary group-count"></span></td>
+            <td><?php echo str_replace('|', ' / ', $group) ?> <span class="label label-dark group-count"></span></td>
             <?php endforeach; ?>
             <?php foreach ($dateArray as $date):
             $key = "{$campaign}|{$group}";
@@ -35,7 +34,7 @@
         <?php foreach ($campaigns[$campaign] as $group):
         ?>
         <tr>
-            <td><?php echo str_replace('|', ' / ', $group) ?> <span class="label label-primary group-count"></span></td>
+            <td><?php echo str_replace('|', ' / ', $group) ?> <span class="label label-dark group-count"></span></td>
             <?php foreach ($dateArray as $date):
             $total = isset($data[$date]['details']["{$campaign}|{$group}"]) ? $data[$date]['details']["{$campaign}|{$group}"] : 0;
             ?>

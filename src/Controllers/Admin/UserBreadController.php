@@ -124,4 +124,64 @@ class UserBreadController extends VoyagerBaseController
     {
         return ['password', 'password2', 'phone', 'note'];
     }
+
+    public function report()
+    {
+        $fromDate = request('fromDate', date('Y-m-d', strtotime("-2 weeks")));
+        $toDate = request('toDate', date('Y-m-d', strtotime('today')));
+        $data = [
+            'fromDate'        => $fromDate,
+            'toDate'          => $toDate,
+            'registeredChart' => $this->getUsersReportData($fromDate, $toDate)
+        ];
+
+        return voyager()->view('t2g_common::voyager.users.report', $data);
+    }
+
+    /**
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return array
+     */
+    protected function getUsersReportData($fromDate, $toDate)
+    {
+        $userRepository = app(UserRepository::class);
+        list($reportData, $campaigns) = $userRepository->getUserRegisteredReport($fromDate, $toDate);
+        // prepare chart data
+        $yAxisData = [
+            'direct' => [],
+            'mkt'    => [],
+        ];
+        $dateArray = [];
+        foreach ($reportData as $date => $reportDatum) {
+            $dateArray[] = $date;
+            $direct = 0;
+            $mkt = 0;
+            foreach ($reportDatum['details'] as $cid => $total) {
+                if ($cid == 'not-set|not-set|not-set') {
+                    $direct += $total;
+                } else {
+                    $mkt += $total;
+                }
+            }
+            $yAxisData['direct'][] = $direct;
+            $yAxisData['mkt'][] = $mkt;
+        }
+        $data = [
+            'dateArray'                  => $dateArray,
+            'fromDate'                   => $fromDate,
+            'toDate'                     => $toDate,
+            'reportRegisteredByCampaign' => [
+                'data'      => $reportData,
+                'campaigns' => $campaigns,
+            ],
+            'chart'                      => [
+                'xAxisData' => $dateArray,
+                'yAxisData' => $yAxisData
+            ]
+        ];
+
+        return $data;
+    }
 }

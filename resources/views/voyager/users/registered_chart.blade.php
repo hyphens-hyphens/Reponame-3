@@ -10,7 +10,7 @@
                 text: 'Thống kê User đăng ký theo ngày'
             },
             xAxis: {
-                categories: {!! json_encode($dateArray) !!}
+                categories: {!! json_encode($chart['xAxisData']) !!}
             },
             yAxis: {
                 min: 0,
@@ -40,10 +40,10 @@
             },
             series: [{
                 name: 'Direct',
-                data: {!! json_encode($registeredChartData['direct']) !!}
+                data: {!! json_encode($chart['yAxisData']['direct']) !!}
             }, {
                 name: 'MKT',
-                data: {!! json_encode($registeredChartData['mkt']) !!}
+                data: {!! json_encode($chart['yAxisData']['mkt']) !!}
             }]
         });
     </script>

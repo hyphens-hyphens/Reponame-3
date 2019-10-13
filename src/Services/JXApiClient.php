@@ -13,7 +13,7 @@ class JXApiClient
     const ENDPOINT_SET_PASSWORD           = '/api/changepass1.php';
     const ENDPOINT_SET_SECONDARY_PASSWORD = '/api/changepass2.php';
     const ENDPOINT_ADD_GOLD               = '/api/donate.php';
-    const ENDPOINT_CCU                    = '/api/getccu.php';
+    const ENDPOINT_CCU                    = '/api/ccu.php';
 
     static $responseStack = [];
 
@@ -162,14 +162,19 @@ class JXApiClient
     }
 
     /**
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return array
+     *         ["Server name" => 234 // CCU, ...]
      */
-    public function getCcu()
+    public function getCCUs()
     {
         $response = $this->client->get(self::ENDPOINT_CCU);
         $body = $response->getBody()->getContents();
         $this->addResponseStack($body);
+        $CCUs = json_decode($body, true);
+        if (json_last_error() == JSON_ERROR_NONE) {
+            return $CCUs;
+        }
 
-        return explode('-', $body);
+        return [];
     }
 }
