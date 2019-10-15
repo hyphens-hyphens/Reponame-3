@@ -2,7 +2,6 @@
 
 namespace T2G\Common\Repository;
 
-use Prettus\Repository\Eloquent\BaseRepository;
 use T2G\Common\Models\Server;
 
 /**

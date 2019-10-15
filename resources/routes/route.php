@@ -33,6 +33,20 @@ Route::group(['middleware' => 'web'], function () {
             });
         });
 
+        // extends `/users/`
+        Route::group(['as' => 'voyager.', 'middleware' => 'admin.user', 'namespace' => 'T2G\Common\Controllers'], function () {
+            Route::group(['as' => 'ccus.', 'prefix' => '/ccu'], function () {
+                Route::get('/report', [
+                    'uses' => 'Admin\CCUController@report',
+                    'as' => 'report',
+                ]);
+                Route::get('/tick', [
+                    'uses' => 'Admin\CCUController@tick',
+                    'as' => 'tick',
+                ]);
+            });
+        });
+
         Voyager::routes();
         // Voyager overwritten routes
         Route::group(['as' => 'voyager.', 'middleware' => 'admin.user', 'namespace' => 'T2G\Common\Controllers'], function () {

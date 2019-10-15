@@ -76,8 +76,8 @@ class PaymentBreadController extends VoyagerBaseController
             'fromDate' => $fromDate,
             'toDate'   => $toDate,
             'revenue'  => $revenue,
-            'todayRevenue' => $paymentRepository->getProfitByPeriod(date('Y-m-d')),
-            'thisMonthRevenue' => $paymentRepository->getProfitByPeriod(date('Y-m-01')),
+            'todayRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-d')),
+            'thisMonthRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-01')),
         ]);
     }
 

@@ -108,25 +108,34 @@ class MoMoTransactionNotifierCommand extends Command
         $email->setFlag("\\Seen \\Flagged");
     }
 
+    /**
+     * @param $emailBody
+     * @param $linkReview
+     *
+     * @return string
+     */
     private function parseAlertMessage($emailBody, $linkReview)
     {
         $crawler = new Crawler($emailBody);
         $senderPhoneNode = $crawler->filterXPath("(//*[contains(text(),'Số điện thoại người gửi')])/../..//td[last()]/span");
-        if (!$senderPhoneNode->text()) {
-            return null;
+        if (!$senderPhoneNode->text('')) {
+            return "";
         }
-        $amountNode = $crawler->filterXPath("//*[contains(text(),'0đ')]");
+        $amountNode = $crawler->filterXPath("(//*[contains(text(),'Số tiền nhận được')])/../..//td[last()]/span");
         $senderNode = $crawler->filterXPath("(//*[contains(text(),'Người gửi')])/../..//td[last()]/span");
         $noteNode = $crawler->filterXPath("(//*[contains(text(),'Tin nhắn')])/../..//td[last()]/span");
+        if (!$noteNode->text('')) {
+            $noteNode = $crawler->filterXPath("(//*[contains(text(),'Lời chúc')])/../..//td[last()]/span");
+        }
         $timeNode = $crawler->filterXPath("(//*[contains(text(),'Thời gian')])/../..//td[last()]/span");
 
         $alert = sprintf(
             "[MoMo] Nhận được số tiền `%s` từ `%s` vào lúc %s.",
-            $amountNode->text(),
-            $senderNode->text(),
-            $timeNode->text()
+            $amountNode->text(''),
+            $senderNode->text(''),
+            $timeNode->text('')
         );
-        if ($note = $noteNode->text()) {
+        if ($note = $noteNode->text('')) {
             $alert .= " Nội dung: `{$note}`.";
         }
         $alert .= " $linkReview";

@@ -2,7 +2,6 @@
 
 namespace T2G\Common\Repository;
 
-use Illuminate\Database\DatabaseManager;
 use T2G\Common\Models\Payment;
 use T2G\Common\Models\AbstractUser;
 use T2G\Common\Util\CommonHelper;
@@ -236,11 +235,16 @@ class PaymentRepository extends AbstractEloquentRepository
         return $payment;
     }
 
-    function getRevenueChartData($fromDate, $toDate){
+    /**
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return array
+     */
+    public function getRevenueChartData($fromDate, $toDate){
         $count = CommonHelper::subDate($fromDate, $toDate);
-        /** @var DatabaseManager $db */
-        $db = app(DatabaseManager::class);
-        $results = $db->table('payments')->selectRaw("
+        $results = $this->db->table($this->model->getTable())
+            ->selectRaw("
             DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`,
             SUM(`profit`)/1000 as `total_profit`
             ")
@@ -290,7 +294,7 @@ class PaymentRepository extends AbstractEloquentRepository
      *
      * @return array []
      */
-    public function getProfitByPeriod($fromDate = null, $toDate = null)
+    public function getRevenueByPeriod($fromDate = null, $toDate = null)
     {
         $query = $this->query();
         if ($fromDate) {
@@ -299,21 +303,13 @@ class PaymentRepository extends AbstractEloquentRepository
         if ($toDate) {
             $query->where('created_at', '<=', $toDate);
         }
-        $results = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, pay_method")
+        $result = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, status")
             ->where('status', 1)
-            ->groupBy('pay_method')
-            ->get()
+            ->groupBy('status')
+            ->first()
         ;
-        $revenue = [
-            'total'  => 0,
-            'profit' => 0,
-        ];
-        foreach ($results as $result) {
-            $revenue['total'] += $result->total;
-            $revenue['profit'] += $result->profit;
-        }
 
-        return $revenue;
+        return $result ? $result->toArray() : ['total' => 0, 'profit' => 0];
     }
 
     /**
@@ -323,5 +319,27 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         $payment->status = true;
         $payment->finished = true;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRevenueChartForWidget()
+    {
+        $fromDate = date('Y-m-d 00:00:00', strtotime("-10 days"));
+        $toDate = date('Y-m-d 23:59:59', strtotime("-1 day"));
+        $results = $this->db->table($this->model->getTable())
+            ->selectRaw("
+            DATE_FORMAT(`created_at`, '%d-%m') AS `date`, 
+            SUM(`amount`) as `total`,
+            DATE_FORMAT(created_at, '%m-%d') as `ordered_date`
+            ")
+            ->whereRaw("`created_at` BETWEEN '{$fromDate}' AND '{$toDate}' AND `status` = 1")
+            ->groupBy('date', 'ordered_date')
+            ->orderBy('ordered_date', 'ASC')
+            ->get()
+        ;
+
+        return $results;
     }
 }

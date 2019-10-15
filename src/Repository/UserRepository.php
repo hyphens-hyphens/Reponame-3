@@ -126,7 +126,7 @@ class UserRepository extends AbstractEloquentRepository
      */
     public function getTodayRegisteredForWidget()
     {
-        $startOfToday = date('Y-m-d 00:00:00', strtotime("-3 months"));
+        $startOfToday = date('Y-m-d 00:00:00');
         $query = $this->db->table($this->model->getTable())
             ->selectRaw("COUNT(*) as total, 
                 CASE
@@ -146,8 +146,8 @@ class UserRepository extends AbstractEloquentRepository
      */
     public function getRegisteredChartForWidget()
     {
-        $fromDate = strtotime(date('Y-m-d 00:00:00', strtotime('-100 days')));
-        $toDate = strtotime(date('Y-m-d 23:59:59', strtotime('-90 day')));
+        $fromDate = strtotime(date('Y-m-d 00:00:00', strtotime('-10 days')));
+        $toDate = strtotime(date('Y-m-d 00:00'));
         $results = $this->db->table($this->model->getTable())
             ->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
             ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN {$fromDate} AND $toDate")
@@ -155,12 +155,7 @@ class UserRepository extends AbstractEloquentRepository
             ->orderByRaw("ordered_date ASC, total DESC")
             ->get()
         ;
-        $data = [];
-        foreach ($results as $row) {
-            $data['xAxisData'][] = $row->date;
-            $data['yAxisData'][] = $row->total;
-        }
 
-        return $data;
+        return $results;
     }
 }

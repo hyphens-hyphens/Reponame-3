@@ -3,6 +3,8 @@
 namespace T2G\Common\Controllers\Admin;
 
 use T2G\Common\Repository\UserRepository;
+use T2G\Common\Widget\CCUWidget;
+use T2G\Common\Widget\PaymentWidget;
 use T2G\Common\Widget\UserWidget;
 use TCG\Voyager\Http\Controllers\Controller;
 
@@ -24,10 +26,15 @@ class DashboardController extends Controller
         $this->userRepository = app(UserRepository::class);
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
         $data = [
-            'widgetUser' => $this->getUserWidgetData(),
+            'widgetUser'    => $this->getUserWidget(),
+            'widgetPayment' => $this->getPaymentWidget(),
+            'widgetCCU'     => $this->getCCUWidget(),
         ];
 
         return voyager()->view('voyager::index', $data);
@@ -36,10 +43,30 @@ class DashboardController extends Controller
     /**
      * @return array
      */
-    protected function getUserWidgetData()
+    protected function getUserWidget()
     {
         $widget = app(UserWidget::class);
 
-        return $widget->getData();
+        return $widget->render();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPaymentWidget()
+    {
+        $widget = app(PaymentWidget::class);
+
+        return $widget->render();
+    }
+
+    /**
+     * @return \Illuminate\View\View
+     */
+    private function getCCUWidget()
+    {
+        $widget = app(CCUWidget::class);
+
+        return $widget->render();
     }
 }

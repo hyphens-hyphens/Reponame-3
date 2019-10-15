@@ -38,7 +38,9 @@ class JXApiClient
             $this->client = new MockedJXApiClient();
         } else {
             $this->client = new Client([
-                'base_uri' => $baseUrl
+                'base_uri'    => $baseUrl,
+                'http_errors' => false,
+                'timeout'     => 5,
             ]);
         }
 
