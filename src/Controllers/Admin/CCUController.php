@@ -17,7 +17,7 @@ class CCUController extends Controller
     public function report(JXApiClient $JXApiClient)
     {
         $fromDate = request('fromDate', date('Y-m-d', strtotime("-2 weeks")));
-        $toDate = request('toDate', date('Y-m-d', strtotime('today')));
+        $toDate = request('toDate', date('Y-m-d'));
         $data = [
             'ccus'     => $JXApiClient->getCCUs(),
             'fromDate' => $fromDate,
@@ -46,9 +46,14 @@ class CCUController extends Controller
         /** @var CCURepository $repository */
         $repository = app(CCURepository::class);
         $chartData = $repository->getCUUChartForReport($fromDate, $toDate);
-        foreach ($chartData as $row) {
-            $data['yAxisData'][$row->server][] = [intval($row->ccu)];
+        if (count($chartData)) {
+            foreach ($chartData as $row) {
+                $data['yAxisData'][$row->server][] = [intval($row->ccu)];
+            }
+        } else {
+            $data['yAxisData']['N/A'] = [0];
         }
+
 
         return $data;
     }
