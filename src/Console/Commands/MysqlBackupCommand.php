@@ -7,7 +7,7 @@ use Symfony\Component\Finder\Finder;
 
 class MysqlBackupCommand extends Command
 {
-    protected $targetDir = "~/backup/";
+    protected $targetDir = "/root/backup/";
 
     /**
      * The name and signature of the console command.
@@ -70,11 +70,12 @@ class MysqlBackupCommand extends Command
         }
         $targetFile = $this->getTargetFilePath($connection['database']);
         exec("mysqldump -p{$connection['password']} -u {$connection['username']} -h {$connection['host']} -P {$connection['port']} {$connection['database']} > {$targetFile}", $output, $result);
-        if ($output === 0) {
+        if ($result === 0) {
             $this->output->success("Database connection `{$connectionName}` was backed up successfully as `{$targetFile}`.");
 
             return true;
         }
+        $this->output->warning(implode("\r\n", $output));
 
         return false;
     }
@@ -92,10 +93,17 @@ class MysqlBackupCommand extends Command
         }
         $backupFilesPattern = '/' . $database . '_[0-9]+\.sql/';
         $finder = new Finder();
-        $finder->files()
-            ->in($this->targetDir)
-            ->sortByModifiedTime()
-            ->path($backupFilesPattern);
+        try {
+            $finder->files()
+                ->in($this->targetDir)
+                ->sortByModifiedTime()
+                ->path($backupFilesPattern);
+        } catch (\InvalidArgumentException $e) {
+            $this->output->warning($e->getMessage());
+
+            return false;
+        }
+
         $totalFiles = $finder->count();
         if ($totalFiles <= $keep) {
             return false;
