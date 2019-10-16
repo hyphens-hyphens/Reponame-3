@@ -25,9 +25,9 @@
             title: {
                 text: ''
             },
-            // legend: {
-            //     enabled: false
-            // },
+            time: {
+                timezoneOffset: -420
+            },
             xAxis: {
                 type: 'datetime',
             },
@@ -66,12 +66,11 @@
                         }
                     },
                     threshold: null,
-                    // series: {
-                    //     pointIntervalUnit: 'hour',
-                    // }
+
                 },
                 series: {
-                    pointInterval: 3600000,
+                    pointStart: {{ $chart['pointStart'] }}, // milisecond timestamp
+                    pointInterval: 3600000, // 1 hour
                 }
             },
             series: [

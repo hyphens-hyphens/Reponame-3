@@ -49,11 +49,15 @@ class CCUWidget extends AbstractWidget
         $chartData = $this->repository->getCCUChartForWidget();
         // https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json
         // prepare data for line time series chart
-        foreach ($chartData as $row) {
+        foreach ($chartData as $k => $row) {
+            if ($k == 0) {
+                $data['chart']['pointStart'] = strtotime($row->date) * 1000; // milisecond timestamp
+            }
             $data['chart']['yAxisData'][$row->server][] = [intval($row->ccu)];
         }
         if (!count($chartData)) {
             $data['chart']['yAxisData'] = ['N/A' => 0];
+            $data['chart']['pointStart'] = 0;
         }
 
         return $data;

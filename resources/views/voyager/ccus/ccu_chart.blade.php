@@ -8,9 +8,9 @@
             title: {
                 text: ''
             },
-            // legend: {
-            //     enabled: false
-            // },
+            time: {
+                timezoneOffset: -420
+            },
             xAxis: {
                 type: 'datetime',
             },
@@ -54,7 +54,7 @@
                     // }
                 },
                 series: {
-                    pointStart: {{ strtotime($fromDate) * 1000}},
+                    pointStart: {{ $chart['pointStart']  }},
                     pointInterval: 3600000,
                 }
             },

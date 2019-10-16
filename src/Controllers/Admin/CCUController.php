@@ -47,11 +47,14 @@ class CCUController extends Controller
         $repository = app(CCURepository::class);
         $chartData = $repository->getCUUChartForReport($fromDate, $toDate);
         if (count($chartData)) {
+            $data['pointStart'] = strtotime($chartData->offsetGet(0)->date) * 1000;
             foreach ($chartData as $row) {
                 $data['yAxisData'][$row->server][] = [intval($row->ccu)];
             }
+            return $data;
         } else {
             $data['yAxisData']['N/A'] = [0];
+            $data['pointStart'] = 0;
         }
 
 
