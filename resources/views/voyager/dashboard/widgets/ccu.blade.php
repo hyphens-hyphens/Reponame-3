@@ -40,7 +40,7 @@
             },
             tooltip: {
                 // pointFormat: '<b>{point.y}</b><br/>',
-                xDateFormat: '%H:00 %d-%m',
+                xDateFormat: '%H:%M %d-%m',
             },
             plotOptions: {
                 area: {
@@ -70,7 +70,7 @@
                 },
                 series: {
                     pointStart: {{ $chart['pointStart'] }}, // milisecond timestamp
-                    pointInterval: 3600000, // 1 hour
+                    pointInterval: 300000, // 1 hour
                 }
             },
             series: [
@@ -83,28 +83,28 @@
                 @endforeach
             ]
         });
-        let ccuUpdateInterval = setInterval(function () {
-            $.ajax({
-                url: '{{ route('voyager.ccus.tick') }}',
-                success: function (result) {
-                    console.log(result);
-                    for (var property in result) {
-                        let $ccuCount = $('.ccu-count[data-server="' + property + '"]');
-                        $ccuCount.text(parseInt(result[property]).toLocaleString())
-                            .removeClass('label-danger')
-                            .addClass('label-success')
-                            .addClass('blinking-text')
-                        ;
-                        setTimeout(function () {
-                            $ccuCount.removeClass('blinking-text');
-                        }, 900)
-                    }
-                },
-                dataType: 'JSON',
-                error: function () {
-                    $('.ccu-count').addClass('label-danger').removeClass('label-success').text("Error");
-                }
-            });
-        }, 3000);
+        {{--let ccuUpdateInterval = setInterval(function () {--}}
+            {{--$.ajax({--}}
+                {{--url: '{{ route('voyager.ccus.tick') }}',--}}
+                {{--success: function (result) {--}}
+                    {{--console.log(result);--}}
+                    {{--for (var property in result) {--}}
+                        {{--let $ccuCount = $('.ccu-count[data-server="' + property + '"]');--}}
+                        {{--$ccuCount.text(parseInt(result[property]).toLocaleString())--}}
+                            {{--.removeClass('label-danger')--}}
+                            {{--.addClass('label-success')--}}
+                            {{--.addClass('blinking-text')--}}
+                        {{--;--}}
+                        {{--setTimeout(function () {--}}
+                            {{--$ccuCount.removeClass('blinking-text');--}}
+                        {{--}, 900)--}}
+                    {{--}--}}
+                {{--},--}}
+                {{--dataType: 'JSON',--}}
+                {{--error: function () {--}}
+                    {{--$('.ccu-count').addClass('label-danger').removeClass('label-success').text("Error");--}}
+                {{--}--}}
+            {{--});--}}
+        {{--}, 3000);--}}
     </script>
 @endpush

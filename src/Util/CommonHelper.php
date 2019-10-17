@@ -7,7 +7,6 @@ use T2G\Common\Models\Payment;
 /**
  * Class CommonHelper
  *
- * @package \App\Util
  */
 class CommonHelper
 {

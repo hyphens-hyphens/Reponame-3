@@ -9,6 +9,8 @@ use T2G\Common\Util\GameApiLog;
 
 class UserObserver
 {
+    public static $isDisabled = false;
+
     public static $updatedPasswordFlag = [];
 
     public static $updatedPassword2Flag = [];
@@ -95,8 +97,8 @@ class UserObserver
      */
     public function created(AbstractUser $user)
     {
-        if (in_array($user->name, self::$updatedPasswordFlag)) {
-            return null;
+        if (self::isDisabled() || $user->isSystemUpdating() || in_array($user->name, self::$updatedPasswordFlag)) {
+            return;
         }
         $this->_createUserForGame($user);
         self::$updatedPasswordFlag[] = $user->name;
@@ -111,6 +113,10 @@ class UserObserver
      */
     public function updated(AbstractUser $user)
     {
+        if (self::isDisabled() || $user->isSystemUpdating()) {
+            return;
+        }
+
         $changes = $user->getChanges();
         $this->checkForUpdatingPassword($user, $changes);
         $this->checkForUpdatingPassword2($user, $changes);
@@ -154,6 +160,25 @@ class UserObserver
         if (isset($changes['password2'])) {
             $this->_setPassword2ForGame($user);
             self::$updatedPassword2Flag[] = $user->name;
+
+            return true;
         }
+
+        return false;
+    }
+
+    /**
+    * @return bool
+    */
+    public static function isDisabled(): bool
+    {
+        return self::$isDisabled;
+    }
+
+    /**
+     * @param bool $isDisabled
+     */
+    public static function setIsDisabled(bool $isDisabled): void {
+        self::$isDisabled = $isDisabled;
     }
 }

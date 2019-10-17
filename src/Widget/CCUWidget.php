@@ -51,7 +51,7 @@ class CCUWidget extends AbstractWidget
         // prepare data for line time series chart
         foreach ($chartData as $k => $row) {
             if ($k == 0) {
-                $data['chart']['pointStart'] = strtotime($row->date) * 1000; // milisecond timestamp
+                $data['chart']['pointStart'] = strtotime($row->created_at) * 1000; // milisecond timestamp
             }
             $data['chart']['yAxisData'][$row->server][] = [intval($row->ccu)];
         }

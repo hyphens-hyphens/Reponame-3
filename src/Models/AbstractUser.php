@@ -39,6 +39,9 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
 {
     use Notifiable;
 
+    /** @var bool  */
+    protected $systemUpdating = false;
+
     protected $table = 'users';
 
     /**
@@ -144,5 +147,15 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
     public function isNormalUser()
     {
         return empty($this->role_id);
+    }
+
+    public function isSystemUpdating()
+    {
+        return boolval($this->systemUpdating);
+    }
+
+    public function markSystemUpdatingAs(bool $status)
+    {
+        $this->systemUpdating = $status;
     }
 }

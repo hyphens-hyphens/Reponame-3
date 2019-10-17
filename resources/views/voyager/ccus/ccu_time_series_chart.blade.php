@@ -1,12 +1,12 @@
-<div id="ccuChart" style="width: 98%;height: 450px;padding: 1% 0"></div>
+<div id="ccuTimeSeriesChart" style="width: 100%;height: 450px;"></div>
 @push('extra-js')
     <script type="text/javascript">
-        Highcharts.chart('ccuChart', {
+        Highcharts.chart('ccuTimeSeriesChart', {
             chart: {
                 zoomType: 'x'
             },
             title: {
-                text: ''
+                text: 'Thống kê CCU theo thời gian'
             },
             time: {
                 timezoneOffset: -420
@@ -23,7 +23,7 @@
             },
             tooltip: {
                 // pointFormat: '<b>{point.y}</b><br/>',
-                xDateFormat: '%H:00 %d-%m',
+                xDateFormat: '%H:%M %d-%m',
             },
             plotOptions: {
                 area: {
@@ -54,12 +54,12 @@
                     // }
                 },
                 series: {
-                    pointStart: {{ $chart['pointStart']  }},
-                    pointInterval: 3600000,
+                    pointStart: {{ $timeSeriesChart['pointStart']  }},
+                    pointInterval: 300000,
                 }
             },
             series: [
-                    @foreach($chart['yAxisData'] as $server => $data)
+                    @foreach($timeSeriesChart['yAxisData'] as $server => $data)
                 {
                     type: 'area',
                     name: '{{ $server }}',

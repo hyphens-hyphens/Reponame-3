@@ -60,7 +60,24 @@
                     </form>
                 </div>
                 <div class="col-xs-12">
-                    @include('t2g_common::voyager.ccus.ccu_chart')
+                    <ul class="nav nav-tabs nav-" role="tablist">
+                        <li role="presentation" class="active table-default">
+                            <a href="#ccu_peak" aria-controls="ccu_peak" role="tab" data-toggle="tab">CCU đỉnh</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#ccu_average" aria-controls="ccu_average" role="tab" data-toggle="tab">CCU Theo thời gian</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="ccu_peak">
+                            @include('t2g_common::voyager.ccus.ccu_peak_chart')
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="ccu_average">
+                            @include('t2g_common::voyager.ccus.ccu_time_series_chart')
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
