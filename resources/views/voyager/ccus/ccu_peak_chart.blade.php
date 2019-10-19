@@ -11,7 +11,6 @@
             },
             xAxis: {
                 categories: {!! json_encode($peakChart['xAxisData']) !!},
-                crosshair: true
             },
             yAxis: {
                 min: 0,
@@ -20,20 +19,43 @@
                 },
             },
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>)<br/>',
                 shared: true
             },
             plotOptions: {
                 column: {
                     pointPadding: 0.2,
                     borderWidth: 0
+                },
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        inside: true
+                    }
                 }
             },
             series: [
-                @foreach($peakChart['yAxisData'] as $server => $data)
+                @foreach($peakChart['yAxisData'] as $name => $data)
                 {
-                    name: '{{ $server }}',
-                    data: {!! json_encode($data) !!}
+                    dataLabels: [
+                        {
+                        // align: 'left',
+                            format: '{point.time}',
+                        },
+                        {
+                            align: 'left',
+                            format: '{point.x}',
+                        }
+                    ],
+                    name: '{{ $name }}',
+                    data: [
+                        @foreach($data as $point)
+                        {
+                            y: {{ intval($point['value']) }},
+                            time: '{{ $point['time'] }}',
+                        },
+                        @endforeach
+                    ]
                 },
                 @endforeach
             ]

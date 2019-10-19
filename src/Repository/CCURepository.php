@@ -47,7 +47,7 @@ class CCURepository extends AbstractEloquentRepository
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getCUUChartForReport($fromDate, $toDate)
+    public function getCCUChartForReport($fromDate, $toDate)
     {
         $results = $this->db->table($this->model->getTable())
             ->selectRaw("
@@ -63,23 +63,41 @@ class CCURepository extends AbstractEloquentRepository
         return $results;
     }
 
-    public function getPeakCUUChartForReport($fromDate, $toDate)
+    public function getMaxCCUForReport($fromDate, $toDate)
     {
         $table = $this->model->getTable();
         $results = $this->db->table($table)
             ->selectRaw("
                 `server`,
-                MAX(online) as `max_ccu`,
-                MIN(online) as `min_ccu`,
+                `created_at`,
+                MAX(online) as `ccu`,
+                DATE_FORMAT(`created_at`, '%d-%m') AS `date`,
+                DATE_FORMAT(`created_at`, '%y-%m-%d') AS `ordered_date`
+            ")
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->groupBy('server', 'date', 'ordered_date')
+            ->orderBy('server', 'ASC')
+            ->orderBy('ordered_date', 'ASC')
+            ->get()
+        ;
+
+        return $results;
+    }
+
+    public function getMinCCUForReport($fromDate, $toDate)
+    {
+        $table = $this->model->getTable();
+        $results = $this->db->table($table)
+            ->selectRaw("
+                `server`,
+                `created_at`,
+                MIN(online) as `ccu`,
                 DATE_FORMAT(`created_at`, '%d-%m') AS `date`,
                 DATE_FORMAT(`created_at`, '%y-%m-%d') AS `ordered_date`
             ")
             ->whereBetween('created_at', [$fromDate, $toDate])
             // do not count CCU on maintenance time
-            ->whereRaw("
-                `created_at` BETWEEN '{$fromDate}' AND '{$toDate}'
-                AND `id` NOT IN (SELECT id from {$table} WHERE CAST(DATE_FORMAT(`created_at`, '%k%i') AS UNSIGNED) BETWEEN 1620 AND 1710)
-            ")
+            ->whereRaw("`id` NOT IN (SELECT id from {$table} WHERE CAST(DATE_FORMAT(`created_at`, '%k%i') AS UNSIGNED) BETWEEN 1620 AND 1710)")
             ->groupBy('server', 'date', 'ordered_date')
             ->orderBy('server', 'ASC')
             ->orderBy('ordered_date', 'ASC')

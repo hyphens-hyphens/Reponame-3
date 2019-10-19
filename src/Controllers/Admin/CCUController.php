@@ -2,7 +2,6 @@
 
 namespace T2G\Common\Controllers\Admin;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use T2G\Common\Controllers\Controller;
 use T2G\Common\Repository\CCURepository;
 use T2G\Common\Services\JXApiClient;
@@ -46,7 +45,7 @@ class CCUController extends Controller
         $data = [];
         /** @var CCURepository $repository */
         $repository = app(CCURepository::class);
-        $chartData = $repository->getCUUChartForReport($fromDate, $toDate);
+        $chartData = $repository->getCCUChartForReport($fromDate, $toDate);
         if (count($chartData)) {
             $data['pointStart'] = strtotime($chartData->offsetGet(0)->created_at) * 1000;
             foreach ($chartData as $row) {
@@ -63,21 +62,34 @@ class CCUController extends Controller
 
     private function getCCUPeakChartData($fromDate, $toDate)
     {
-        $data = [];
+        $data = ['xAxisData' => [], 'yAxisData' => []];
         /** @var CCURepository $repository */
         $repository = app(CCURepository::class);
-        $chartData = $repository->getPeakCUUChartForReport($fromDate, $toDate);
-        if (count($chartData)) {
-            foreach ($chartData as $row) {
-                $data['xAxisData'][] = $row->date;
-                $data['yAxisData']["{$row->server} Max CCU"][] = [intval($row->max_ccu)];
-                $data['yAxisData']["{$row->server} Min CCU"][] = [intval($row->min_ccu)];
-            }
+        $maxCCUData = $repository->getMaxCCUForReport($fromDate, $toDate);
+        $minCCUData = $repository->getMinCCUForReport($fromDate, $toDate);
+        if (!count($maxCCUData) && !count($minCCUData)) {
+            $data['yAxisData'] = ['N/A' => 0];
+
             return $data;
-        } else {
-            $data['xAxisData'] = [];
-            $data['yAxisData']['N/A'] = [0];
         }
+
+        $chartData = [
+            'Max CCU' => $maxCCUData,
+            'Min CCU' => $minCCUData,
+        ];
+        foreach ($chartData as $label => $rows) {
+            foreach ($rows as $row) {
+                if (!in_array($row->date, $data['xAxisData'])) {
+                    $data['xAxisData'][] = $row->date;
+                }
+                $data['yAxisData']["{$row->server} {$label}"][] = [
+                    'value' => intval($row->ccu),
+                    'x'     => array_search($row->date, $data['xAxisData']),
+                    'time'  => date('H:i', strtotime($row->created_at)),
+                ];
+            }
+        }
+        ksort($data['yAxisData']);
 
         return $data;
     }
