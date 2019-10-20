@@ -19,7 +19,7 @@
                 },
             },
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>)<br/>',
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.time})<br/>',
                 shared: true
             },
             plotOptions: {
@@ -40,11 +40,12 @@
                     dataLabels: [
                         {
                         // align: 'left',
+                            rotation: 90,
                             format: '{point.time}',
                         },
                         {
-                            align: 'left',
-                            format: '{point.x}',
+                            verticalAlign: 'top',
+                            format: '{y}',
                         }
                     ],
                     name: '{{ $name }}',

@@ -21,6 +21,10 @@ return [
         'base_url'  => env('GAME_API_BASE_URL'),
         'api_key'   => env('GAME_API_KEY'),
         'is_mocked' => env('GAME_API_MOCK', true),
+        'maintenance_time' => [
+            'start' => 1620, // in int format, see CCURepository::getMinCCUForReport
+            'end'   => 1710,
+        ],
     ],
     'payment'  => [
         'card_payment_partner'        => env(

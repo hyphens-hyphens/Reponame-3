@@ -62,31 +62,51 @@ class CCUController extends Controller
 
     private function getCCUPeakChartData($fromDate, $toDate)
     {
+        $maintenanceTime = config('t2g_common.game_api.maintenance_time');
         $data = ['xAxisData' => [], 'yAxisData' => []];
         /** @var CCURepository $repository */
         $repository = app(CCURepository::class);
-        $maxCCUData = $repository->getMaxCCUForReport($fromDate, $toDate);
-        $minCCUData = $repository->getMinCCUForReport($fromDate, $toDate);
-        if (!count($maxCCUData) && !count($minCCUData)) {
+        $chartData = $repository->getCCUForPeakReport($fromDate, $toDate);
+        if (!$chartData) {
             $data['yAxisData'] = ['N/A' => 0];
 
             return $data;
         }
-
+        $maxCCUData = $minCCUData = [];
+        foreach ($chartData as $row) {
+            $date = $row->created_at->format('d-m');
+            if (!isset($maxCCUData[$row->server][$date])) {
+                $maxCCUData[$row->server][$date] = $row;
+            } elseif ($row->online > $maxCCUData[$row->server][$date]->online) {
+                $maxCCUData[$row->server][$date] = $row;
+            }
+            $time = intval($row->created_at->format('Hi'));
+            // do not use CCU in maintenance time as min CCU
+            if ($time > $maintenanceTime['start'] && $time < $maintenanceTime['end']) {
+                continue;
+            }
+            if (!isset($minCCUData[$row->server][$date])) {
+                $minCCUData[$row->server][$date] = $row;
+            } elseif ($row->online < $minCCUData[$row->server][$date]->online) {
+                $minCCUData[$row->server][$date] = $row;
+            }
+        }
         $chartData = [
             'Max CCU' => $maxCCUData,
             'Min CCU' => $minCCUData,
         ];
-        foreach ($chartData as $label => $rows) {
-            foreach ($rows as $row) {
-                if (!in_array($row->date, $data['xAxisData'])) {
-                    $data['xAxisData'][] = $row->date;
+        foreach ($chartData as $label => $group) {
+            foreach ($group as $server => $rows) {
+                foreach ($rows as $date => $row) {
+                    if (!in_array($date, $data['xAxisData'])) {
+                        $data['xAxisData'][] = $date;
+                    }
+                    $data['yAxisData']["{$row->server} {$label}"][] = [
+                        'value' => $row->online,
+                        'x'     => array_search($date, $data['xAxisData']),
+                        'time'  => $row->created_at->format('H:i'),
+                    ];
                 }
-                $data['yAxisData']["{$row->server} {$label}"][] = [
-                    'value' => intval($row->ccu),
-                    'x'     => array_search($row->date, $data['xAxisData']),
-                    'time'  => date('H:i', strtotime($row->created_at)),
-                ];
             }
         }
         ksort($data['yAxisData']);
