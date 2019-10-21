@@ -49,7 +49,7 @@ class CCUController extends Controller
         if (count($chartData)) {
             $data['pointStart'] = strtotime($chartData->offsetGet(0)->created_at) * 1000;
             foreach ($chartData as $row) {
-                $data['yAxisData'][$row->server][] = [intval($row->ccu)];
+                $data['yAxisData'][$row->server][] = intval($row->ccu);
             }
             return $data;
         } else {
