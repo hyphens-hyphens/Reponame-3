@@ -33,10 +33,8 @@ class PaymentBreadController extends BaseVoyagerController
     protected $currentUser;
 
     public function __construct() {
-        /** @var \Illuminate\Contracts\Auth\Guard  $guard */
-        $guard = app(\Illuminate\Contracts\Auth\Guard::class);
-        $this->currentUser = $guard->user();
         parent::__construct();
+        $this->currentUser = \Auth::user();
     }
 
     public function index(Request $request)
@@ -188,7 +186,7 @@ class PaymentBreadController extends BaseVoyagerController
                 if ($e->getCode() > 0) {
                     $error = "Lỗi API nạp tiền";
                     $this->getGameApiLogger()->notify("Add vàng thất bại cho user `{$payment->username}` " . $e->getMessage(), [
-                        'creator' => $this->currentUser->name,
+                        'creator' => $this->currentUser->name ?? '',
                         'info' => array_only($payment->toArray(), ['id', 'amount', 'note']),
                     ]);
                 }

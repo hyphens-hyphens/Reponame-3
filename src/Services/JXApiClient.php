@@ -145,14 +145,15 @@ class JXApiClient
         $signed = md5($this->apiKey . $username);
         $params = ['tk' => $username, 'sign' => $signed];
         if ($xu > 0) {
-            $params['soxu'] = $xu;
+            $params['soxu'] = intval($xu);
         }
         if ($knb > 0) {
-            $params['knb'] = $knb;
+            $params['knb'] = round($knb / 20);
         }
         $response = $this->client->get(self::ENDPOINT_ADD_GOLD, [
             'query' => $params
         ]);
+
         $body = $response->getBody()->getContents();
         $this->addResponseStack($body);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
