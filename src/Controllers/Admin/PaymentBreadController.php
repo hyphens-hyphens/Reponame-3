@@ -15,14 +15,13 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataUpdated;
-use TCG\Voyager\Http\Controllers\VoyagerBaseController;
 
 /**
  * Class PaymentAdminController
  *
  * @package \T2G\Common\Http\Controllers\Admin
  */
-class PaymentBreadController extends VoyagerBaseController
+class PaymentBreadController extends BaseVoyagerController
 {
     const VOYAGER_SLUG = 'payments';
 
@@ -37,6 +36,7 @@ class PaymentBreadController extends VoyagerBaseController
         /** @var \Illuminate\Contracts\Auth\Guard  $guard */
         $guard = app(\Illuminate\Contracts\Auth\Guard::class);
         $this->currentUser = $guard->user();
+        parent::__construct();
     }
 
     public function index(Request $request)

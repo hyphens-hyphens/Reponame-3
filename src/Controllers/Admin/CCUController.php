@@ -15,7 +15,7 @@ class CCUController extends Controller
 {
     public function report(JXApiClient $JXApiClient)
     {
-        $fromDate = request('fromDate', date('Y-m-d 00:00:00', strtotime("-2 weeks")));
+        $fromDate = request('fromDate', date('Y-m-d 00:00:00', strtotime("-1 week")));
         $toDate = request('toDate', date('Y-m-d 23:59:59'));
         $data = [
             'ccus'     => $JXApiClient->getCCUs(),

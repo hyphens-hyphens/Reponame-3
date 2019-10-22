@@ -67,7 +67,11 @@ php artisan t2g_common:payment:update_profit
 ```mysql
 UPDATE data_types SET model_name = REPLACE(model_name, 'App\\Models', 'T2G\\Common\\Models');
 
-UPDATE data_types SET policy_name = REPLACE(model_name, 'App\\Models', 'T2G\\Common\\Models');
+UPDATE data_types SET policy_name = REPLACE(policy_name, 'App\\Models', 'T2G\\Common\\Models');
+
+insert into permissions (`key`, created_at, updated_at) values ('widget.user', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
+insert into permissions (`key`, created_at, updated_at) values ('widget.ccu', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
+insert into permissions (`key`, created_at, updated_at) values ('widget.payment', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
 ```
 
 ## TODO

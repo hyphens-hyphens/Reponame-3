@@ -2,11 +2,11 @@
 
 namespace T2G\Common\Controllers\Admin;
 
+use T2G\Common\Controllers\Controller;
 use T2G\Common\Repository\UserRepository;
 use T2G\Common\Widget\CCUWidget;
 use T2G\Common\Widget\PaymentWidget;
 use T2G\Common\Widget\UserWidget;
-use TCG\Voyager\Http\Controllers\Controller;
 
 /**
  * Class DashboardController
@@ -23,6 +23,7 @@ class DashboardController extends Controller
      */
     public function __construct()
     {
+        parent::__construct();
         $this->userRepository = app(UserRepository::class);
     }
 

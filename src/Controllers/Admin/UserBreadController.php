@@ -5,14 +5,13 @@ namespace T2G\Common\Controllers\Admin;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Repository\UserRepository;
 use Illuminate\Http\Request;
-use TCG\Voyager\Http\Controllers\VoyagerBaseController;
 
 /**
  * Class UserBreadController
  *
  * @package \T2G\Common\Http\Controllers\Admin
  */
-class UserBreadController extends VoyagerBaseController
+class UserBreadController extends BaseVoyagerController
 {
     protected $searchable = [
         'name', 'phone', 'note', 'id', 'email'

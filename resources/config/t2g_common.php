@@ -22,7 +22,7 @@ return [
         'api_key'   => env('GAME_API_KEY'),
         'is_mocked' => env('GAME_API_MOCK', true),
         'maintenance_time' => [
-            'start' => 1620, // in int format, see CCURepository::getMinCCUForReport
+            'start' => 1620, // in int format, see CCUController::getCCUPeakChartData
             'end'   => 1710,
         ],
     ],

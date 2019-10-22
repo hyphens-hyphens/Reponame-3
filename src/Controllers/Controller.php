@@ -14,4 +14,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 class Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function __construct() {
+        \Illuminate\Pagination\Paginator::defaultView('vendor.pagination.default');
+    }
 }

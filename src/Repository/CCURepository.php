@@ -33,7 +33,7 @@ class CCURepository extends AbstractEloquentRepository
                 online as `ccu`, 
                 `created_at`
             ")
-            ->where('created_at', '>=', date('Y-m-d', strtotime("-3 days")))
+            ->where('created_at', '>=', date('Y-m-d', strtotime("-1 days")))
             ->orderBy('created_at', 'ASC')
             ->get()
         ;
