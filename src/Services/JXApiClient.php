@@ -40,7 +40,7 @@ class JXApiClient
             $this->client = new Client([
                 'base_uri'    => $baseUrl,
                 'http_errors' => false,
-                'timeout'     => 5,
+                'timeout'     => 10,
             ]);
         }
 
@@ -148,7 +148,8 @@ class JXApiClient
             $params['soxu'] = intval($xu);
         }
         if ($knb > 0) {
-            $params['knb'] = round($knb / 20);
+            $isLegacyApi = config('t2g_common.game_api.legacy', true);
+            $params['knb'] = $isLegacyApi ? round($knb / 20) : $knb;
         }
         $response = $this->client->get(self::ENDPOINT_ADD_GOLD, [
             'query' => $params
