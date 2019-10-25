@@ -37,7 +37,7 @@ class PostRepository extends AbstractEloquentRepository
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
         $query->published()
-            ->orderByPublishDate()
+            ->orderBy('updated_at', 'desc')
             ->limit($limit)
         ;
         if ($categorySlug) {
@@ -53,7 +53,7 @@ class PostRepository extends AbstractEloquentRepository
         $query = $this->query();
         $query->published()
             ->categorySlug($eventSlug)
-            ->orderByPublishDate()
+            ->orderBy('updated_at', 'desc')
             ->limit($limit)
         ;
 
@@ -125,7 +125,7 @@ class PostRepository extends AbstractEloquentRepository
         $query = $this->query();
         $query->published()
             ->whereRaw("title LIKE '%{$keyword}%'")
-            ->orderByPublishDate()
+            ->orderBy('updated_at', 'desc')
         ;
 
         return $query->paginate($limit);

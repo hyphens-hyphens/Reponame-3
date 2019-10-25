@@ -31,7 +31,7 @@ class SliderRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->active()
-            ->orderBy('id', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->limit($limit)
         ;
 

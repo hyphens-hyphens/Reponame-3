@@ -30,7 +30,7 @@ class BannerRepository extends AbstractEloquentRepository
         /** @var Banner|\Illuminate\Database\Eloquent\Builder $query */
         $query = $this->query();
         $query->active()
-            ->orderBy('id', 'desc')
+            ->orderBy('updated_at', 'desc')
         ;
         /** @var Banner|null $banner */
         $banner = $query->first();
