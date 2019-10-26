@@ -81,14 +81,14 @@ class Post extends \TCG\Voyager\Models\Post
      */
     public function getImage()
     {
+        $image = '';
         if (!empty($this->image)) {
-            return $this->image;
-        }
-        if ($this->body) {
-            return $this->getFirstImageFromBody();
+            $image = $this->image;
+        } elseif ($this->body) {
+            $image = $this->getFirstImageFromBody();
         }
 
-        return null;
+        return ltrim($image, '/');
     }
 
     /**

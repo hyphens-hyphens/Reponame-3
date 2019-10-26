@@ -58,4 +58,8 @@ Route::group(['middleware' => 'web'], function () {
         Route::get('/users', ['uses' => 'AutoCompleteController@getUsers', 'as' => 'users']);
     });
 
+    Route::group(['prefix' => '', 'as' => 't2g_common.', 'namespace' => 'T2G\Common\Controllers'], function () {
+        Route::get('/start-detect', ['uses' => 'Front\ClientLaunchingController@start', 'as' => 'start_detect']);
+    });
+
 });
