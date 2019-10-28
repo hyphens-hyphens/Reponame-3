@@ -59,7 +59,7 @@ Route::group(['middleware' => 'web'], function () {
     });
 
     Route::group(['prefix' => '', 'as' => 't2g_common.', 'namespace' => 'T2G\Common\Controllers'], function () {
-        Route::get('/start-detect', ['uses' => 'Front\ClientLaunchingController@start', 'as' => 'start_detect']);
+        Route::get('/start-detect', ['uses' => 'Front\ClientTrackingController@start', 'as' => 'start_detect']);
     });
 
 });

@@ -2,27 +2,27 @@
 
 namespace T2G\Common\Controllers\Front;
 
-use T2G\Common\Models\ClientLaunching;
-use T2G\Common\Repository\ClientLaunchingRepository;
+use T2G\Common\Models\ClientTracking;
+use T2G\Common\Repository\ClientTrackingRepository;
 
 /**
- * Class ClientLaunchingController
+ * Class ClientTrackingController
  *
  * @package \T2G\Common\Controllers\Front
  */
-class ClientLaunchingController extends BaseFrontController
+class ClientTrackingController extends BaseFrontController
 {
     /**
-     * @var \T2G\Common\Repository\ClientLaunchingRepository
+     * @var \T2G\Common\Repository\ClientTrackingRepository
      */
     protected $repository;
 
     /**
      * ClientLaunchingController constructor.
      *
-     * @param \T2G\Common\Repository\ClientLaunchingRepository $repository
+     * @param \T2G\Common\Repository\ClientTrackingRepository $repository
      */
-    public function __construct(ClientLaunchingRepository $repository)
+    public function __construct(ClientTrackingRepository $repository)
     {
         parent::__construct();
         $this->repository = $repository;
@@ -32,10 +32,10 @@ class ClientLaunchingController extends BaseFrontController
     {
         $ethernetMAC = request('EthernetMAC');
         $wifiMAC = request('WifiMAC');
-        list($version, $host) = $this->extractVersionAndHost();
         $data = request()->all();
-        /** @var \T2G\Common\Models\ClientLaunching|null $record */
-        $signature = $this->repository->makeClientSignature($ethernetMAC, $wifiMAC, $version, $host);
+        list($data['version'], $data['host']) = $this->extractVersionAndHost();
+        /** @var \T2G\Common\Models\ClientTracking|null $record */
+        $signature = $this->repository->makeClientSignature($ethernetMAC, $wifiMAC, $data['version'], $data['host']);
         $record = $this->repository->getRecordByClientSignature($signature);
         if (!$record) {
             $record = $this->createNewRecord($data);
@@ -59,17 +59,18 @@ class ClientLaunchingController extends BaseFrontController
             'wifi_mac'     => $data['WifiMAC'] ?? '',
             'local_ip'     => $data['localIP'] ?? '',
             'external_ip'  => $data['extIP'] ?? '',
+            'version'      => $data['version'] ?? '',
+            'host'         => $data['host'] ?? '',
         ];
-        list($data['version'], $data['host']) = $this->extractVersionAndHost();
 
         return $this->repository->create($data);
     }
 
     /**
-     * @param \T2G\Common\Models\ClientLaunching $record
+     * @param \T2G\Common\Models\ClientTracking  $record
      * @param                                    $data
      */
-    private function updateClientRecord(ClientLaunching $record, $data)
+    private function updateClientRecord(ClientTracking $record, $data)
     {
         $record->local_ip    = $data['localIP'] ?? '';
         $record->external_ip = $data['extIP'] ?? '';

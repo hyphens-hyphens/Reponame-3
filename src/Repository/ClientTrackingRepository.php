@@ -2,14 +2,14 @@
 
 namespace T2G\Common\Repository;
 
-use T2G\Common\Models\ClientLaunching;
+use T2G\Common\Models\ClientTracking;
 
 /**
- * Class ClientLaunchingRepository
+ * Class ClientTrackingRepository
  *
  * @package \T2G\Common\Repository
  */
-class ClientLaunchingRepository extends AbstractEloquentRepository
+class ClientTrackingRepository extends AbstractEloquentRepository
 {
 
     /**
@@ -17,7 +17,7 @@ class ClientLaunchingRepository extends AbstractEloquentRepository
      */
     public function model(): string
     {
-        return ClientLaunching::class;
+        return ClientTracking::class;
     }
 
     public function create(array $data)

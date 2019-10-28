@@ -41,7 +41,7 @@ class UserBreadController extends BaseVoyagerController
             $rules['password2'] = 'between:6,32';
         }
 
-        return app(\Illuminate\Validation\Validator::class)->make($request, $rules);
+        return app(\Illuminate\Validation\Factory::class)->make($request, $rules);
     }
 
     /**
