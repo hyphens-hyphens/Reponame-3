@@ -39,6 +39,7 @@ class PostRepository extends AbstractEloquentRepository
         $query->published()
             ->orderBy('updated_at', 'desc')
             ->limit($limit)
+            ->with('category')
         ;
         if ($categorySlug) {
             $query->categorySlug($categorySlug);
@@ -129,5 +130,19 @@ class PostRepository extends AbstractEloquentRepository
         ;
 
         return $query->paginate($limit);
+    }
+
+    public function getPostsBySlugs(array $slugs, $limit = 10)
+    {
+        /** @var \Illuminate\Database\Query\Builder|Post $query */
+        $query = $this->query();
+        $query->published()
+            ->whereIn("slug", $slugs)
+            ->limit($limit)
+            ->with('category')
+            ->orderByRaw("FIELD(slug, '". implode("','", $slugs) ."')")
+        ;
+
+        return $query->get();
     }
 }
