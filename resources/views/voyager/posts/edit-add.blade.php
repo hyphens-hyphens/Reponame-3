@@ -259,7 +259,6 @@
 @section('javascript')
     <script>
         $('document').ready(function () {
-            $('#slug').slugify();
             $('.toggleswitch').bootstrapToggle();
 
             @if ($isModelTranslatable)

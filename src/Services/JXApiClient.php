@@ -3,6 +3,7 @@
 namespace T2G\Common\Services;
 
 use GuzzleHttp\Client;
+use T2G\Common\Util\GameApiLog;
 
 /**
  * Class JXApiClient
@@ -32,6 +33,11 @@ class JXApiClient
      */
     private $apiKey;
 
+    /**
+     * @var \T2G\Common\Util\GameApiLog
+     */
+    protected $logger;
+
     public function __construct($baseUrl, $apiKey)
     {
         if (config('t2g_common.game_api.is_mocked', false)) {
@@ -43,9 +49,9 @@ class JXApiClient
                 'timeout'     => 10,
             ]);
         }
-
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->apiKey = $apiKey;
+        $this->logger = app(GameApiLog::class);
     }
 
     /**
@@ -81,6 +87,11 @@ class JXApiClient
         $this->addResponseStack($body);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
+            $this->logger->critical(
+                "Cannot create account for user `{$username}`",
+                ['api_response' => $body]
+            );
+
             return false;
         }
 
@@ -104,6 +115,11 @@ class JXApiClient
         $this->addResponseStack($body);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
+            $this->logger->critical(
+                "Cannot set password for user `{$username}`",
+                ['api_response' => $this->getLastResponse()]
+            );
+
             return false;
         }
 
@@ -127,6 +143,11 @@ class JXApiClient
         $this->addResponseStack($body);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
+            $this->logger->critical(
+                "Cannot set password 2 for user `{$username}`",
+                ['api_response' => $body]
+            );
+
             return false;
         }
 
@@ -159,6 +180,11 @@ class JXApiClient
         $this->addResponseStack($body);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
+            $this->logger->critical(
+                "Cannot add gold for user `{$username}`",
+                ['api_response' => $body, 'knb' => $knb, 'xu' => $xu]
+            );
+
             return false;
         }
 
@@ -178,6 +204,11 @@ class JXApiClient
         if (json_last_error() == JSON_ERROR_NONE) {
             return $CCUs;
         }
+
+        $this->logger->critical(
+            "Cannot get CCUs",
+            ['api_response' => $body]
+        );
 
         return [];
     }

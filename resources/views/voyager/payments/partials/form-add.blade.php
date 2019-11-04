@@ -69,7 +69,7 @@ $rowClass = 'col-xs-12 col-md-4';
                 @endif
                 @if(empty($isBrowsing) && $dataTypeContent->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_CARD)
                     <p>
-                        @include('partials.admin.card_info', ['item' => $dataTypeContent])
+                        @include('t2g_common::voyager.payments.card_info', ['item' => $dataTypeContent])
                     </p>
                 @endif
             </div>

@@ -29,14 +29,6 @@ class PaymentBreadController extends BaseVoyagerController
         'username', 'card_pin', 'card_serial', 'card_type', 'note', 'id', 'created_at', 'payment_type'
     ];
 
-    /** @var \T2G\Common\Models\AbstractUser|null */
-    protected $currentUser;
-
-    public function __construct() {
-        parent::__construct();
-        $this->currentUser = \Auth::user();
-    }
-
     public function index(Request $request)
     {
         voyager()->onLoadingView('voyager::payments.browse', function ($view, &$params) {
@@ -103,6 +95,10 @@ class PaymentBreadController extends BaseVoyagerController
             return $this->returnToListWithError($error, $payment->id);
         }
         $payment->gamecoin = $knb + $xu;
+        if ($payment->payment_type == Payment::PAYMENT_TYPE_CARD) {
+            $payment->note .= "Được chấp nhận bởi Moderator " . $this->getCurrentUser()->name;
+        }
+
         $paymentRepository->setDone($payment);
 
         return redirect()
@@ -185,8 +181,8 @@ class PaymentBreadController extends BaseVoyagerController
                 $error = $e->getMessage();
                 if ($e->getCode() > 0) {
                     $error = "Lỗi API nạp tiền";
-                    $this->getGameApiLogger()->notify("Add vàng thất bại cho user `{$payment->username}` " . $e->getMessage(), [
-                        'creator' => $this->currentUser->name ?? '',
+                    \Log::critical("Add vàng thất bại cho user `{$payment->username}` " . $e->getMessage(), [
+                        'creator' => $this->getCurrentUser()->name ?? '',
                         'info' => array_only($payment->toArray(), ['id', 'amount', 'note']),
                     ]);
                 }
@@ -252,10 +248,11 @@ class PaymentBreadController extends BaseVoyagerController
                 $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
             } catch (PaymentApiException $e) {
                 $payment = $e->getPaymentItem();
-                $this->getGameApiLogger()->notify("Add vàng thất bại cho user `{$payment->username}` " . $e->getMessage(), [
-                    'creator' => $this->currentUser->name,
+                \Log::critical("Add vàng thất bại cho user `{$payment->username}` " . $e->getMessage(), [
+                    'creator' => $this->getCurrentUser()->name,
                     'info' => array_only($payment->toArray(), ['id', 'amount', 'note']),
                 ]);
+
                 return $this->returnToListWithError($request, $payment->id);
             }
             event(new BreadDataUpdated($dataType, $data));
@@ -344,7 +341,7 @@ class PaymentBreadController extends BaseVoyagerController
         }
 
         if (env('APP_ENV') != 'prod') {
-            $this->getGameApiLogger()->notify($text);
+            \Log::critical($text);
         } else {
             $discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.add_gold'));
             $discord->send($text);
@@ -467,6 +464,10 @@ class PaymentBreadController extends BaseVoyagerController
         if ($statusCode = $request->get('status_code')) {
             $query->where('status_code', $statusCode);
         }
+
+        if ($note = $request->get('note')) {
+            $query->where('note', 'LIKE', "%{$note}%");
+        }
     }
 
     /**
@@ -475,5 +476,13 @@ class PaymentBreadController extends BaseVoyagerController
     protected function getGameApiLogger()
     {
         return app(GameApiLog::class);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    private function getCurrentUser()
+    {
+        return \Auth::user();
     }
 }

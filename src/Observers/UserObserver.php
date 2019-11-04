@@ -5,7 +5,6 @@ namespace T2G\Common\Observers;
 use T2G\Common\Models\AbstractUser;
 use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\JXApiClient;
-use T2G\Common\Util\GameApiLog;
 
 class UserObserver
 {
@@ -25,30 +24,15 @@ class UserObserver
      */
     protected $gameApiClient;
 
-    /**
-     * @var GameApiLog
-     */
-    protected $logger;
-
     public function __construct()
     {
         $this->userRepository = app(UserRepository::class);
         $this->gameApiClient = app(JXApiClient::class);
-        $this->logger = app(GameApiLog::class);
     }
 
     private function _setPasswordForGame(AbstractUser $user)
     {
-        $apiResult = $this->gameApiClient->setPassword($user->name, $user->getRawPassword());
-        if (!$apiResult) {
-            //log error
-            $this->logger->info("Cannot set password for user `{$user->name}`", [
-                'api_response' => $this->gameApiClient->getLastResponse(),
-                'user' => array_only($user->toArray(), ['id', 'name'])
-            ]);
-        }
-
-        return true;
+        return $this->gameApiClient->setPassword($user->name, $user->getRawPassword());
     }
 
     /**
@@ -58,16 +42,7 @@ class UserObserver
      */
     private function _setPassword2ForGame(AbstractUser $user)
     {
-        $apiResult = $this->gameApiClient->setSecondaryPassword($user->name, $user->getRawPassword2());
-        if (!$apiResult) {
-            //log error
-            $this->logger->info("Cannot set password 2 for user `{$user->name}`", [
-                'api_response' => $this->gameApiClient->getLastResponse(),
-                'user' => array_only($user->toArray(), ['id', 'name'])
-            ]);
-        }
-
-        return true;
+        return $this->gameApiClient->setSecondaryPassword($user->name, $user->getRawPassword2());
     }
 
     /**
@@ -77,15 +52,7 @@ class UserObserver
      */
     private function _createUserForGame(AbstractUser $user)
     {
-        $apiResult = $this->gameApiClient->createUser($user->name, $user->getRawPassword());
-        if (!$apiResult) {
-            $this->logger->info("Cannot create account for user `{$user->name}`", [
-                'api_response' => $this->gameApiClient->getLastResponse(),
-                'user' => array_only($user->toArray(), ['id', 'name'])
-            ]);
-        }
-
-        return true;
+        return $this->gameApiClient->createUser($user->name, $user->getRawPassword());
     }
 
     /**

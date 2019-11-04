@@ -9,29 +9,18 @@ use Illuminate\Log\LogManager;
  *
  * @package \T2G\Common\Util
  */
-class GameApiLog
+class GameApiLog extends LogManager
 {
     /**
-     * @var \Illuminate\Log\LogManager
-     */
-    protected $logger;
-
-    /**
      * GameApiLog constructor.
+     *
+     * @param \Illuminate\Foundation\Application $app
      */
-    public function __construct()
+    public function __construct(\Illuminate\Foundation\Application $app)
     {
-        $this->logger = app(LogManager::class);
-        $this->logger->channel(config('t2g_common.game_api.is_mocked') ? 'game_api_request' : 'game_api');
+        parent::__construct(($app));
+
+        $this->channel(config('t2g_common.game_api.is_mocked') ? 'game_api_request' : 'game_api');
     }
 
-    /**
-     * @param       $message
-     * @param array $data
-     */
-    public function notify($message, $data = [])
-    {
-        $message = "[" . time() . "] " . $message;
-        $this->logger->notice($message, $data);
-    }
 }

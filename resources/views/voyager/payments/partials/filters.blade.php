@@ -29,6 +29,19 @@
                                value="{{ request('id') }}"/>
                     </div>
                     <div class="form-group col-xs-12 col-sm-4">
+                        <label for="id">Note</label>
+                        <input type="text" class="form-control" name="note"
+                               value="{{ request('note') }}"/>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-4">
+                        <label for="created_at">Thời gian</label>
+                        <input type="text" class="form-control" name="created_at"
+                               placeholder="Ex: YYYY-mm-dd, > 2019-09, < 2019-09, < 2019-08-30"
+                               value="{{ request('created_at') }}"/>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-4">
                         <label for="user_id">Tài khoản</label>
                         <select class="form-control select2-users" name="user_id">
                             @if($userId = request('user_id') && $user = \App\User::find(request('user_id')))
@@ -44,13 +57,6 @@
                                 <option {{ request('pay_method') == $text ? 'selected="selected"' : '' }} value="{{ $text }}">{{ $text }}</option>
                             @endforeach
                         </select>
-                    </div>
-
-                    <div class="form-group col-xs-12 col-sm-4">
-                        <label for="created_at">Thời gian</label>
-                        <input type="text" class="form-control" name="created_at"
-                               placeholder="Ex: YYYY-mm-dd, > 2019-09, < 2019-09, < 2019-08-30"
-                               value="{{ request('created_at') }}"/>
                     </div>
 
                     <div class="form-group col-xs-12 col-sm-4">
