@@ -3,6 +3,7 @@
 namespace T2G\Common\Models;
 
 use Illuminate\Notifications\Notifiable;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * Class User
@@ -35,15 +36,26 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \Illuminate\Database\Eloquent\Collection|\TCG\Voyager\Models\Role[]                                       $roles
  * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Payment[]                                     $payments
  */
-abstract class AbstractUser extends \TCG\Voyager\Models\User
+class AbstractUser extends \TCG\Voyager\Models\User
 {
-    use Notifiable;
+    use Notifiable, RevisionableTrait;
 
     /** @var bool  */
     protected $systemUpdating = false;
 
     protected $table = 'users';
 
+    protected $dontKeepRevisionOf = ['password', 'updated_at', 'created_at', 'utm_source', 'utm_medium', 'utm_campaign', 'registered_ip'];
+    protected $revisionCleanup = true; //Remove old revisions (works only when used with $historyLimit)
+    protected $historyLimit = 300; //Maintain a maximum of 500 changes at any point of time, while cleaning up old revisions.
+    protected $revisionFormattedFieldNames = [
+        'name'         => 'Username',
+        'email'        => 'Email',
+        'phone'        => 'Phone',
+        'note'         => 'Note',
+        'raw_password' => 'Mật khẩu cấp 1',
+        'password2'    => 'Mật khẩu cấp 2',
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -99,7 +111,7 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
      */
     public function getRawPassword()
     {
-        return base64_decode($this->raw_password);
+        return self::decodePassword($this->raw_password);
     }
 
     public function displayPhone()
@@ -128,7 +140,7 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
      */
     public function getRawPassword2()
     {
-        return base64_decode($this->password2);
+        return self::decodePassword($this->password2);
     }
 
     /**
@@ -157,5 +169,15 @@ abstract class AbstractUser extends \TCG\Voyager\Models\User
     public function markSystemUpdatingAs(bool $status)
     {
         $this->systemUpdating = $status;
+    }
+
+    public static function decodePassword($password)
+    {
+        return base64_decode($password);
+    }
+
+    public static function encodePassword($password)
+    {
+        return base64_encode($password);
     }
 }

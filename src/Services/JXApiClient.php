@@ -205,7 +205,7 @@ class JXApiClient
             return $CCUs;
         }
 
-        $this->logger->critical(
+        $this->logger->notice(
             "Cannot get CCUs",
             ['api_response' => $body]
         );

@@ -103,7 +103,7 @@ class UserObserver
 
         if (isset($changes['raw_password'])) {
             $hasher = app(\Illuminate\Contracts\Hashing\Hasher::class);
-            $newPassword = $hasher->make(base64_decode($changes['raw_password']));
+            $newPassword = $hasher->make(AbstractUser::decodePassword($changes['raw_password']));
             $this->_setPasswordForGame($user);
             self::$updatedPasswordFlag[] = $user->name;
             if ($newPassword != $user->getAuthPassword()) {
