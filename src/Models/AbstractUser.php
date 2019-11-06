@@ -38,7 +38,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  */
 class AbstractUser extends \TCG\Voyager\Models\User
 {
-    use Notifiable, RevisionableTrait;
+    use Notifiable, RevisionableTrait, AdvanceRevisionable;
 
     /** @var bool  */
     protected $systemUpdating = false;

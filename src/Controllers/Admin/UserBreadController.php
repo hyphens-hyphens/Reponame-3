@@ -92,15 +92,16 @@ class UserBreadController extends BaseVoyagerController
         $field = $request->input('name');
         $value = $request->input('value');
         $id = $request->input('pk');
-        $dataType = voyager()->model('DataType')->where('slug', '=', $slug)->firstOrFail();
+        voyager()->model('DataType')->where('slug', '=', $slug)->firstOrFail();
         if (!in_array($field, $this->getEditableFields())) {
             return response()->json(['errors' => ["You are not allowed to perform this action on field `{$field}``"]]);
         }
-        // Check permission
-        $this->authorize('edit', app($dataType->model_name));
-        $userRepository = app(UserRepository::class);
         /** @var \T2G\Common\Models\AbstractUser $user */
         $user = t2g_model('user')->findOrFail($id);
+        // Check permission
+        $this->authorize('edit', $user);
+        $userRepository = app(UserRepository::class);
+
         if ($field == 'password' || $field == 'password2') {
             $this->authorize('editPassword', $user);
             if (!$value) {

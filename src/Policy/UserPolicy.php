@@ -39,8 +39,11 @@ class UserPolicy extends \TCG\Voyager\Policies\BasePolicy
 
         return $current
             || (
+                // has role `admin` and edited user is not admin
                 ( $user->hasRole('admin') && !$model->hasRole('admin'))
+                // has role `dev` and edited user is not dev or admin
                 || ($user->hasRole('dev') && !$model->hasRole('dev') && !$model->hasRole('admin'))
+                // has role `operator` and edited user is normal user and operator has permission to edit User
                 || ($user->hasRole('operator') && $model->isNormalUser())
                 && $this->checkPermission($user, $model, 'edit')
             );
