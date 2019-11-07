@@ -125,10 +125,12 @@ class ServiceProvider extends LaravelServiceProvider
     private function registerGameApiClient()
     {
         $this->app->singleton(JXApiClient::class, function ($app) {
+            // support multiple Game API base URLs
             $baseUrl = config('t2g_common.game_api.base_url');
+            $baseUrls = explode(',', $baseUrl);
             $apiKey = config('t2g_common.game_api.api_key');
 
-            return new JXApiClient($baseUrl, $apiKey);
+            return new JXApiClient($baseUrls, $apiKey);
         });
     }
 

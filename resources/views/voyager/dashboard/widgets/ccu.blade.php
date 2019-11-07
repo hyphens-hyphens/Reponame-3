@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-4">
+<div class="col-xs-12 col-sm-6 col-md-4">
     <div class="panel widget widget-small">
         <a class="widget-goto" href="{{ route('voyager.ccus.report') }}" data-toggle="tooltip" title="Xem chi tiết">
             <span class="voyager-forward"></span>
@@ -9,7 +9,7 @@
         <div class="panel-body">
             <div data-toggle="tooltip" title="CCU hiện tại, tự cập nhật mỗi 3s">
                 @foreach($ccus as $server => $ccu)
-                    <div class="h5 col-xs-6" style="margin-top: 0;">
+                    <div class="h5 col-xs-12 col-sm-6" style="margin-top: 0;">
                         {{ \Illuminate\Support\Str::words($server, 2, '') }}: <span class="h6 ccu-count label label-success" data-server="{{ $server }}">{{ number_format($ccu) }}</span>
                     </div>
                 @endforeach
@@ -83,11 +83,11 @@
                 @endforeach
             ]
         });
-        let ccuUpdateInterval = setInterval(function () {
+        let ccuUpdateTimeout = '';
+        let refresh = function () {
             $.ajax({
                 url: '{{ route('voyager.ccus.tick') }}',
                 success: function (result) {
-                    console.log(result);
                     for (var property in result) {
                         let $ccuCount = $('.ccu-count[data-server="' + property + '"]');
                         $ccuCount.text(parseInt(result[property]).toLocaleString())
@@ -97,14 +97,20 @@
                         ;
                         setTimeout(function () {
                             $ccuCount.removeClass('blinking-text');
-                        }, 900)
+                        }, 900);
+                        clearTimeout(ccuUpdateTimeout);
+                        ccuUpdateTimeout = setTimeout(refresh, 3000);
                     }
                 },
                 dataType: 'JSON',
                 error: function () {
                     $('.ccu-count').addClass('label-danger').removeClass('label-success').text("Error");
+                    clearTimeout(ccuUpdateTimeout);
+                    ccuUpdateTimeout = setTimeout(refresh, 30000);
                 }
             });
-        }, 3000);
+        };
+
+        refresh();
     </script>
 @endpush
