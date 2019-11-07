@@ -10,7 +10,6 @@ use T2G\Common\Models\Payment;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\JXApiClient;
-use T2G\Common\Util\GameApiLog;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use TCG\Voyager\Events\BreadDataAdded;
@@ -468,14 +467,6 @@ class PaymentBreadController extends BaseVoyagerController
         if ($note = $request->get('note')) {
             $query->where('note', 'LIKE', "%{$note}%");
         }
-    }
-
-    /**
-     * @return GameApiLog
-     */
-    protected function getGameApiLogger()
-    {
-        return app(GameApiLog::class);
     }
 
     /**

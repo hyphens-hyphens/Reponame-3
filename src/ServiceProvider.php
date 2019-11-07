@@ -108,6 +108,10 @@ class ServiceProvider extends LaravelServiceProvider
                 return app(RecardPayment::class);
             }
         });
+
+        $this->app->singleton('game_api_log', function () {
+            return app('log')->channel('game_api');
+        });
     }
 
     /**

@@ -4,9 +4,9 @@ namespace T2G\Common\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 use T2G\Common\Exceptions\GameApiException;
-use T2G\Common\Util\GameApiLog;
 
 /**
  * Class JXApiClient
@@ -19,6 +19,7 @@ class JXApiClient extends Client
     const ENDPOINT_ADD_GOLD               = '/api/donate.php';
     const ENDPOINT_CCU                    = '/api/ccu.php';
 
+    static $responseStack = [];
     /**
      * @var array
      */
@@ -30,9 +31,14 @@ class JXApiClient extends Client
     private $apiKey;
 
     /**
-     * @var \T2G\Common\Util\GameApiLog
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var string
+     */
+    protected $lastResponseText;
 
     /**
      * JXApiClient constructor.
@@ -48,7 +54,28 @@ class JXApiClient extends Client
         ]);
         $this->baseUrls = $baseUrls;
         $this->apiKey = $apiKey;
-        $this->logger = app(GameApiLog::class);
+        $this->logger = app('game_api_log');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastResponse()
+    {
+        return $this->lastResponseText;
+    }
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return string
+     */
+    protected function getResponseText(ResponseInterface $response)
+    {
+        $responseText = $response->getBody()->getContents();
+        $this->lastResponseText = $responseText;
+
+        return $this->lastResponseText;
     }
 
     /**
@@ -66,7 +93,7 @@ class JXApiClient extends Client
         $response = $this->get(self::ENDPOINT_CREATE_USER, [
             'query' => $params
         ]);
-        $body = $response->getBody()->getContents();
+        $body = $this->getResponseText($response);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
@@ -95,7 +122,7 @@ class JXApiClient extends Client
         $response = $this->get(self::ENDPOINT_SET_PASSWORD, [
             'query' => $params
         ]);
-        $body = $response->getBody()->getContents();
+        $body = $this->getResponseText($response);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
@@ -124,7 +151,7 @@ class JXApiClient extends Client
         $response = $this->get(self::ENDPOINT_SET_SECONDARY_PASSWORD, [
             'query' => $params
         ]);
-        $body = $response->getBody()->getContents();
+        $body = $this->getResponseText($response);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
@@ -162,7 +189,7 @@ class JXApiClient extends Client
             'query' => $params
         ]);
 
-        $body = $response->getBody()->getContents();
+        $body = $this->getResponseText($response);
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
@@ -185,7 +212,7 @@ class JXApiClient extends Client
     public function getCCUs()
     {
         $response = $this->get(self::ENDPOINT_CCU);
-        $body = $response->getBody()->getContents();
+        $body = $this->getResponseText($response);
         $CCUs = json_decode($body, true);
         if (json_last_error() == JSON_ERROR_NONE) {
             return $CCUs;
@@ -242,7 +269,9 @@ class JXApiClient extends Client
 
         try {
             $baseUri = rtrim(current($this->baseUrls), '/');
-            $response = $this->request($method, $baseUri . $uri, $options);
+            $uri = $baseUri . $uri;
+            $this->logRequest($method, $uri, $options);
+            $response = $this->request($method, $uri, $options);
         } catch (ConnectException $e) {
             $next = next($this->baseUrls);
             if ($next) {
@@ -259,5 +288,14 @@ class JXApiClient extends Client
         reset($this->baseUrls);
 
         return $response;
+    }
+
+    private function logRequest($method, $uri, array $options)
+    {
+        $this->logger->info("Requesting to JX API", [
+            'method' => $method,
+            'uri' => $uri,
+            'options' => $options
+        ]);
     }
 }
