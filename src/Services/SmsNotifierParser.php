@@ -84,7 +84,9 @@ class SmsNotifierParser
      */
     public function isSkippedMessage($message)
     {
-
+        if (config('t2g_common.payment.skip_cashout_alert', false)) {
+            return false;
+        }
         // check reCard cashout
         if (strpos($message, '.ReCARD') !== false || strpos($message, '.reCARD') !== false) {
             return true;

@@ -126,7 +126,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot set password for user `{$username}`",
+                "Cannot set password for user `{$username}`. " . $body,
                 ['api_response' => $body]
             );
 
@@ -155,7 +155,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot set password 2 for user `{$username}`",
+                "Cannot set password 2 for user `{$username}`. " . $body,
                 ['api_response' => $body]
             );
 
@@ -193,7 +193,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot add gold for user `{$username}`",
+                "Cannot add gold for user `{$username}`. " . $body,
                 ['api_response' => $body, 'knb' => $knb, 'xu' => $xu]
             );
 

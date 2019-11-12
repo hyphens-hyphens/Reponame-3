@@ -59,6 +59,7 @@ return [
             'napthenhanh' => 32,
             'zing'        => 30,
         ],
+        'skip_cashout_alert' => false
     ],
     'momo'     => [
         'mailbox' => 'momo_mailbox', // mailbox name as configured in webklex/laravel-imap package config file
