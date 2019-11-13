@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use T2G\Common\Exceptions\GameApiException;
 
 /**
@@ -126,7 +127,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot set password for user `{$username}`. " . $body,
+                "Cannot set password for user `{$username}`. " . $this->getResponseError($response, $body),
                 ['api_response' => $body]
             );
 
@@ -155,7 +156,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot set password 2 for user `{$username}`. " . $body,
+                "Cannot set password 2 for user `{$username}`. " . $this->getResponseError($response, $body),
                 ['api_response' => $body]
             );
 
@@ -194,7 +195,7 @@ class JXApiClient extends Client
         $responseCode = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
         if(substr($responseCode, 0, 2) != '1:') {
             $this->logger->critical(
-                "Cannot add gold for user `{$username}`. " . $body,
+                "Cannot add gold for user `{$username}`. " . $this->getResponseError($response, $body),
                 ['api_response' => $body, 'knb' => $knb, 'xu' => $xu]
             );
 
@@ -298,5 +299,20 @@ class JXApiClient extends Client
             'uri' => $uri,
             'options' => $options
         ]);
+    }
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param                                     $body
+     *
+     * @return string
+     */
+    private function getResponseError(ResponseInterface $response, $body)
+    {
+        if ($response->getStatusCode() == Response::HTTP_INTERNAL_SERVER_ERROR) {
+            return $response->getReasonPhrase();
+        }
+
+        return $body;
     }
 }
