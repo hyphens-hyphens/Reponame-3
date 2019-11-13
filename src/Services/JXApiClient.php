@@ -166,18 +166,19 @@ class JXApiClient extends Client
     }
 
     /**
-     * @param     $username
-     * @param int $knb
-     * @param int $xu
+     * @param      $username
+     * @param int  $knb
+     * @param int  $xu
+     * @param mixed|null $orderId
      *
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \T2G\Common\Exceptions\GameApiException
      */
-    public function addGold($username, $knb = 0, $xu = 0)
+    public function addGold($username, $knb = 0, $xu = 0, $orderId = null)
     {
         $signed = md5($this->apiKey . $username);
-        $params = ['tk' => $username, 'sign' => $signed];
+        $params = ['tk' => $username, 'sign' => $signed, 'orderId' => $orderId];
         if ($xu > 0) {
             $params['soxu'] = intval($xu);
         }

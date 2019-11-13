@@ -139,7 +139,7 @@ class PaymentController extends BaseFrontController
         $paymentRepository->updateCardPaymentTransaction($record, $status, $cardPayment->getCallbackMessage($callbackCode), $amount);
         if ($status && empty($record->gold_added)) {
             $gamecoin = $record->gamecoin;
-            $result = $gameApiClient->addGold($record->username, $gamecoin);
+            $result = $gameApiClient->addGold($record->username, $gamecoin, 0, $record->id);
             $paymentRepository->updateRecordAddedGold($record, $result);
             $responseStatus = true;
         }

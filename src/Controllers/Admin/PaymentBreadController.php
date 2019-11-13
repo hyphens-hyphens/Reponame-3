@@ -87,7 +87,7 @@ class PaymentBreadController extends BaseVoyagerController
         }
 
         list($knb, $xu) = $paymentRepository->exchangeGamecoin($payment->amount, $payment->payment_type);
-        $addedGoldStatus = $JXApiClient->addGold($payment->username, $knb, $xu);
+        $addedGoldStatus = $JXApiClient->addGold($payment->username, $knb, $xu, $payment->id);
 
         if (!$addedGoldStatus) {
             $error = "Lỗi API nạp vàng, chưa add được vàng cho user";
@@ -402,7 +402,7 @@ class PaymentBreadController extends BaseVoyagerController
         }
         /** @var JXApiClient $jxApi */
         $jxApi = app(JXApiClient::class);
-        if ($addGoldStatus = $jxApi->addGold($user->name, $knb, $soxu)) {
+        if ($addGoldStatus = $jxApi->addGold($user->name, $knb, $soxu, $payment->id)) {
             $paymentRepository->updateRecordAddedGold($payment, $addGoldStatus);
             $this->sendPaymentNotification($payment);
         } else {
