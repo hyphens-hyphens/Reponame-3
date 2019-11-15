@@ -45,7 +45,11 @@ $user = \Auth::user();
                                     @if(isset($dataTypeContent->avatar))
                                         <img src="{{ filter_var($dataTypeContent->avatar, FILTER_VALIDATE_URL) ? $dataTypeContent->avatar : Voyager::image( $dataTypeContent->avatar ) }}" style="width:200px; height:auto; clear:both; display:block; padding:2px; border:1px solid #ddd; margin-bottom:10px;" />
                                     @endif
-                                    <input type="file" data-name="avatar" name="avatar">
+                                    <input type="file" class="avatar" data-name="avatar">
+                                </div>
+                                <div>
+                                    <div class="mce-btn mce-open"></div>
+                                    <input type="hidden" name="avatar" class="mce-textbox">
                                 </div>
                             @endif
                             @if($dataTypeContent->created_at)
@@ -137,54 +141,9 @@ $user = \Auth::user();
                 </div>
 
                 @if(!empty($dataTypeContent->id))
-                    <div class="col-md-7">
-                        <div class="panel panel panel-bordered panel-warning">
-                            <div class="panel-body">
-                                <h4 class="title">Lịch sử giao dịch</h4>
-                                <p class="h4">Đã nạp: <span class="label h5 label-success">{{ number_format($dataTypeContent->getTotalPaid()) }}</span></p>
-                                @if($debt = $dataTypeContent->getTotalDebt())
-                                    <p class="h4">Đang ứng: <span class="label h5 label-danger">{{ number_format($debt) }}</span></p>
-                                @endif
-                                <table class="table table-hover dataTable no-footer" role="grid" aria-describedby="dataTable_info">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Thông tin</th>
-                                        <th>Số tiền</th>
-                                        <th>Số Xu</th>
-                                        <th>Tình trạng</th>
-                                    </tr>
-                                    @foreach($histories as $history)
-                                        <tr>
-                                            <td>{{ $history->id }}</td>
-                                            <td>{!! view('vendor.voyager.payments.transaction_id', ['data' => $history]) !!}</td>
-                                            <td>{{ number_format($history->amount) }}</td>
-                                            <td>{{ number_format($history->gamecoin) }}</td>
-                                            <td>{!! $history->getStatusText(true) !!}</td>
-                                        </tr>
-                                    @endforeach
-                                    @if($histories->total() == 0)
-                                        <tr>
-                                            <td colspan="5">Không có lịch sử giao dịch</td>
-                                        </tr>
-                                    @endif
-                                </table>
-                                @if($histories->total() > 0)
-                                    <div class="center">
-                                        {{ $histories->links() }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+                    @include('t2g_common::voyager.users.payment_history')
                 @endif
             </div>
-        </form>
-
-        <iframe id="form_target" name="form_target" style="display:none"></iframe>
-        <form id="my_form" action="{{ route('voyager.upload') }}" target="form_target" method="post" enctype="multipart/form-data" style="width:0px;height:0;overflow:hidden">
-            {{ csrf_field() }}
-            <input name="image" id="upload_file" type="file" onchange="$('#my_form').submit();this.value='';">
-            <input type="hidden" name="type_slug" id="type_slug" value="{{ $dataType->slug }}">
         </form>
 
         <iframe id="form_target" name="form_target" style="display:none"></iframe>
@@ -221,7 +180,10 @@ $user = \Auth::user();
     <script>
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
-
+            $('.avatar').click(function (e) {
+                e.preventDefault();
+                $('#upload_file').trigger('click');
+            });
             $('.show-fuzzy').click(function () {
                 let fuzzyText = $(this).parent().find('.fuzzy');
                 fuzzyText.removeClass('fuzzy');

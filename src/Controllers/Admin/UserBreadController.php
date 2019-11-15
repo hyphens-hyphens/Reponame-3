@@ -2,6 +2,7 @@
 
 namespace T2G\Common\Controllers\Admin;
 
+use T2G\Common\Models\Revision;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Repository\UserRepository;
 use Illuminate\Http\Request;
@@ -59,7 +60,7 @@ class UserBreadController extends BaseVoyagerController
         $userRepository = app(UserRepository::class);
         /** @var \T2G\Common\Models\AbstractUser $user */
         $user = $data;
-        $user->fill(array_only($request->all(), ['name', 'phone', 'email', 'role_id', 'note']));
+        $user->fill(array_only($request->all(), ['name', 'avatar', 'phone', 'email', 'role_id', 'note']));
         if ($password = $request->get('password')) {
             $this->authorize('editPassword', $data);
             $userRepository->updatePassword($user, $password);
@@ -183,5 +184,35 @@ class UserBreadController extends BaseVoyagerController
         ];
 
         return $data;
+    }
+
+    public function revertRevision(Request $request, UserRepository $userRepository)
+    {
+        $revisionId = $request->input('revision_id');
+        /** @var Revision $revision */
+        $revision = Revision::findOrFail($revisionId);
+        /** @var \T2G\Common\Models\AbstractUser $user */
+        $user = $revision->historyOf();
+        // Check permission
+        $this->authorize('revert', $user);
+        $field = $revision->key;
+        if ($field == 'raw_password' || $field == 'password2') {
+            $this->authorize('editPassword', $user);
+            if ($field == 'raw_password') {
+                $userRepository->updatePassword($user, $revision->oldValue());
+            } else {
+                $userRepository->updatePassword2($user, $revision->oldValue());
+            }
+        } else {
+            $user->{$field} = $revision->oldValue();
+            $user->save();
+        }
+
+        return redirect()
+            ->route("voyager.users.edit", [$user->id])
+            ->with([
+                'message'    => 'Phục hồi thành công. User #' . $user->name,
+                'alert-type' => 'success',
+            ]);
     }
 }

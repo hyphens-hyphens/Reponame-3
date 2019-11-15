@@ -45,7 +45,7 @@ class AbstractUser extends \TCG\Voyager\Models\User
 
     protected $table = 'users';
 
-    protected $dontKeepRevisionOf = ['password', 'updated_at', 'created_at', 'utm_source', 'utm_medium', 'utm_campaign', 'registered_ip'];
+    protected $dontKeepRevisionOf = ['password', 'updated_at', 'created_at', 'utm_source', 'utm_medium', 'utm_campaign', 'registered_ip', 'remember_token'];
     protected $revisionCleanup = true; //Remove old revisions (works only when used with $historyLimit)
     protected $historyLimit = 300; //Maintain a maximum of 500 changes at any point of time, while cleaning up old revisions.
     protected $revisionFormattedFieldNames = [
@@ -62,7 +62,7 @@ class AbstractUser extends \TCG\Voyager\Models\User
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'utm_source', 'utm_medium', 'utm_campaign', 'phone', 'raw_password', 'role_id', 'note'
+        'name', 'avatar', 'email', 'password', 'utm_source', 'utm_medium', 'utm_campaign', 'phone', 'raw_password', 'role_id', 'note'
     ];
 
     /**

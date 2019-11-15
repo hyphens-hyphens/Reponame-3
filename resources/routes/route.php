@@ -30,6 +30,11 @@ Route::group(['middleware' => 'web'], function () {
                     'uses' => 'Admin\UserBreadController@report',
                     'as' => 'report',
                 ]);
+
+                Route::post('/revisions/revert', [
+                    'uses' => 'Admin\UserBreadController@revertRevision',
+                    'as' => 'revision_revert',
+                ]);
             });
         });
 

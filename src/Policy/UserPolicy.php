@@ -101,4 +101,15 @@ class UserPolicy extends \TCG\Voyager\Policies\BasePolicy
         );
     }
 
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param                                 $model
+     *
+     * @return bool
+     */
+    public function revert(AbstractUser $user, $model)
+    {
+        // currently use same logic as editing user
+        return $this->edit($user, $model);
+    }
 }
