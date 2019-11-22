@@ -12,7 +12,7 @@ use T2G\Common\Exceptions\GameApiException;
 /**
  * Class JXApiClient
  */
-class JXApiClient extends Client
+class JXApiClient
 {
     const ENDPOINT_CREATE_USER            = '/api/register.php';
     const ENDPOINT_SET_PASSWORD           = '/api/changepass1.php';
@@ -49,13 +49,20 @@ class JXApiClient extends Client
      */
     public function __construct($baseUrls, $apiKey)
     {
-        parent::__construct([
-            'http_errors' => false,
-            'timeout'     => 2,
-        ]);
         $this->baseUrls = $baseUrls;
         $this->apiKey = $apiKey;
         $this->logger = app('game_api_log');
+    }
+
+    /**
+     * @return array
+     */
+    private function getClientDefaultConfigs()
+    {
+        return [
+            'http_errors' => false,
+            'timeout'     => 2,
+        ];
     }
 
     /**
@@ -236,7 +243,7 @@ class JXApiClient extends Client
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \T2G\Common\Exceptions\GameApiException
      */
-    public function get($uri, $options = [])
+    private function get($uri, $options = [])
     {
         return $this->_request(Request::METHOD_GET, $uri, $options);
     }
@@ -249,7 +256,7 @@ class JXApiClient extends Client
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \T2G\Common\Exceptions\GameApiException
      */
-    public function post($uri, $options = [])
+    private function post($uri, $options = [])
     {
         return $this->_request(Request::METHOD_POST, $uri, $options);
     }
@@ -270,10 +277,11 @@ class JXApiClient extends Client
         }
 
         try {
-            $baseUri = rtrim(current($this->baseUrls), '/');
-            $uri = $baseUri . $uri;
-            $this->logRequest($method, $uri, $options);
-            $response = $this->request($method, $uri, $options);
+            $baseUrl = rtrim(current($this->baseUrls), '/');
+            $requestUrl = $baseUrl . $uri;
+            $this->logRequest($method, $requestUrl, $options);
+            $client = $this->makeClient($baseUrl);
+            $response = $client->request($method, $uri, $options);
         } catch (ConnectException $e) {
             $next = next($this->baseUrls);
             if ($next) {
@@ -314,5 +322,17 @@ class JXApiClient extends Client
         }
 
         return $body;
+    }
+
+    /**
+     * @param $baseUrl
+     *
+     * @return \GuzzleHttp\Client
+     */
+    private function makeClient($baseUrl)
+    {
+        $configs = $this->getClientDefaultConfigs() + ['base_uri' => $baseUrl];
+
+        return new Client($configs);
     }
 }
