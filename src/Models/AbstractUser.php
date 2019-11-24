@@ -9,7 +9,6 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * Class User
  *
  * @package \T2G\Common\Models
- *
  * @property int $id
  * @property int|null $role_id
  * @property string $name
@@ -35,6 +34,29 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @property-read \TCG\Voyager\Models\Role|null                                                                             $role
  * @property-read \Illuminate\Database\Eloquent\Collection|\TCG\Voyager\Models\Role[]                                       $roles
  * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Payment[]                                     $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Revision[] $advancedRevisionHistory
+ * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser wherePassword2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereRawPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereRawPassword2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereRegisteredIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereRoleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereSettings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUtmCampaign($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUtmMedium($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUtmSource($value)
+ * @mixin \Eloquent
  */
 class AbstractUser extends \TCG\Voyager\Models\User
 {

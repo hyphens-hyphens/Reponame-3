@@ -2,24 +2,49 @@
 extract($revenue)
 @endphp
 <div class="row">
-    <div class="col-xs-2">
+    <div class="col-xs-2 revenue-label">
         Tổng doanh thu:
     </div>
     <div class="col-xs-2">
         {{ number_format($total * 1000) }} VNĐ
     </div>
-    <div class="col-xs-8">
+    <div class="col-xs-18">
         @foreach($seriesData as $name => $data)
             <span class="label label-info">{{ $name }}: {{  number_format(array_sum($data)) }}K</span>
         @endforeach
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-2">
+    <div class="col-xs-2 revenue-label">
         Tổng lợi nhuận:
     </div>
     <div class="col-xs-2">
         {{ number_format($totalRevenue * 1000) }} VNĐ
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-2 revenue-label">
+        Pay Rate:
+    </div>
+    <div class="col-xs-2">
+        {{ number_format($metrics['payRate']) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-2 revenue-label">
+        ARPU:
+    </div>
+    <div class="col-xs-2">
+        {{ number_format($metrics['ARPU']) }} VNĐ
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-2 revenue-label">
+        ARPPU:
+    </div>
+    <div class="col-xs-2">
+        {{ number_format($metrics['ARPPU']) }} VNĐ
     </div>
 </div>
 <div id="revenueChart" style="width: 98%;height: 450px;padding: 1% 0"></div>
@@ -77,5 +102,11 @@ extract($revenue)
             ]
         });
     </script>
+
+    <style>
+        .revenue-label {
+            font-weight: bold;
+        }
+    </style>
 @endpush
 

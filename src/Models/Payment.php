@@ -37,9 +37,44 @@ use T2G\Common\Util\MobileCard;
  * @property int|null $creator_id
  * @property int|null $amount
  * @property int|null $status_code
- * @property int|null profit
  * @property \T2G\Common\Models\AbstractUser    creator
-*/
+ * @property int|null $profit
+ * @method static \Illuminate\Database\Eloquent\Builder|BaseEloquentModel active()
+ * @method static \Illuminate\Database\Eloquent\Builder|BaseEloquentModel orderByPublishDate()
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCardAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCardPin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCardSerial($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCardType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereExpiredDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereFinished($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGamecoin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGamecoinPromotion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGatewayAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGatewayResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGatewayStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereGoldAdded($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment wherePayFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment wherePayMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment wherePaymentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereProfit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereStatusCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereTransactionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUtmCampaign($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUtmMedium($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUtmSource($value)
+ * @mixin \Eloquent
+ */
 class Payment extends BaseEloquentModel
 {
     const PAYMENT_TYPE_CARD = 1;
@@ -146,7 +181,7 @@ class Payment extends BaseEloquentModel
     }
 
     /**
-     * @param \T2G\Common\Models\Payment $payment
+     * @param Payment $payment
      *
      * @return int
      */
@@ -200,7 +235,7 @@ class Payment extends BaseEloquentModel
     }
 
     /**
-     * @param \T2G\Common\Models\Payment $payment
+     * @param Payment $payment
      *
      * @return bool
      */
@@ -217,7 +252,7 @@ class Payment extends BaseEloquentModel
     }
 
     /**
-     * @param \T2G\Common\Models\Payment $payment
+     * @param Payment $payment
      *
      * @return bool
      */

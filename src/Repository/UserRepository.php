@@ -3,6 +3,7 @@
 namespace T2G\Common\Repository;
 
 use T2G\Common\Models\AbstractUser;
+use T2G\Common\Models\UserLastLogin;
 
 /**
  * Class UserRepository
@@ -157,5 +158,44 @@ class UserRepository extends AbstractEloquentRepository
         ;
 
         return $results;
+    }
+
+    /**
+     * @param array $usernames
+     *
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model[]
+     */
+    public function getUsersByNames(array $usernames)
+    {
+        $query = $this->query()
+            ->select(['id', 'name'])
+            ->whereIn('name', $usernames);
+        $results = $query->get();
+
+        return $results ? $results->toArray() : [];
+    }
+
+    /**
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return int
+     */
+    public function getActiveUsers($fromDate, $toDate)
+    {
+        /** @var UserLastLogin $lastLoginTable */
+        $lastLoginModel= app(UserLastLogin::class);
+        $lastLoginTable = $lastLoginModel->getTable();
+        $query = $this->query();
+        $query->whereRaw("
+            `id` IN (
+                SELECT `user_id` 
+                FROM `{$lastLoginTable}` 
+                WHERE `last_login_date` 
+                BETWEEN '{$fromDate}' AND '{$toDate}'
+            )
+        ");
+
+        return $query->count();
     }
 }

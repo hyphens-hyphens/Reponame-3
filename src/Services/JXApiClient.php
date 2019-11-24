@@ -3,7 +3,7 @@
 namespace T2G\Common\Services;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +19,7 @@ class JXApiClient
     const ENDPOINT_SET_SECONDARY_PASSWORD = '/api/changepass2.php';
     const ENDPOINT_ADD_GOLD               = '/api/donate.php';
     const ENDPOINT_CCU                    = '/api/ccu.php';
+    const ENDPOINT_USER_LAST_LOGIN        = '/api/user_last_login.php';
 
     static $responseStack = [];
     /**
@@ -63,6 +64,18 @@ class JXApiClient
             'http_errors' => false,
             'timeout'     => 2,
         ];
+    }
+
+    /**
+     * @param $baseUrl
+     *
+     * @return \GuzzleHttp\Client
+     */
+    private function makeClient($baseUrl)
+    {
+        $configs = $this->getClientDefaultConfigs() + ['base_uri' => $baseUrl];
+
+        return new Client($configs);
     }
 
     /**
@@ -240,8 +253,8 @@ class JXApiClient
      * @param array                                 $options
      *
      * @return mixed|\Psr\Http\Message\ResponseInterface
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \T2G\Common\Exceptions\GameApiException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function get($uri, $options = [])
     {
@@ -282,7 +295,7 @@ class JXApiClient
             $this->logRequest($method, $requestUrl, $options);
             $client = $this->makeClient($baseUrl);
             $response = $client->request($method, $uri, $options);
-        } catch (ConnectException $e) {
+        } catch (GuzzleException $e) {
             $next = next($this->baseUrls);
             if ($next) {
                 return $this->_request($method, $uri, $options);
@@ -325,14 +338,28 @@ class JXApiClient
     }
 
     /**
-     * @param $baseUrl
+     * @param \DateTime|null $date
      *
-     * @return \GuzzleHttp\Client
+     * @return mixed|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \T2G\Common\Exceptions\GameApiException
+     * @throws \Exception
      */
-    private function makeClient($baseUrl)
+    public function getUsersLastLogin(?\DateTime $date = null)
     {
-        $configs = $this->getClientDefaultConfigs() + ['base_uri' => $baseUrl];
+        $date = $date ?: new \DateTime();
+        $params = ['from' => $date->format('Y-m-d')];
+        $response = $this->get(self::ENDPOINT_USER_LAST_LOGIN, $params);
+        $body = $this->getResponseText($response);
+        if ($response->getStatusCode() != Response::HTTP_OK) {
+            $this->logger->info(
+                "Cannot get list of last login users. " . $this->getResponseError($response, $body),
+                ['api_response' => $body]
+            );
 
-        return new Client($configs);
+            return [];
+        }
+
+        return json_decode($body, 1);
     }
 }

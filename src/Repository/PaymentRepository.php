@@ -152,7 +152,9 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         $record->gold_added = $status;
         $record->status     = $status;
-        $record->finished   = true;
+        if ($record->payment_type != Payment::PAYMENT_TYPE_ADVANCE_DEBT) {
+            $record->finished   = true;
+        }
         $record->save();
     }
 
@@ -248,7 +250,7 @@ class PaymentRepository extends AbstractEloquentRepository
             DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`,
             SUM(`profit`)/1000 as `total_profit`
             ")
-            ->whereRaw("`created_at` BETWEEN '{$fromDate} 00:00:00' AND '{$toDate} 23:59:59' AND `status` = 1")
+            ->whereRaw("`created_at` BETWEEN '{$fromDate} 00:00:00' AND '{$toDate} 23:59:59' AND `status_code` = 1")
             ->groupBy('pay_method', 'date')
             ->orderBy('date', 'ASC')
             ->get()
@@ -303,9 +305,9 @@ class PaymentRepository extends AbstractEloquentRepository
         if ($toDate) {
             $query->where('created_at', '<=', $toDate);
         }
-        $result = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, status")
-            ->where('status', 1)
-            ->groupBy('status')
+        $result = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, status_code")
+            ->where('status_code', 1)
+            ->groupBy('status_code')
             ->first()
         ;
 
@@ -334,12 +336,23 @@ class PaymentRepository extends AbstractEloquentRepository
             SUM(`amount`) as `total`,
             DATE_FORMAT(created_at, '%m-%d') as `ordered_date`
             ")
-            ->whereRaw("`created_at` BETWEEN '{$fromDate}' AND '{$toDate}' AND `status` = 1")
+            ->whereRaw("`created_at` BETWEEN '{$fromDate}' AND '{$toDate}' AND `status_code` = 1")
             ->groupBy('date', 'ordered_date')
             ->orderBy('ordered_date', 'ASC')
             ->get()
         ;
 
         return $results;
+    }
+
+    public function getPayUsers($fromDate, $toDate)
+    {
+        $query = $this->query();
+        $query->where('status_code', 1)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->groupBy('user_id')
+        ;
+
+        return $query->count();
     }
 }

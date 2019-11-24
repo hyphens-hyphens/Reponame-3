@@ -8,6 +8,7 @@ use T2G\Common\Exceptions\PaymentApiException;
 use T2G\Common\Models\AbstractUser;
 use T2G\Common\Models\Payment;
 use T2G\Common\Repository\PaymentRepository;
+use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\JXApiClient;
 use Illuminate\Http\Request;
@@ -65,6 +66,7 @@ class PaymentBreadController extends BaseVoyagerController
             'fromDate' => $fromDate,
             'toDate'   => $toDate,
             'revenue'  => $revenue,
+            'metrics'  => $this->getPaymentMetrics($fromDate, $toDate),
             'todayRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-d')),
             'thisMonthRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-01')),
         ]);
@@ -76,7 +78,9 @@ class PaymentBreadController extends BaseVoyagerController
      * @param \T2G\Common\Repository\PaymentRepository $paymentRepository
      *
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \T2G\Common\Exceptions\GameApiException
      */
     public function accept(Payment $payment, JXApiClient $JXApiClient, PaymentRepository $paymentRepository)
     {
@@ -151,7 +155,9 @@ class PaymentBreadController extends BaseVoyagerController
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \T2G\Common\Exceptions\GameApiException
      */
     public function store(Request $request)
     {
@@ -219,7 +225,9 @@ class PaymentBreadController extends BaseVoyagerController
      * @param                          $id
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \T2G\Common\Exceptions\GameApiException
      */
     public function update(Request $request, $id)
     {
@@ -272,6 +280,8 @@ class PaymentBreadController extends BaseVoyagerController
      * @param Payment $data
      *
      * @return \T2G\Common\Models\Payment
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \T2G\Common\Exceptions\GameApiException
      * @throws \T2G\Common\Exceptions\PaymentApiException
      */
     public function insertUpdateData($request, $slug, $rows, $data)
@@ -370,6 +380,8 @@ class PaymentBreadController extends BaseVoyagerController
      * @param \Illuminate\Http\Request $request
      *
      * @return \T2G\Common\Models\Payment
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \T2G\Common\Exceptions\GameApiException
      * @throws \T2G\Common\Exceptions\PaymentApiException
      */
     private function addNewPayment(Request $request)
@@ -475,5 +487,29 @@ class PaymentBreadController extends BaseVoyagerController
     private function getCurrentUser()
     {
         return \Auth::user();
+    }
+
+    /**
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return array
+     */
+    private function getPaymentMetrics($fromDate, $toDate)
+    {
+        /** @var PaymentRepository $paymentRepository */
+        $paymentRepository = app(PaymentRepository::class);
+        $userRepository = app(UserRepository::class);
+
+        $payUsers = $paymentRepository->getPayUsers($fromDate, $toDate);
+        $activeUsers = $userRepository->getActiveUsers($fromDate, $toDate);
+        $revenue = $paymentRepository->getRevenueByPeriod($fromDate, $toDate);
+        $revenue = $revenue['total'];
+
+        return [
+            'payRate' => $activeUsers > 0 ? $payUsers / $activeUsers : 0,
+            'ARPU'    => $activeUsers > 0 ? $revenue / $activeUsers : 0,
+            'ARPPU'   => $payUsers > 0 ? $revenue / $payUsers : 0,
+        ];
     }
 }

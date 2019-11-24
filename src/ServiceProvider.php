@@ -11,6 +11,7 @@ use T2G\Common\Console\Commands\MysqlBackupCommand;
 use T2G\Common\Console\Commands\UpdateCCUCommand;
 use T2G\Common\Console\Commands\UpdatePaymentProfitCommand;
 use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
+use T2G\Common\Console\Commands\UpdateUserLastLoginCommand;
 use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Event\PostCreatingEvent;
 use T2G\Common\Listeners\PostCreatingListener;
@@ -161,7 +162,8 @@ class ServiceProvider extends LaravelServiceProvider
                 MysqlBackupCommand::class,
                 UpdatePaymentStatusCodeCommand::class,
                 UpdatePaymentProfitCommand::class,
-                UpdateCCUCommand::class
+                UpdateCCUCommand::class,
+                UpdateUserLastLoginCommand::class,
             ]);
         }
     }
