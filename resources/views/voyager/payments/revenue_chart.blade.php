@@ -41,9 +41,9 @@ extract($revenue)
               data-title="Doanh thu">{{ number_format($revenue['total'] * 1000) }}
         </span>
         &nbsp;/ <span class="label label-success" data-toggle="tooltip"
-                data-title="Pay Users">{{ number_format($metrics['payUsers']) }}
+                data-title="Pay Users">{{ number_format($metrics['activeUsers']) }}
         </span>
-        &nbsp;= {{ number_format($metrics['ARPU'], 2) }} VNĐ / user
+        &nbsp;= {{ number_format(round($metrics['ARPU'])) }} VNĐ / user
     </div>
 </div>
 
@@ -56,9 +56,9 @@ extract($revenue)
               data-title="Doanh thu">{{ number_format($revenue['total'] * 1000) }}
         </span>
         &nbsp;/ <span class="label label-info" data-toggle="tooltip"
-                data-title="Active Users">{{ number_format($metrics['activeUsers']) }}
+                data-title="Active Users">{{ number_format($metrics['payUsers']) }}
         </span>
-        &nbsp;= {{ number_format($metrics['ARPPU'], 2) }} VNĐ / user
+        &nbsp;= {{ number_format(round($metrics['ARPPU'])) }} VNĐ / user
     </div>
 </div>
 <div id="revenueChart" style="width: 98%;height: 450px;padding: 1% 0"></div>
