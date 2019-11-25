@@ -348,11 +348,13 @@ class PaymentRepository extends AbstractEloquentRepository
     public function getPayUsers($fromDate, $toDate)
     {
         $query = $this->query();
-        $query->where('status_code', 1)
+        $query
+            ->selectRaw("count(DISTINCT(`user_id`)) as pay_users")
+            ->where('status_code', 1)
             ->whereBetween('created_at', [$fromDate, $toDate])
-            ->groupBy('user_id')
         ;
+        $count = $query->first()->toArray();
 
-        return $query->count();
+        return $count['pay_users'] ?? 0;
     }
 }

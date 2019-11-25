@@ -61,12 +61,13 @@ class PaymentBreadController extends BaseVoyagerController
         $fromDate = $request->get('fromDate', date('Y-m-d', strtotime("-1 weeks")));
         $toDate = $request->get('toDate', date('Y-m-d', strtotime('today')));
         $revenue = $paymentRepository->getRevenueChartData($fromDate, $toDate);
+        $metrics = $this->getPaymentMetrics($fromDate, $toDate);
 
         return view('t2g_common::voyager.payments.report', [
             'fromDate' => $fromDate,
             'toDate'   => $toDate,
             'revenue'  => $revenue,
-            'metrics'  => $this->getPaymentMetrics($fromDate, $toDate),
+            'metrics'  => $metrics,
             'todayRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-d')),
             'thisMonthRevenue' => $paymentRepository->getRevenueByPeriod(date('Y-m-01')),
         ]);
@@ -499,6 +500,7 @@ class PaymentBreadController extends BaseVoyagerController
     {
         /** @var PaymentRepository $paymentRepository */
         $paymentRepository = app(PaymentRepository::class);
+        /** @var UserRepository $userRepository */
         $userRepository = app(UserRepository::class);
 
         $payUsers = $paymentRepository->getPayUsers($fromDate, $toDate);
@@ -507,9 +509,11 @@ class PaymentBreadController extends BaseVoyagerController
         $revenue = $revenue['total'];
 
         return [
-            'payRate' => $activeUsers > 0 ? $payUsers / $activeUsers : 0,
-            'ARPU'    => $activeUsers > 0 ? $revenue / $activeUsers : 0,
-            'ARPPU'   => $payUsers > 0 ? $revenue / $payUsers : 0,
+            'activeUsers' => $activeUsers,
+            'payUsers'    => $payUsers,
+            'payRate'     => $activeUsers > 0 ? $payUsers / $activeUsers : 0,
+            'ARPU'        => $activeUsers > 0 ? $revenue / $activeUsers : 0,
+            'ARPPU'       => $payUsers > 0 ? $revenue / $payUsers : 0,
         ];
     }
 }
