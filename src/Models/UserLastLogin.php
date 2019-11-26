@@ -17,6 +17,8 @@ namespace T2G\Common\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|UserLastLogin whereLastLogoutDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserLastLogin whereUserId($value)
  * @mixin \Eloquent
+ * @property string|null $hwid
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin whereHwid($value)
  */
 class UserLastLogin extends BaseEloquentModel
 {

@@ -37,7 +37,6 @@ use T2G\Common\Util\MobileCard;
  * @property int|null $creator_id
  * @property int|null $amount
  * @property int|null $status_code
- * @property \T2G\Common\Models\AbstractUser    creator
  * @property int|null $profit
  * @method static \Illuminate\Database\Eloquent\Builder|BaseEloquentModel active()
  * @method static \Illuminate\Database\Eloquent\Builder|BaseEloquentModel orderByPublishDate()
@@ -74,6 +73,8 @@ use T2G\Common\Util\MobileCard;
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUtmMedium($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUtmSource($value)
  * @mixin \Eloquent
+ * @property-read \T2G\Common\Models\AbstractUser|null $creator
+ * @property-read \T2G\Common\Models\AbstractUser|null $user
  */
 class Payment extends BaseEloquentModel
 {

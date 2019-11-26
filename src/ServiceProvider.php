@@ -6,6 +6,7 @@ use Illuminate\Log\LogManager;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use T2G\Common\Action\AcceptPaymentAction;
 use T2G\Common\Action\RejectPaymentAction;
+use T2G\Common\Console\Commands\ImportUserLastLoginCommand;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
 use T2G\Common\Console\Commands\MysqlBackupCommand;
 use T2G\Common\Console\Commands\UpdateCCUCommand;
@@ -164,6 +165,7 @@ class ServiceProvider extends LaravelServiceProvider
                 UpdatePaymentProfitCommand::class,
                 UpdateCCUCommand::class,
                 UpdateUserLastLoginCommand::class,
+                ImportUserLastLoginCommand::class,
             ]);
         }
     }
