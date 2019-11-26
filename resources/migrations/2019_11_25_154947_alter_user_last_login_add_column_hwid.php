@@ -15,6 +15,7 @@ class AlterUserLastLoginAddColumnHwid extends Migration
     {
         Schema::table('users_last_login', function (Blueprint $table) {
             $table->string('hwid')->nullable();
+            $table->integer('server')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ class AlterUserLastLoginAddColumnHwid extends Migration
     {
         Schema::table('users_last_login', function (Blueprint $table) {
             $table->dropColumn('hwid');
+            $table->dropColumn('server');
         });
     }
 }

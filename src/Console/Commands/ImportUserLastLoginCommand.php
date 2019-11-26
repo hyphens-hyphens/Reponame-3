@@ -9,12 +9,13 @@ use T2G\Common\Repository\UserRepository;
 
 class ImportUserLastLoginCommand extends Command
 {
+    const CONDITION_MINIMUM_LEVEL = 50;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 't2g_common:users:import_last_login {--from=}';
+    protected $signature = 't2g_common:users:import_last_login {--path=} {--from=}';
 
     /**
      * The console command description.
@@ -24,6 +25,22 @@ class ImportUserLastLoginCommand extends Command
     protected $description = "Command to import users's last login from HWID logs";
 
     /**
+     * @var \T2G\Common\Repository\UserRepository
+     */
+    protected $userRepository;
+
+    /**
+     * ImportUserLastLoginCommand constructor.
+     *
+     * @param \T2G\Common\Repository\UserRepository $userRepository
+     */
+    public function __construct(UserRepository $userRepository)
+    {
+        parent::__construct();
+        $this->userRepository = $userRepository;
+    }
+
+    /**
      * Execute the console command.
      */
     public function handle()
@@ -31,9 +48,13 @@ class ImportUserLastLoginCommand extends Command
         $processed = 0;
         $fromInt = 0;
         $from = $this->input->getOption('from');
+        $path = $this->input->getOption('path');
+        if (!$path) {
+            $path = 'logs/savehwid';
+        }
         $finder = new Finder();
         $finder->files()
-            ->in(storage_path('logs/savehwid'))
+            ->in(storage_path($path))
             ->name('*.txt')
             ->sortByName()
         ;
@@ -76,33 +97,65 @@ class ImportUserLastLoginCommand extends Command
             $texts = explode("\t", $line);
             $loggedAt = \DateTime::createFromFormat("d/m/Y_H:i:s", $texts[0]);
             $username = $texts[1];
-            $hwid = $texts[4];
-            $linesParsed[$username] = [
-                'loggedAt' => $loggedAt,
-                'hwid'     => $hwid,
+            $level = $texts[3];
+            $hwid = $this->parseHwid($texts[4]);
+            $server = $this->parseServer($logFile->getRelativePath());
+            if ($level < self::CONDITION_MINIMUM_LEVEL || !$hwid) {
+                continue;
+            }
+            $linesParsed[$username][$server] = [
+                'last_login_date' => $loggedAt->format('Y-m-d H:i:s'),
+                'hwid'            => $hwid,
+                'server'          => $server,
             ];
         }
 
-        /** @var UserRepository $userRepository */
-        $userRepository = app(UserRepository::class);
-        $users = $userRepository->getUsersByNames(array_keys($linesParsed));
+        $users = $this->userRepository->getUsersByNames(array_keys($linesParsed));
         $users = array_column($users, 'id', 'name');
         $model = app(UserLastLogin::class);
         $records = [];
-        foreach ($linesParsed as $username => $item) {
+        foreach ($linesParsed as $username => $recordsPerServer) {
             if (!isset($users[strtolower($username)])) {
                 continue;
             }
-            $records[] = [
-                'user_id'         => $users[strtolower($username)],
-                'last_login_date' => $item['loggedAt'],
-                'hwid'            => $item['hwid'],
-            ];
+            foreach ($recordsPerServer as $server => $item) {
+                $item['user_id'] = $users[strtolower($username)];
+                $records[] = $item;
+            }
         }
         \DB::table($model->getTable())->insert($records);
         $processed += count($records);
         $this->output->text(sprintf("Completed importing `%s` records from log file %s", count($records), $logFile->getRealPath()));
 
+        unset($records, $users, $linesParsed, $lines);
+
         return true;
+    }
+
+    /**
+     * @param $rawHwid
+     *
+     * @return string
+     */
+    private function parseHwid($rawHwid)
+    {
+        $splits = explode('-', $rawHwid);
+        if (count($splits) < 8) {
+            return '';
+        }
+
+        return implode('-', [$splits[3], $splits[4], $splits[6]]);
+    }
+
+    /**
+     * @param $filePath
+     *
+     * @return mixed
+     */
+    private function parseServer($filePath)
+    {
+        $paths = explode(DIRECTORY_SEPARATOR, $filePath);
+
+        return strpos($paths[0], 's') !== false ? intval($paths[0][1]) : intval($paths[0]);
     }
 }
