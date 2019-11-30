@@ -83,12 +83,20 @@ class Post extends \TCG\Voyager\Models\Post
     {
         $image = '';
         if (!empty($this->image)) {
-            $image = $this->image;
+            $image = \Voyager::image(trim($this->image, '/'));
         } elseif ($this->body) {
             $image = $this->getFirstImageFromBody();
         }
 
-        return ltrim($image, '/');
+        return $image;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->excerpt ?: str_limit(strip_tags($this->body), 150);
     }
 
     /**
