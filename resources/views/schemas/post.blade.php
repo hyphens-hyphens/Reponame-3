@@ -1,4 +1,10 @@
 <?php /** @var \T2G\Common\Models\Post $post */ ?>
+<meta property="og:article:author" content="{{ config('app.name') }}"/>
+<meta property="og:article:published_time" content="{{ $post->created_at->format('c') }}"/>
+<meta property="og:article:modified_time" content="{{ $post->updated_at->format('c') }}"/>
+<meta property="og:article:section" content="{{ config('t2g_common.site.og.section') }}"/>
+<meta property="og:article:tag" content="{{ config('t2g_common.site.og.tag') }}"/>
+
 <script type="application/ld+json">
 {
   "@context": "http://schema.org",

@@ -12,6 +12,11 @@ return [
             'meta_keyword'    => '',
             'meta_image'       => '',
         ],
+        // Open Graph configs
+        'og' => [
+            'section' => 'Gaming',
+            'tag' => ''
+        ]
     ],
     'models'   => [
         'user_model_class'    => 'App\User',
