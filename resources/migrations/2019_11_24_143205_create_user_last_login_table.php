@@ -17,7 +17,7 @@ class CreateUserLastLoginTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->dateTime('last_login_date');
-            $table->dateTime('last_logout_date')->nullable();
+            $table->integer('server')->nullable();
         });
     }
 

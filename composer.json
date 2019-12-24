@@ -18,7 +18,8 @@
         "webklex/laravel-imap": "^1.4",
         "ext-json": "*",
         "ext-imap": "*",
-        "venturecraft/revisionable": "^1.33"
+        "venturecraft/revisionable": "^1.33",
+        "elasticsearch/elasticsearch": "^7.4"
     },
     "require-dev": {
         "phpunit/phpcov": "~3.0|~4.0",
