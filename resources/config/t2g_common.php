@@ -75,6 +75,7 @@ return [
             'payment_alert' => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
             // thông báo khi QTV add vàng từ admincp
             'add_gold'      => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
+            'police'        => env('DISCORD_POLICE_WEBHOOK_URL'),
         ],
     ],
     'kibana' => [

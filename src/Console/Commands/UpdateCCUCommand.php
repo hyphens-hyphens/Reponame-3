@@ -3,7 +3,6 @@
 namespace T2G\Common\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Finder\Finder;
 use T2G\Common\Models\CCU;
 use T2G\Common\Services\JXApiClient;
 

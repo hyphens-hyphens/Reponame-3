@@ -98,21 +98,18 @@ class ImportUserLastLoginCommand extends Command
             $loggedAt = \DateTime::createFromFormat("d/m/Y_H:i:s", $texts[0]);
             $username = $texts[1];
             $level = $texts[3];
-            $hwid = $this->parseHwid($texts[4]);
             $server = $this->parseServer($logFile->getRelativePath());
-            if ($level < self::CONDITION_MINIMUM_LEVEL || !$hwid) {
+            if ($level < self::CONDITION_MINIMUM_LEVEL) {
                 continue;
             }
             $linesParsed[$username][$server] = [
                 'last_login_date' => $loggedAt->format('Y-m-d H:i:s'),
-                'hwid'            => $hwid,
                 'server'          => $server,
             ];
         }
 
         $users = $this->userRepository->getUsersByNames(array_keys($linesParsed));
         $users = array_column($users, 'id', 'name');
-        $model = app(UserLastLogin::class);
         $records = [];
         foreach ($linesParsed as $username => $recordsPerServer) {
             if (!isset($users[strtolower($username)])) {
@@ -123,28 +120,13 @@ class ImportUserLastLoginCommand extends Command
                 $records[] = $item;
             }
         }
-        \DB::table($model->getTable())->insert($records);
+        UserLastLogin::insert($records);
         $processed += count($records);
         $this->output->text(sprintf("Completed importing `%s` records from log file %s", count($records), $logFile->getRealPath()));
 
         unset($records, $users, $linesParsed, $lines);
 
         return true;
-    }
-
-    /**
-     * @param $rawHwid
-     *
-     * @return string
-     */
-    private function parseHwid($rawHwid)
-    {
-        $splits = explode('-', $rawHwid);
-        if (count($splits) < 8) {
-            return '';
-        }
-
-        return implode('-', [$splits[3], $splits[4], $splits[6]]);
     }
 
     /**

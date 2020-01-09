@@ -357,4 +357,20 @@ class PaymentRepository extends AbstractEloquentRepository
 
         return $count['pay_users'] ?? 0;
     }
+
+    /**
+     * @param $username
+     *
+     * @return int
+     */
+    public function isUserPaid($username)
+    {
+        $query = $this->query();
+        $query->where('username', $username)
+            ->where('status_code', 1)
+        ;
+
+        return $query->count();
+    }
+
 }
