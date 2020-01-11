@@ -43,7 +43,7 @@ class MonitorJXGoldCommand extends Command
      */
     public function handle()
     {
-        $lastRunTimestamp = setting(self::LAST_RUN_SETTING_KEY, strtotime('-1 day'));
+        $lastRunTimestamp = setting(self::LAST_RUN_SETTING_KEY) ?? strtotime('-1 day');
         $startDate = new \DateTime('@' . $lastRunTimestamp);
         $this->output->text("Checking gold withdrawing from `Kibana logs`");
         $this->output->title("Processing from " . $startDate->format('c'));
@@ -72,7 +72,10 @@ class MonitorJXGoldCommand extends Command
             }
             $lastRunTimestamp = strtotime($log['_source']['created_at']);
         }
-        $this->saveLastRunSetting($lastRunTimestamp);
+        if (!$data) {
+            $lastRunTimestamp = time();
+        }
+        $this->saveLastRunSetting($lastRunTimestamp + 1);
 
         $this->output->success("Done processing.");
     }
