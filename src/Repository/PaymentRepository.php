@@ -55,19 +55,21 @@ class PaymentRepository extends AbstractEloquentRepository
     }
 
     /**
-     * @param \T2G\Common\Models\AbstractUser            $user
-     * @param \T2G\Common\Util\MobileCard $card
-     * @param                      $gameCoin
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param \T2G\Common\Util\MobileCard     $card
+     * @param                                 $gameCoin
+     * @param                                 $payMethod
      *
      * @return \T2G\Common\Models\Payment
      */
-    public function createCardPayment(AbstractUser $user, MobileCard $card, $gameCoin)
+    public function createCardPayment(AbstractUser $user, MobileCard $card, $gameCoin, $payMethod)
     {
         $data = [
             'card_type'   => $card->getType(),
             'card_serial' => $card->getSerial(),
             'card_pin'    => $card->getCode(),
             'card_amount' => $card->getAmount(),
+            'pay_method'  => $payMethod,
         ];
         $payment = $this->createPayment($user, Payment::PAYMENT_TYPE_CARD, $card->getAmount(), $gameCoin, $data);
 

@@ -56,7 +56,7 @@ class PaymentController extends BaseFrontController
         }
         $cardPayment = $this->getCardPaymentService();
         list($knb, $soxu) = $paymentRepository->exchangeGamecoin($card->getAmount(), Payment::PAYMENT_TYPE_CARD);
-        $payment = $paymentRepository->createCardPayment($user, $card, $knb);
+        $payment = $paymentRepository->createCardPayment($user, $card, $knb, $this->getPayMethod($card, $cardPayment));
         if ($card->getType() == MobileCard::TYPE_ZING){
             $this->discord->send("`{$user->name}` vừa submit 1 thẻ Zing `" . $card->getAmount() / 1000 . "k`");
         } else {
@@ -256,5 +256,22 @@ class PaymentController extends BaseFrontController
         $cardPayment->logCallbackProcessed($message);
 
         return response()->json($response, $statusCode);
+    }
+
+    /**
+     * get pay_method from Card payment partner
+     *
+     * @param \T2G\Common\Util\MobileCard               $card
+     * @param \T2G\Common\Contract\CardPaymentInterface $cardPayment
+     *
+     * @return string
+     */
+    private function getPayMethod(MobileCard $card, CardPaymentInterface $cardPayment)
+    {
+        if ($card->getType() == MobileCard::TYPE_ZING) {
+            return Payment::PAY_METHOD_ZING_CARD;
+        }
+
+        return $cardPayment->getPartnerName() == CardPaymentInterface::PARTNER_NAPTHENHANH ? Payment::PAY_METHOD_NAPTHENHANH : Payment::PAY_METHOD_RECARD;
     }
 }
