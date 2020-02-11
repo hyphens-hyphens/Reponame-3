@@ -34,7 +34,7 @@ class PaymentRepository extends AbstractEloquentRepository
         $query->where('card_pin', 'LIKE', $card->getCode())
             ->where('card_serial', 'LIKE', $card->getSerial())
             ->where('card_type', $card->getType())
-            ->where('created_at', '>', new \DateTime("-30 minutes"))
+            ->where('created_at', '>', new \DateTime("-5 minutes"))
         ;
 
         return $query->count();

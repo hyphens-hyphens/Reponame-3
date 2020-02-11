@@ -54,9 +54,10 @@ class MonitorJXGoldCommand extends Command
         foreach ($data as $log) {
             if ($this->checkForWarning($log)) {
                 $this->alertMonitor("Giao dịch rút xu khả nghi. S{$log['_source']['jx_server']} `{$log['_source']['message']}`");
+                $lastRunTimestamp = strtotime($log['_source']['created_at']);
                 continue;
             }
-            if ($log['_source']['amount'] >= 1000) {
+            if ($log['_source']['amount'] >= 500) {
                 $type = $log['_source']['field'] == 'ExtPoint3' ? "CK" : "Card";
                 $message = sprintf(
                     "User `%s` server S%s (`%s`) rút `%s` Xu - %s vào lúc %s",
@@ -84,12 +85,13 @@ class MonitorJXGoldCommand extends Command
     {
         $this->warn($message);
         $this->discord->sendWithEmbed("Ò Í E! Ò E!", $message, DiscordWebHookClient::EMBED_COLOR_ALERT);
+        sleep(1);
     }
 
     private function warningMonitor(string $message)
     {
         $this->discord->sendWithEmbed("Giao dịch rút xu", $message, DiscordWebHookClient::EMBED_COLOR_NOTICE);
-        sleep(0.2);
+        sleep(1);
     }
 
     /**

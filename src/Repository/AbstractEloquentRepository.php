@@ -114,6 +114,6 @@ abstract class AbstractEloquentRepository implements RepositoryInterface
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function find($id){
-        return $this->model->newModelQuery()->find($id);
+        return $this->query()->find($id);
     }
 }

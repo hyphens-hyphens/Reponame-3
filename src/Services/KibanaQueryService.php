@@ -50,8 +50,8 @@ class KibanaQueryService
             "query" => [
                 "range" => [
                     "@timestamp" => [
-                        "gte" => $start->format('c'),
-                        "lt"  => $end->format('c'),
+                        "gte" => $start->setTimezone(new \DateTimeZone(config('app.timezone')))->format('c'),
+                        "lt"  => $end->setTimezone(new \DateTimeZone(config('app.timezone')))->format('c'),
                     ],
                 ],
             ],
@@ -102,7 +102,7 @@ class KibanaQueryService
             "query" => [
                 "range" => [
                     "@timestamp" => [
-                        "gte" => $from->format('c'),
+                        "gte" => $from->setTimezone(new \DateTimeZone(config('app.timezone')))->format('c'),
                     ],
                 ],
             ],
