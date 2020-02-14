@@ -9,6 +9,7 @@ use T2G\Common\Action\RejectPaymentAction;
 use T2G\Common\Console\Commands\ImportUserLastLoginCommand;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldCommand;
+use T2G\Common\Console\Commands\MonitorMultiplePCCommand;
 use T2G\Common\Console\Commands\MysqlBackupCommand;
 use T2G\Common\Console\Commands\SyncUserCommand;
 use T2G\Common\Console\Commands\UpdateCCUCommand;
@@ -169,7 +170,8 @@ class ServiceProvider extends LaravelServiceProvider
                 UpdateUserLastLoginCommand::class,
                 ImportUserLastLoginCommand::class,
                 SyncUserCommand::class,
-                MonitorJXGoldCommand::class
+                MonitorJXGoldCommand::class,
+                MonitorMultiplePCCommand::class
             ]);
         }
     }

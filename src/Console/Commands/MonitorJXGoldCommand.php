@@ -5,7 +5,7 @@ namespace T2G\Common\Console\Commands;
 use Illuminate\Console\Command;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\KibanaQueryService;
+use T2G\Common\Services\Kibana\GoldWithdrawingService;
 use TCG\Voyager\Models\Setting;
 
 class MonitorJXGoldCommand extends Command
@@ -47,8 +47,7 @@ class MonitorJXGoldCommand extends Command
         $startDate = new \DateTime('@' . $lastRunTimestamp);
         $this->output->text("Checking gold withdrawing from `Kibana logs`");
         $this->output->title("Processing from " . $startDate->format('c'));
-        /** @var KibanaQueryService $kibana */
-        $kibana  = app(KibanaQueryService::class);
+        $kibana  = app(GoldWithdrawingService::class);
         $results = $kibana->getGoldWithdrawingLogs($startDate);
         $data = $results->getHits();
         foreach ($data as $log) {

@@ -5,7 +5,7 @@ namespace T2G\Common\Console\Commands;
 use Illuminate\Console\Command;
 use T2G\Common\Models\UserLastLogin;
 use T2G\Common\Repository\UserRepository;
-use T2G\Common\Services\KibanaQueryService;
+use T2G\Common\Services\Kibana\AccountService;
 
 class UpdateUserLastLoginCommand extends Command
 {
@@ -62,8 +62,7 @@ class UpdateUserLastLoginCommand extends Command
 
         $this->output->text("Importing users last login from `Kibana logs`");
         $this->output->title("Processing " . $startDate->format('Y-m-d'));
-        /** @var KibanaQueryService $kibana */
-        $kibana  = app(KibanaQueryService::class);
+        $kibana  = app(AccountService::class);
         $results = $kibana->getActiveUsersInAPeriod($startDate, $endDate, $size, $scroll = '5m');
         while ($data = $results->getHits()) {
             $usernames = [];

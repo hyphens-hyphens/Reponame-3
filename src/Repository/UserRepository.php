@@ -21,6 +21,19 @@ class UserRepository extends AbstractEloquentRepository
     }
 
     /**
+     * @param string $username
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function findUserByUsername(string $username)
+    {
+        $query = $this->query();
+
+        return $query->where('name', $username)
+            ->first();
+    }
+
+    /**
      * @param $data
      *
      * @return AbstractUser|null

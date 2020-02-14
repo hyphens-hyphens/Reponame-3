@@ -41,8 +41,16 @@ class SearchResult
         return isset($this->data['hits']['hits']) ? $this->data['hits']['hits'] : [];
     }
 
+    /**
+     * @return int
+     */
     public function getTotalResults()
     {
         return isset($this->data['hits']['total']['value']) ? $this->data['hits']['total']['value'] : 0;
+    }
+
+    public function getAggs()
+    {
+        return isset($this->data['aggregations']) ? $this->data['aggregations'] : [];
     }
 }
