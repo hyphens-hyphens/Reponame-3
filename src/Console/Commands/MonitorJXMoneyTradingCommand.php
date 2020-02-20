@@ -174,7 +174,7 @@ TEMPLATE;
                     $listUsers .= sprintf("- `%s (%s)` %s kVạn \n", $user1['user'], $user1['char'], round($user1['amount'] / 10000));
                 }
             }
-            $message = sprintf($template, $server, $user2['user'], $user2['char'], $user2['level'], $total, $listUsers);
+            $message = sprintf($template, $server, $user2['user'], $user2['char'], $user2['level'], round($total / 10000), $listUsers);
             $this->discord->sendWithEmbed(
                 "Log nhận xu SLL (> {$threshold} kVạn)",
                 $message,
