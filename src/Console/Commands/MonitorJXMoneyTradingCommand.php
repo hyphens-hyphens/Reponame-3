@@ -10,12 +10,13 @@ use T2G\Common\Services\Kibana\TradingMonitoringService;
 
 class MonitorJXMoneyTradingCommand extends Command
 {
+    const K_VAN = 10000000;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 't2g_common:monitor:money_trading {threshold=200}';
+    protected $signature = 't2g_common:monitor:money_trading {threshold=30}';
 
     /**
      * @var \T2G\Common\Services\DiscordWebHookClient
@@ -103,7 +104,7 @@ TEMPLATE;
                 $user = $item['user'];
                 $listUsers = '';
                 foreach ($item['users2'] as $user2) {
-                    $listUsers .= sprintf("- `%s (%s)` %s kVạn \n", $user2['user'], $user2['char'], round($user2['amount'] / 10000));
+                    $listUsers .= sprintf("- `%s (%s)` %s kVạn \n", $user2['user'], $user2['char'], round($user2['amount'] / self::K_VAN));
                 }
             }
             $message = sprintf($template, $server, $user['user'], $user['char'], $user['level'], $listUsers);
@@ -171,10 +172,10 @@ TEMPLATE;
                 $listUsers = '';
                 foreach ($item['users1'] as $user1) {
                     $total += $user1['amount'];
-                    $listUsers .= sprintf("- `%s (%s)` %s kVạn \n", $user1['user'], $user1['char'], round($user1['amount'] / 10000));
+                    $listUsers .= sprintf("- `%s (%s)` %s kVạn \n", $user1['user'], $user1['char'], round($user1['amount'] / self::K_VAN));
                 }
             }
-            $message = sprintf($template, $server, $user2['user'], $user2['char'], $user2['level'], round($total / 10000), $listUsers);
+            $message = sprintf($template, $server, $user2['user'], $user2['char'], $user2['level'], round($total / self::K_VAN), $listUsers);
             $this->discord->sendWithEmbed(
                 "Log nhận xu SLL (> {$threshold} kVạn)",
                 $message,
