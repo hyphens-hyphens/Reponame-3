@@ -121,6 +121,9 @@ TEMPLATE;
         // todo: refactor prepareReportOwner and prepareReportReceiver to 1 function
         $data = $report = [];
         $aggs = $results->getAggs();
+        if (!isset($aggs['filter_aggs']['server']['buckets'])) {
+            return false;
+        }
         foreach ($aggs['filter_aggs']['server']['buckets'] as $bucket) {
             $server = $bucket['key'];
             $char1Buckets = $bucket['char1']['buckets'];
@@ -188,6 +191,9 @@ TEMPLATE;
     {
         $data = $report = [];
         $aggs = $results->getAggs();
+        if (!isset($aggs['filter_aggs']['server']['buckets'])) {
+            return false;
+        }
         foreach ($aggs['filter_aggs']['server']['buckets'] as $bucket) {
             $server = $bucket['key'];
             $char2Buckets = $bucket['char2']['buckets'];
