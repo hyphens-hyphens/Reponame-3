@@ -72,7 +72,7 @@ class AccountService extends AbstractKibanaService
             "sort" => [
                 "@timestamp" => "desc"
             ],
-            "_source" => ["user", "char", "level", "hwid", "jx_server"]
+            "_source" => ["user", "char", "level", "jx_server"]
         ];
         $params = [
             'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
