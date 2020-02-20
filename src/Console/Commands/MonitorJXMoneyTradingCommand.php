@@ -130,7 +130,7 @@ TEMPLATE;
                 $char2Buckets = $char1Bucket['char2']['buckets'];
                 foreach ($char2Buckets as $char2Bucket) {
                     $char2 = $char2Bucket['key'];
-                    if ($char2Bucket['total_money']['value'] > $threshold) {
+                    if ($char2Bucket['total_money']['value'] > ($threshold * self::K_VAN)) {
                         $data[$server][$char1][$char2] = $char2Bucket['total_money']['value'];
                     }
                 }
@@ -197,7 +197,7 @@ TEMPLATE;
                 $char1Buckets = $char2Bucket['char1']['buckets'];
                 foreach ($char1Buckets as $char1Bucket) {
                     $char1 = $char1Bucket['key'];
-                    if ($char1Bucket['total_money']['value'] > $threshold) {
+                    if ($char1Bucket['total_money']['value'] > ($threshold * self::K_VAN)) {
                         $data[$server][$char2][$char1] = $char1Bucket['total_money']['value'];
                     }
                 }
