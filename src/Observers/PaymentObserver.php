@@ -2,9 +2,7 @@
 
 namespace T2G\Common\Observers;
 
-use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Models\Payment;
-use T2G\Common\Util\MobileCard;
 
 class PaymentObserver
 {

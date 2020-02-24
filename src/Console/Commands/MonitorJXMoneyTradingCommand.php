@@ -109,7 +109,7 @@ TEMPLATE;
             }
             $message = sprintf($template, $server, $user['user'], $user['char'], $user['level'], $listUsers);
             $this->discord->sendWithEmbed(
-                "Log giao dịch tiền vạn SLL (> {$threshold} kVạn)",
+                "Log giao dịch tiền Vạn SLL (> {$threshold} kVạn)",
                 $message,
                 DiscordWebHookClient::EMBED_COLOR_NOTICE
             );
@@ -180,7 +180,7 @@ TEMPLATE;
             }
             $message = sprintf($template, $server, $user2['user'], $user2['char'], $user2['level'], round($total / self::K_VAN), $listUsers);
             $this->discord->sendWithEmbed(
-                "Log nhận xu SLL (> {$threshold} kVạn)",
+                "Log nhận tiền Vạn SLL (> {$threshold} kVạn)",
                 $message,
                 DiscordWebHookClient::EMBED_COLOR_NOTICE
             );
