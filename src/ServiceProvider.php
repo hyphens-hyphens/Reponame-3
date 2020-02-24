@@ -8,6 +8,7 @@ use T2G\Common\Action\AcceptPaymentAction;
 use T2G\Common\Action\RejectPaymentAction;
 use T2G\Common\Console\Commands\ImportUserLastLoginCommand;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
+use T2G\Common\Console\Commands\MonitorJXGMGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldTradingCommand;
 use T2G\Common\Console\Commands\MonitorJXMoneyTradingCommand;
@@ -175,7 +176,8 @@ class ServiceProvider extends LaravelServiceProvider
                 MonitorJXGoldCommand::class,
                 MonitorMultiplePCCommand::class,
                 MonitorJXGoldTradingCommand::class,
-                MonitorJXMoneyTradingCommand::class
+                MonitorJXMoneyTradingCommand::class,
+                MonitorJXGMGoldCommand::class
             ]);
         }
     }

@@ -18,6 +18,9 @@ class MonitorJXGoldCommand extends Command
      */
     protected $signature = 't2g_common:monitor:gold';
 
+    /**
+     * @var \T2G\Common\Services\DiscordWebHookClient
+     */
     protected $discord;
 
     /**
@@ -59,7 +62,7 @@ class MonitorJXGoldCommand extends Command
             if ($log['_source']['amount'] >= 500) {
                 $type = $log['_source']['field'] == 'ExtPoint3' ? "CK" : "Card";
                 $message = sprintf(
-                    "User `%s` server S%s (`%s`) rút `%s` Xu - %s vào lúc %s",
+                    "User `%s` server S%s (`%s`) rút `%s` Xu - %s - vào lúc %s",
                     $log['_source']['user'],
                     $log['_source']['jx_server'],
                     $log['_source']['char'],
