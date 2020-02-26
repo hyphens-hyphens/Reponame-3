@@ -45,7 +45,7 @@ class MonitorJXGMGoldCommand extends Command
      */
     public function handle()
     {
-        $lastRunTimestamp = setting(self::LAST_RUN_SETTING_KEY) ?? strtotime('-60 days');
+        $lastRunTimestamp = setting(self::LAST_RUN_SETTING_KEY) ?? strtotime('-1 days');
         $startDate = new \DateTime('@' . $lastRunTimestamp);
         $this->output->text("Checking GM gold withdrawing from `Kibana logs`");
         $this->output->title("Processing from " . $startDate->format('c'));
