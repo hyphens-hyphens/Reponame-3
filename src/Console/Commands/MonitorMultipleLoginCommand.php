@@ -2,14 +2,10 @@
 
 namespace T2G\Common\Console\Commands;
 
-use Illuminate\Console\Command;
-use T2G\Common\Observers\UserObserver;
-use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\JXApiClient;
 use T2G\Common\Services\Kibana\MultipleLoginDetectionService;
 
-class MonitorMultipleLoginCommand extends Command
+class MonitorMultipleLoginCommand extends AbstractJXCommand
 {
     const MAX_ACCOUNT_PER_PC = 4;
     /**
@@ -24,6 +20,8 @@ class MonitorMultipleLoginCommand extends Command
      */
     protected $discord;
 
+    protected $excluded = [];
+
     /**
      * Create a new command instance.
      *
@@ -33,6 +31,7 @@ class MonitorMultipleLoginCommand extends Command
     {
         parent::__construct();
         $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.multiple_login'));
+        $this->excluded = config('t2g_common.jx_monitor.multi_login_excluded_accounts');
     }
 
     /**
@@ -86,7 +85,7 @@ TEMPLATE;
         foreach ($userArray as $username => $charArray) {
             $existed = [];
             foreach ($charArray as $user) {
-                if (in_array($user['user'], $existed)) {
+                if (in_array($user['user'], $existed) || in_array($user['user'], $this->excluded)) {
                     continue;
                 }
                 $listUsers .= sprintf("- `%s (%s)` level %s, Map: %s (%s, %s) \n", $user['user'], $user['char'], $user['level'], $user['map'], $user['x'], $user['y']);
@@ -100,19 +99,5 @@ TEMPLATE;
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);
-    }
-
-    private function banUser($username)
-    {
-        $bannedPassword = 'keoxe_PM_bikhoa';
-        $api = app(JXApiClient::class);
-        $userRepository = app(UserRepository::class);
-        /** @var \T2G\Common\Models\AbstractUser $user */
-        $user = $userRepository->findUserByUsername($username);
-        if ($user->getRawPassword() != $bannedPassword) {
-            $userRepository->updatePassword($user, $bannedPassword);
-            UserObserver::setIsDisabled(true);
-            $api->setPassword($username, 'keoxe_PM_bikhoa');
-        }
     }
 }

@@ -89,5 +89,8 @@ return [
             'handler' => \Elasticsearch\ClientBuilder::singleHandler()
         ],
         'index_suffix' => '_*'
+    ],
+    'jx_monitor' => [
+        'multi_login_excluded_accounts' => []
     ]
 ];
