@@ -66,6 +66,7 @@ class MonitorMultiplePCCommand extends Command
                 }
             }
         }
+        dd($data);
         foreach ($data as $server => $chars) {
             foreach ($chars as $char => $char2Arr) {
                 $user = $accountService->getUsernameByChar($server, $char);

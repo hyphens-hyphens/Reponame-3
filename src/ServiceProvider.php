@@ -12,6 +12,7 @@ use T2G\Common\Console\Commands\MonitorJXGMGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldTradingCommand;
 use T2G\Common\Console\Commands\MonitorJXMoneyTradingCommand;
+use T2G\Common\Console\Commands\MonitorMultipleLoginCommand;
 use T2G\Common\Console\Commands\MonitorMultiplePCCommand;
 use T2G\Common\Console\Commands\MysqlBackupCommand;
 use T2G\Common\Console\Commands\SyncUserCommand;
@@ -177,7 +178,8 @@ class ServiceProvider extends LaravelServiceProvider
                 MonitorMultiplePCCommand::class,
                 MonitorJXGoldTradingCommand::class,
                 MonitorJXMoneyTradingCommand::class,
-                MonitorJXGMGoldCommand::class
+                MonitorJXGMGoldCommand::class,
+                MonitorMultipleLoginCommand::class
             ]);
         }
     }

@@ -72,11 +72,12 @@ return [
     'discord'  => [
         'webhooks' => [
             // thông báo giao dịch từ email (MoMo), SMS webhook
-            'payment_alert' => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
+            'payment_alert'  => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
             // thông báo khi QTV add vàng từ admincp
-            'add_gold'      => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
-            'police'        => env('DISCORD_POLICE_WEBHOOK_URL'),
-            'multiple_pc'   => env('DISCORD_MULTIPLE_PC_WEBHOOK_URL'),
+            'add_gold'       => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
+            'police'         => env('DISCORD_POLICE_WEBHOOK_URL'),
+            'multiple_pc'    => env('DISCORD_MULTIPLE_PC_WEBHOOK_URL'),
+            'multiple_login' => env('DISCORD_MULTIPLE_LOGIN_WEBHOOK_URL'),
         ],
     ],
     'kibana' => [
