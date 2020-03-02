@@ -57,23 +57,28 @@ class MonitorMultipleLoginCommand extends Command
             if (empty($row['hwid_filtered'])) {
                 continue;
             }
-            $report[$row['jx_server']][$row['hwid_filtered']][$row['user']][] = $row;
+            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$row['hwid_filtered']][$row['user']][] = $row;
         }
-        foreach ($report as $server => $hwidArray) {
+        foreach ($report as $serverAndLogFile => $hwidArray) {
+            $serverAndLogFileSplitted = explode('|', $serverAndLogFile);
+            $server = $serverAndLogFileSplitted[0];
+            $logFile = $serverAndLogFileSplitted[1];
             foreach ($hwidArray as $hwid => $userArray) {
                 if (count($userArray) <= self::MAX_ACCOUNT_PER_PC ) {
                     continue;
                 }
-                $this->alertReport($server, $hwid, $userArray);
+                $this->alertReport($server, $logFile, $hwid, $userArray);
             }
         }
 
     }
 
-    private function alertReport($server, $hwid, array $userArray)
+    private function alertReport($server, $logFile, $hwid, array $userArray)
     {
         $template = <<<'TEMPLATE'
-        Server: S%s, HWID: `%s`
+        Server: S%s
+        File: `%s`
+        HWID: `%s`
         Dàn acc:
         %s
 TEMPLATE;
@@ -84,11 +89,11 @@ TEMPLATE;
                 if (in_array($user['user'], $existed)) {
                     continue;
                 }
-                $listUsers .= sprintf("- `%s (%s)` level %s \n", $user['user'], $user['char'], $user['level']);
+                $listUsers .= sprintf("- `%s (%s)` level %s, Map: %s (%s, %s) \n", $user['user'], $user['char'], $user['level'], $user['map'], $user['x'], $user['y']);
                 $existed[] = $user['user'];
             }
         }
-        $message = sprintf($template, $server, $hwid, $listUsers);
+        $message = sprintf($template, $server, $logFile, $hwid, $listUsers);
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
             $message,
