@@ -53,7 +53,7 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
         $report = [];
         foreach ($results->getHits() as $hit) {
             $row = $hit['_source'];
-            if (empty($row['hwid_filtered'])) {
+            if (empty($row['hwid_filtered']) || in_array($row['user'], $this->excluded)) {
                 continue;
             }
             $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$row['hwid_filtered']][$row['user']][] = $row;
@@ -85,7 +85,7 @@ TEMPLATE;
         foreach ($userArray as $username => $charArray) {
             $existed = [];
             foreach ($charArray as $user) {
-                if (in_array($user['user'], $existed) || in_array($user['user'], $this->excluded)) {
+                if (in_array($user['user'], $existed)) {
                     continue;
                 }
                 $listUsers .= sprintf("- `%s (%s)` level %s, Map: %s (%s, %s) \n", $user['user'], $user['char'], $user['level'], $user['map'], $user['x'], $user['y']);
