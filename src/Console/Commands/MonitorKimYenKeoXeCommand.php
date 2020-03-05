@@ -35,7 +35,7 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
     public function __construct()
     {
         parent::__construct();
-        $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.multiple_pc'));
+        $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.kimyen'));
         $this->redis = app('redis.connection');
     }
 

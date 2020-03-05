@@ -78,6 +78,7 @@ return [
             'police'         => env('DISCORD_POLICE_WEBHOOK_URL'),
             'multiple_pc'    => env('DISCORD_MULTIPLE_PC_WEBHOOK_URL'),
             'multiple_login' => env('DISCORD_MULTIPLE_LOGIN_WEBHOOK_URL'),
+            'kimyen'         => env('DISCORD_KIMYEN_WEBHOOK_URL'),
         ],
     ],
     'kibana' => [
