@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use T2G\Common\Observers\UserObserver;
 use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\JXApiClient;
+use TCG\Voyager\Models\Setting;
 
 /**
  * Class AbstractJXCommand
@@ -25,5 +26,19 @@ abstract class AbstractJXCommand extends Command
             UserObserver::setIsDisabled(true);
             $api->setPassword($username, $bannedPassword);
         }
+    }
+
+    protected function saveLastRunSetting($settingKey, $lastRunTimestamp)
+    {
+        $lastRunSetting = Setting::where('key', $settingKey)->first();
+        if (!$lastRunSetting) {
+            $lastRunSetting = new Setting();
+            $lastRunSetting->key = $settingKey;
+            $lastRunSetting->display_name = $settingKey;
+            $lastRunSetting->type = 'number';
+            $lastRunSetting->group = 'System';
+        }
+        $lastRunSetting->value = $lastRunTimestamp;
+        $lastRunSetting->save();
     }
 }

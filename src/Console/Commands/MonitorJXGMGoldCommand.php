@@ -2,12 +2,11 @@
 
 namespace T2G\Common\Console\Commands;
 
-use Illuminate\Console\Command;
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\GoldWithdrawingService;
 use TCG\Voyager\Models\Setting;
 
-class MonitorJXGMGoldCommand extends Command
+class MonitorJXGMGoldCommand extends AbstractJXCommand
 {
     const LAST_RUN_SETTING_KEY = 'system.t2g_common:monitor:gold_gm:lastrun';
     /**
@@ -68,7 +67,7 @@ class MonitorJXGMGoldCommand extends Command
         if (!$data) {
             $lastRunTimestamp = time();
         }
-        $this->saveLastRunSetting($lastRunTimestamp + 1);
+        $this->saveLastRunSetting(self::LAST_RUN_SETTING_KEY, $lastRunTimestamp + 1);
 
         $this->output->success("Done processing.");
     }
@@ -80,17 +79,4 @@ class MonitorJXGMGoldCommand extends Command
         sleep(1);
     }
 
-    private function saveLastRunSetting($lastRunTimestamp)
-    {
-        $lastRunSetting = Setting::where('key', self::LAST_RUN_SETTING_KEY)->first();
-        if (!$lastRunSetting) {
-            $lastRunSetting = new Setting();
-            $lastRunSetting->key = self::LAST_RUN_SETTING_KEY;
-            $lastRunSetting->display_name = self::LAST_RUN_SETTING_KEY;
-            $lastRunSetting->type = 'number';
-            $lastRunSetting->group = 'System';
-        }
-        $lastRunSetting->value = $lastRunTimestamp;
-        $lastRunSetting->save();
-    }
 }
