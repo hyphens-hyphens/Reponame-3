@@ -53,10 +53,13 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
         $report = [];
         foreach ($results->getHits() as $hit) {
             $row = $hit['_source'];
-            if (empty($row['hwid_filtered']) || in_array($row['user'], $this->excluded)) {
+            if (empty($row['hwid']) || in_array($row['user'], $this->excluded)) {
                 continue;
             }
-            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$row['hwid_filtered']][$row['user']][] = $row;
+            $hwidPieces = explode('-', $row['hwid']);
+            $newHwidArray = ['XXX', 'XXX', $hwidPieces[2], 'XXX', $hwidPieces[4], 'XXX', $hwidPieces[6], 'XXX'];
+            $newHwid = implode('-', $newHwidArray);
+            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$newHwid][$row['user']][] = $row;
         }
         foreach ($report as $serverAndLogFile => $hwidArray) {
             $serverAndLogFileSplitted = explode('|', $serverAndLogFile);

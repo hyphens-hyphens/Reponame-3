@@ -61,6 +61,7 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
             if (empty($row['action']) || empty($row['map_id'])) {
                 continue;
             }
+            // Server|Username|LeaveMap
             $queueKey = sprintf("%s|%s|%s", $row['jx_server'], $row['user'], self::ACTION_LEAVE_MAP);
             if ($row['action'] == self::ACTION_LEAVE_MAP) {
                 $queue[$queueKey][] = $row;
@@ -73,10 +74,12 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
                     $enterAt = strtotime($row['@timestamp']);
                     $sub = $enterAt - $leaveAt;
                     if ($item['user'] == $row['user'] && $sub > 0 &&  $sub <= 2) {
-                        // match route
+                        // match route Server|LeaveMap|LeaveMap_ID|MoveTo|MoveTo_MapID
                         $key = sprintf("%s|%s|%s|%s|%s", $row['jx_server'], self::ACTION_LEAVE_MAP, $item['map_id'], self::ACTION_MOVE_TO, $row['map_id']);
                         $item['leave_at'] = $leaveAt;
                         $item['enter_at'] = $enterAt;
+                        $item['leave_map_name'] = $item['map_name'];
+                        $item['leave_map_id'] = $item['map_id'];
                         $report[$key][] = $item;
                         unset($queue[$queueKey][$index]);
                         break;
@@ -105,7 +108,7 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
         foreach ($final as $key => $item) {
             if (count($item) > 4) {
                 /*
-                 *
+                 * ex
                  * 4 => array:10 [
                         "jx_server" => 3
                         "@timestamp" => "2020-03-04T15:37:35.000Z"
@@ -117,6 +120,8 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
                         "user" => "tanryo251"
                         "leave_at" => 1583336255
                         "enter_at" => 1583336256
+                        "leave_map_id" => 2
+                        "leave_map_name" => "Lâm An"
                       ]
                  */
                 $mainAcc = array_shift($item);
@@ -139,7 +144,7 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
     {
         $template = <<<'TEMPLATE'
         Server: S%s , Thời gian: `%s`
-        Acc chính: `%s (%s)` level %s. Map: `%s (%s)`
+        Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
         Dàn acc:
         %s
 TEMPLATE;
@@ -147,7 +152,19 @@ TEMPLATE;
         foreach ($secondaryAccs as $k => $acc) {
             $listUsers .= sprintf("- `%s (%s)` level %s, ***%s lần***  \n", $acc['user'], $acc['char'], $acc['level'], $acc['weight']);
         }
-        $message = sprintf($template, $mainAcc['jx_server'], date('d-m-Y H:i:s', $mainAcc['enter_at']), $mainAcc['user'], $mainAcc['char'], $mainAcc['level'], $mainAcc['map_name'], $mainAcc['map_id'], $listUsers);
+        $message = sprintf(
+            $template,
+            $mainAcc['jx_server'],
+            date('d-m-Y H:i:s', $mainAcc['enter_at']),
+            $mainAcc['user'],
+            $mainAcc['char'],
+            $mainAcc['level'],
+            $mainAcc['leave_map_name'],
+            $mainAcc['leave_map_id'],
+            $mainAcc['map_name'],
+            $mainAcc['map_id'],
+            $listUsers
+        );
 
         $this->discord->sendWithEmbed(
             "Cảnh báo Kéo xe Kim Yến",
