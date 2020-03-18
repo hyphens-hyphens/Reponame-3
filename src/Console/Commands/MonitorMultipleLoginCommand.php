@@ -91,10 +91,9 @@ TEMPLATE;
                     continue;
                 }
                 $listUsers .= sprintf(
-                    "- `%s (%s)` level %s, Map: %s (%s, %s), HWID: `%s` \n",
+                    "- `%s (%s)`, %s (%s, %s), `%s` \n",
                     $user['user'],
                     $user['char'],
-                    $user['level'],
                     $user['map'],
                     $user['x'],
                     $user['y'],
@@ -104,6 +103,7 @@ TEMPLATE;
             }
         }
         $message = sprintf($template, $server, $logFile, $hwid, $listUsers);
+        dd($message, strlen($message));
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
             $message,
