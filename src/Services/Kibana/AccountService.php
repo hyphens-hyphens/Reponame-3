@@ -49,6 +49,12 @@ class AccountService extends AbstractKibanaService
         return new SearchResult($data);
     }
 
+    /**
+     * @param int $server
+     * @param     $char
+     *
+     * @return array|null
+     */
     public function getUsernameByChar(int $server, $char)
     {
         $query = [
@@ -87,5 +93,69 @@ class AccountService extends AbstractKibanaService
         $hit = array_first($searchResult->getHits());
 
         return $hit['_source'];
+    }
+
+    /**
+     * return ex array:5 [
+     *       "usernameX" => "93C39-E0310-D1AA5-41A7D-54976-F8E25-6306D-B0107"
+     *       ...
+     *   ]
+     * @param array $usernames
+     *
+     * @return array
+     */
+    public function getHwidByUsernames(array $usernames)
+    {
+        $query = [
+            "size" => 0,
+            "aggs" => [
+                "filter_data" => [
+                    "filter" => [
+                        "bool" => [
+                            "filter" => [
+                                [
+                                    "terms" => [
+                                        "user.keyword" => $usernames
+                                    ]
+                                ]
+                            ],
+                        ],
+                    ],
+                    "aggs" => [
+                        "user" => [
+                            "terms" => [
+                                "field" => "user.keyword"
+                            ],
+                            "aggs" => [
+                                "top" => [
+                                    "top_hits" => [
+                                        "sort" => [
+                                            "@timestamp" => ["order" => "desc"]
+                                        ],
+                                        "_source" => [
+                                            "includes" => ['user', 'hwid', '@timestamp', 'jx_server', 'level'],
+                                        ],
+                                        "size" => 1
+                                    ],
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+        ];
+        $params = [
+            'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
+            'body'  => $query,
+        ];
+        $data = $this->es->search($params);
+        $searchResult = new SearchResult($data);
+        $aggs = $searchResult->getAggs('filter_data');
+        $data = [];
+        foreach ($aggs['user']['buckets'] as $row) {
+            $data[$row['key']] = $row['top']['hits']['hits'][0]['_source']['hwid'];
+        }
+
+        return $data;
     }
 }

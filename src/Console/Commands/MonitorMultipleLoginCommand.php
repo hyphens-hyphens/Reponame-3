@@ -56,10 +56,9 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
             if (empty($row['hwid']) || in_array($row['user'], $this->excluded)) {
                 continue;
             }
-            $hwidPieces = explode('-', $row['hwid']);
-            $newHwidArray = ['XXX', 'XXX', $hwidPieces[2], 'XXX', $hwidPieces[4], 'XXX', $hwidPieces[6], 'XXX'];
-            $newHwid = implode('-', $newHwidArray);
-            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$newHwid][$row['user']][] = $row;
+
+            $filteredHwid = $this->getFilteredHwid($row['hwid']);
+            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$filteredHwid][$row['user']][] = $row;
         }
         foreach ($report as $serverAndLogFile => $hwidArray) {
             $serverAndLogFileSplitted = explode('|', $serverAndLogFile);
@@ -91,7 +90,16 @@ TEMPLATE;
                 if (in_array($user['user'], $existed)) {
                     continue;
                 }
-                $listUsers .= sprintf("- `%s (%s)` level %s, Map: %s (%s, %s) \n", $user['user'], $user['char'], $user['level'], $user['map'], $user['x'], $user['y']);
+                $listUsers .= sprintf(
+                    "- `%s (%s)` level %s, Map: %s (%s, %s), HWID: `%s` \n",
+                    $user['user'],
+                    $user['char'],
+                    $user['level'],
+                    $user['map'],
+                    $user['x'],
+                    $user['y'],
+                    $user['hwid']
+                );
                 $existed[] = $user['user'];
             }
         }

@@ -49,8 +49,18 @@ class SearchResult
         return isset($this->data['hits']['total']['value']) ? $this->data['hits']['total']['value'] : 0;
     }
 
-    public function getAggs()
+    /**
+     * @param string $rootAggs
+     *
+     * @return array|mixed
+     */
+    public function getAggs($rootAggs = '')
     {
-        return isset($this->data['aggregations']) ? $this->data['aggregations'] : [];
+        $data = isset($this->data['aggregations']) ? $this->data['aggregations'] : [];
+        if ($rootAggs && isset($data[$rootAggs])) {
+            return $data[$rootAggs];
+        }
+
+        return $data;
     }
 }

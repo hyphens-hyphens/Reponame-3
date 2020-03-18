@@ -3,6 +3,7 @@
 namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
+use T2G\Common\Services\Kibana\AccountService;
 use T2G\Common\Services\Kibana\KimYenKeoXeDetectionService;
 
 class MonitorKimYenKeoXeCommand extends AbstractJXCommand
@@ -142,15 +143,30 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 
     private function alertReport(array $mainAcc, array $secondaryAccs)
     {
+        $usernames = [$mainAcc['user']];
+        foreach ($secondaryAccs as $k => $acc) {
+            $usernames[] = $acc['user'];
+        }
+        $accountService = app(AccountService::class);
+        $hwidArray = $accountService->getHwidByUsernames($usernames);
+
         $template = <<<'TEMPLATE'
         Server: S%s , Thời gian: `%s`
         Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
+        HWID: `%s`
         Dàn acc:
         %s
 TEMPLATE;
         $listUsers = '';
         foreach ($secondaryAccs as $k => $acc) {
-            $listUsers .= sprintf("- `%s (%s)` level %s, ***%s lần***  \n", $acc['user'], $acc['char'], $acc['level'], $acc['weight']);
+            $listUsers .= sprintf(
+                "- `%s (%s)` level %s, HWID: `%s`, ***%s lần***  \n",
+                $acc['user'],
+                $acc['char'],
+                $acc['level'],
+                $hwidArray[$acc['user']] ?? '',
+                $acc['weight']
+            );
         }
         $message = sprintf(
             $template,
@@ -163,6 +179,7 @@ TEMPLATE;
             $mainAcc['leave_map_id'],
             $mainAcc['map_name'],
             $mainAcc['map_id'],
+            $hwidArray[$mainAcc['user']] ?? '',
             $listUsers
         );
 
