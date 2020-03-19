@@ -50,6 +50,13 @@ Route::group(['middleware' => 'web'], function () {
                     'as' => 'tick',
                 ]);
             });
+
+            Route::group(['as' => 'console_log_viewer.', 'prefix' => '/console_log'], function () {
+                Route::get('/kimyen', [
+                    'uses' => 'Admin\ConsoleLogViewerController@viewLogKimYen',
+                    'as' => 'kimyen',
+                ]);
+            });
         });
 
         Voyager::routes();

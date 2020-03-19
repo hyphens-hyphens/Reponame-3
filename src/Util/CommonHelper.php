@@ -74,4 +74,17 @@ class CommonHelper
 
         return $icons[$paymentType] ?? 'voyager-exclamation';
     }
+
+    /**
+     * @param $rawHwid
+     *
+     * @return string
+     */
+    public static function getFilteredHwid($rawHwid)
+    {
+        $hwidPieces = explode('-', $rawHwid);
+        $newHwidArray = [$hwidPieces[3], $hwidPieces[4], $hwidPieces[6]];
+
+        return implode('-', $newHwidArray);
+    }
 }

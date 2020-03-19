@@ -4,6 +4,7 @@ namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\MultipleLoginDetectionService;
+use T2G\Common\Util\CommonHelper;
 
 class MonitorMultipleLoginCommand extends AbstractJXCommand
 {
@@ -57,7 +58,7 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
                 continue;
             }
 
-            $filteredHwid = $this->getFilteredHwid($row['hwid']);
+            $filteredHwid = CommonHelper::getFilteredHwid($row['hwid']);
             $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$filteredHwid][$row['user']][] = $row;
         }
         foreach ($report as $serverAndLogFile => $hwidArray) {
@@ -76,6 +77,8 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
 
     private function alertReport($server, $logFile, $hwid, array $userArray)
     {
+        $file = explode('/', $logFile);
+        $file = last($file);
         $template = <<<'TEMPLATE'
         Server: S%s
         File: `%s`
@@ -91,18 +94,17 @@ TEMPLATE;
                     continue;
                 }
                 $listUsers .= sprintf(
-                    "- `%s (%s)`, %s (%s, %s), `%s` \n",
+                    "- `%s (%s)`, %s (%s, %s)\n",
                     $user['user'],
                     $user['char'],
                     $user['map'],
                     $user['x'],
-                    $user['y'],
-                    $user['hwid']
+                    $user['y']
                 );
                 $existed[] = $user['user'];
             }
         }
-        $message = sprintf($template, $server, $logFile, $hwid, $listUsers);
+        $message = sprintf($template, $server, $file, $hwid, $listUsers);
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
             $message,

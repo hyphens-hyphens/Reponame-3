@@ -4,6 +4,7 @@ namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\KimYenKeoXeDetectionService;
+use T2G\Common\Util\CommonHelper;
 
 class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 {
@@ -150,18 +151,20 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 
     private function alertReport(array $mainAcc, array $secondaryAccs)
     {
+        $token = md5($mainAcc['user'] . time());
         $template = <<<'TEMPLATE'
         Server: S%s , Thời gian: `%s`
         Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
+        Link: %s
         HWIDs:
         - %s
         Dàn acc:
         %s
 TEMPLATE;
         $listUsers = [];
-        $hwidArray = [$this->getFilteredHwid($mainAcc['hwid'])];
+        $hwidArray = [CommonHelper::getFilteredHwid($mainAcc['hwid'])];
         foreach ($secondaryAccs as $k => $acc) {
-            $filteredHwid = $this->getFilteredHwid($acc['hwid']);
+            $filteredHwid = CommonHelper::getFilteredHwid($acc['hwid']);
             if (!in_array($filteredHwid, $hwidArray)) {
                 $hwidArray[] = $filteredHwid;
             }
@@ -170,7 +173,7 @@ TEMPLATE;
             $hwid = $wrapper . $filteredHwid . strrev($wrapper);
             $key = $filteredHwid . $k;
             $listUsers[$key] = sprintf(
-                "- `%s (%s)`, %s, `%s lần`  \n",
+                "- `%s (%s)`, %s, `%s lần`\n",
                 $acc['user'],
                 $acc['char'],
 //                $acc['level'],
@@ -190,6 +193,7 @@ TEMPLATE;
             $mainAcc['map_id'],
             $mainAcc['move_map_name'],
             $mainAcc['move_map_id'],
+            route('voyager.console_log_viewer.kimyen', ['t' => $token]),
             implode("\n- ", $hwidArray),
             implode('', array_values($listUsers))
         );
@@ -198,6 +202,8 @@ TEMPLATE;
             $message,
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
+        $htmlFilename = "kimyen_{$token}.html";
+        $this->saveHtml($htmlFilename, $mainAcc, $secondaryAccs, $hwidArray);
         sleep(1);
     }
 
@@ -213,5 +219,21 @@ TEMPLATE;
         ];
 
         return $index < count($styleWrapper) ? $styleWrapper[$index] : '*';
+    }
+
+    /**
+     * @param       $filename
+     * @param array $mainAcc
+     * @param array $secondaryAccs
+     * @param       $hwidArray
+     */
+    private function saveHtml($filename, array $mainAcc, array $secondaryAccs, $hwidArray)
+    {
+        $file = storage_path('app/console_log/' . $filename);
+        file_put_contents($file, view('t2g_common::console/kimyen_keoxe', [
+            'mainAcc'       => $mainAcc,
+            'secondaryAccs' => $secondaryAccs,
+            'hwidArray'     => $hwidArray,
+        ]));
     }
 }
