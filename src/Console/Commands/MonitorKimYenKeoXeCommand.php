@@ -67,21 +67,29 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
             if ($row['action'] == self::ACTION_LEAVE_MAP) {
                 $queue[$queueKey][] = $row;
             } else {
+                $moveMapItem = $row;
                 if (!isset($queue[$queueKey])) {
                     continue;
                 }
-                foreach ($queue[$queueKey] as $index => $item) {
-                    $leaveAt = strtotime($item['@timestamp']);
-                    $enterAt = strtotime($row['@timestamp']);
-                    $sub = $enterAt - $leaveAt;
-                    if ($item['user'] == $row['user'] && $sub > 0 &&  $sub <= 2) {
+                foreach ($queue[$queueKey] as $index => $leaveMapItem) {
+                    $leaveAt = strtotime($leaveMapItem['@timestamp']);
+                    $enterAt = strtotime($moveMapItem['@timestamp']);
+                    $timeSub = $enterAt - $leaveAt;
+                    if ($leaveMapItem['user'] == $moveMapItem['user'] && $timeSub > 0 &&  $timeSub <= 2) {
                         // match route Server|LeaveMap|LeaveMap_ID|MoveTo|MoveTo_MapID
-                        $key = sprintf("%s|%s|%s|%s|%s", $row['jx_server'], self::ACTION_LEAVE_MAP, $item['map_id'], self::ACTION_MOVE_TO, $row['map_id']);
-                        $item['leave_at'] = $leaveAt;
-                        $item['enter_at'] = $enterAt;
-                        $item['leave_map_name'] = $item['map_name'];
-                        $item['leave_map_id'] = $item['map_id'];
-                        $report[$key][] = $item;
+                        $key = sprintf(
+                            "%s|%s|%s|%s|%s",
+                            $moveMapItem['jx_server'],
+                            self::ACTION_LEAVE_MAP,
+                            $leaveMapItem['map_id'],
+                            self::ACTION_MOVE_TO,
+                            $moveMapItem['map_id']
+                        );
+                        $leaveMapItem['leave_at'] = $leaveAt;
+                        $leaveMapItem['enter_at'] = $enterAt;
+                        $leaveMapItem['move_map_name'] = $moveMapItem['map_name'];
+                        $leaveMapItem['move_map_id'] = $moveMapItem['map_id'];
+                        $report[$key][] = $leaveMapItem;
                         unset($queue[$queueKey][$index]);
                         break;
                     }
@@ -149,22 +157,27 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
         }
         $accountService = app(AccountService::class);
         $hwidArray = $accountService->getHwidByUsernames($usernames);
-
+        $uniqueHwidArray = $this->getUniqueHwids($hwidArray);
         $template = <<<'TEMPLATE'
         Server: S%s , Thời gian: `%s`
         Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
-        HWID: `%s`
+        HWID:
+        %s
         Dàn acc:
         %s
 TEMPLATE;
         $listUsers = '';
         foreach ($secondaryAccs as $k => $acc) {
+            $filteredHwid = $this->getFilteredHwid($hwidArray[$acc['user']] ?? '');
+            $index = array_search($filteredHwid, $uniqueHwidArray);
+            $wrapper = $this->getMarkdownWrapper($index);
+            $hwid = isset($hwidArray[$acc['user']]) ? $wrapper . $hwidArray[$acc['user']] . $wrapper : '';
             $listUsers .= sprintf(
-                "- `%s (%s)` level %s, HWID: `%s`, ***%s lần***  \n",
+                "- `%s (%s)` level %s, %s, ***%s lần***  \n",
                 $acc['user'],
                 $acc['char'],
                 $acc['level'],
-                $hwidArray[$acc['user']] ?? '',
+                $hwid,
                 $acc['weight']
             );
         }
@@ -175,11 +188,11 @@ TEMPLATE;
             $mainAcc['user'],
             $mainAcc['char'],
             $mainAcc['level'],
-            $mainAcc['leave_map_name'],
-            $mainAcc['leave_map_id'],
             $mainAcc['map_name'],
             $mainAcc['map_id'],
-            $hwidArray[$mainAcc['user']] ?? '',
+            $mainAcc['move_map_name'],
+            $mainAcc['move_map_id'],
+            implode("\n- ", $uniqueHwidArray),
             $listUsers
         );
 
@@ -189,5 +202,32 @@ TEMPLATE;
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);
+    }
+
+    private function getUniqueHwids($hwidArray)
+    {
+        if (empty($hwidArray)) {
+            return [];
+        }
+        $filteredHwids = [];
+        foreach (array_values($hwidArray) as $k => $hwid) {
+            $filteredHwids[] = $this->getFilteredHwid($hwid);
+        }
+
+        return array_unique($filteredHwids);
+    }
+
+    /**
+     * @param $index
+     *
+     * @return mixed
+     */
+    private function getMarkdownWrapper($index)
+    {
+        $styleWrapper = [
+            '*', '**', '***', '__', '__*', '__**', '__***'
+        ];
+
+        return $index < count($styleWrapper) ? $styleWrapper[$index] : '*';
     }
 }
