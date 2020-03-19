@@ -39,7 +39,7 @@ class KimYenKeoXeDetectionService extends AbstractKibanaService
             "sort"  => [
                 "@timestamp" => ["order" => "asc"]
             ],
-            "_source" => ['jx_server', '@timestamp', 'user', 'char', 'map_id', 'map_name', 'action', 'level']
+            "_source" => ['jx_server', '@timestamp', 'user', 'char', 'map_id', 'map_name', 'action', 'level', 'hwid']
         ];
         $params = [
             'index' => $this->getIndex(self::INDEX_PREFIX_MOVE_MAP),

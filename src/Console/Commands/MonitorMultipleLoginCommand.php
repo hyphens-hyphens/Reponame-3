@@ -103,7 +103,6 @@ TEMPLATE;
             }
         }
         $message = sprintf($template, $server, $logFile, $hwid, $listUsers);
-        dd($message, strlen($message));
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
             $message,

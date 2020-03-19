@@ -3,7 +3,6 @@
 namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\Kibana\AccountService;
 use T2G\Common\Services\Kibana\KimYenKeoXeDetectionService;
 
 class MonitorKimYenKeoXeCommand extends AbstractJXCommand
@@ -151,36 +150,35 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 
     private function alertReport(array $mainAcc, array $secondaryAccs)
     {
-        $usernames = [$mainAcc['user']];
-        foreach ($secondaryAccs as $k => $acc) {
-            $usernames[] = $acc['user'];
-        }
-        $accountService = app(AccountService::class);
-        $hwidArray = $accountService->getHwidByUsernames($usernames);
-        $uniqueHwidArray = $this->getUniqueHwids($hwidArray);
         $template = <<<'TEMPLATE'
         Server: S%s , Thời gian: `%s`
         Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
-        HWID:
-        %s
+        HWIDs:
+        - %s
         Dàn acc:
         %s
 TEMPLATE;
-        $listUsers = '';
+        $listUsers = [];
+        $hwidArray = [$this->getFilteredHwid($mainAcc['hwid'])];
         foreach ($secondaryAccs as $k => $acc) {
-            $filteredHwid = $this->getFilteredHwid($hwidArray[$acc['user']] ?? '');
-            $index = array_search($filteredHwid, $uniqueHwidArray);
+            $filteredHwid = $this->getFilteredHwid($acc['hwid']);
+            if (!in_array($filteredHwid, $hwidArray)) {
+                $hwidArray[] = $filteredHwid;
+            }
+            $index = array_search($filteredHwid, $hwidArray);
             $wrapper = $this->getMarkdownWrapper($index);
-            $hwid = isset($hwidArray[$acc['user']]) ? $wrapper . $hwidArray[$acc['user']] . $wrapper : '';
-            $listUsers .= sprintf(
-                "- `%s (%s)` level %s, %s, ***%s lần***  \n",
+            $hwid = $wrapper . $filteredHwid . strrev($wrapper);
+            $key = $filteredHwid . $k;
+            $listUsers[$key] = sprintf(
+                "- `%s (%s)`, %s, `%s lần`  \n",
                 $acc['user'],
                 $acc['char'],
-                $acc['level'],
+//                $acc['level'],
                 $hwid,
                 $acc['weight']
             );
         }
+        ksort($listUsers);
         $message = sprintf(
             $template,
             $mainAcc['jx_server'],
@@ -192,29 +190,15 @@ TEMPLATE;
             $mainAcc['map_id'],
             $mainAcc['move_map_name'],
             $mainAcc['move_map_id'],
-            implode("\n- ", $uniqueHwidArray),
-            $listUsers
+            implode("\n- ", $hwidArray),
+            implode('', array_values($listUsers))
         );
-
         $this->discord->sendWithEmbed(
             "Cảnh báo Kéo xe Kim Yến",
             $message,
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);
-    }
-
-    private function getUniqueHwids($hwidArray)
-    {
-        if (empty($hwidArray)) {
-            return [];
-        }
-        $filteredHwids = [];
-        foreach (array_values($hwidArray) as $k => $hwid) {
-            $filteredHwids[] = $this->getFilteredHwid($hwid);
-        }
-
-        return array_unique($filteredHwids);
     }
 
     /**

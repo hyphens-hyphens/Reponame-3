@@ -50,7 +50,7 @@ abstract class AbstractJXCommand extends Command
     protected function getFilteredHwid($rawHwid)
     {
         $hwidPieces = explode('-', $rawHwid);
-        $newHwidArray = ['XXX', 'XXX', $hwidPieces[2], 'XXX', $hwidPieces[4], 'XXX', $hwidPieces[6], 'XXX'];
+        $newHwidArray = [$hwidPieces[3], $hwidPieces[4], $hwidPieces[6]];
 
         return implode('-', $newHwidArray);
     }
