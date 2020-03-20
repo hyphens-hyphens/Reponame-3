@@ -94,12 +94,11 @@ TEMPLATE;
                     continue;
                 }
                 $listUsers .= sprintf(
-                    "- `%s (%s)`, %s (%s, %s)\n",
+                    "- `%s (%s)`, lv %s, %s\n",
                     $user['user'],
                     $user['char'],
-                    $user['map'],
-                    $user['x'],
-                    $user['y']
+                    $user['level'],
+                    $user['map']
                 );
                 $existed[] = $user['user'];
             }
