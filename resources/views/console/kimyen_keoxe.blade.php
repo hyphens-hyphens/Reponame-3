@@ -12,7 +12,7 @@
 <p>Acc chính: <b>{{ $mainAcc['user'] }}</b> level {{ $mainAcc['level'] }}. <b>{{ \T2G\Common\Util\CommonHelper::getFilteredHwid($mainAcc['hwid']) }}</b></p>
 <p>Map: <b>{{ $mainAcc['map_name'] }} ({{ $mainAcc['map_id'] }}) -> {{ $mainAcc['move_map_name'] }} ({{ $mainAcc['move_map_id'] }})</b>.</p>
 @php
-$colors = ['red', 'blue', 'green', 'orange', 'teal', 'violet', 'pink', 'brown'];
+$colors = ['red', 'blue', 'green', 'orange', 'teal', 'violet', 'pink', 'brown', 'chocolate', 'darkcyan', 'crimson'];
 $hwidColors = [];
 @endphp
 <p>HWIDs:</p>

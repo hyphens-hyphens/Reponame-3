@@ -8,8 +8,9 @@ use T2G\Common\Util\CommonHelper;
 
 class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 {
-    const ACTION_LEAVE_MAP     = 'LeaveMap';
-    const ACTION_MOVE_TO       = 'MoveTo';
+    const ACTION_LEAVE_MAP = 'LeaveMap';
+    const ACTION_MOVE_TO   = 'MoveTo';
+    const WEIGHT_THRESHOLD = 2;
 
     /**
      * The name and signature of the console command.
@@ -135,16 +136,24 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
                  */
                 $mainAcc = array_shift($item);
                 $secondaryAccs = [];
+                $alert = false;
+                $previousRow = null;
+                $server = $mainAcc['jx_server'];
                 foreach ($item as $k => $row) {
-                    $key = sprintf("%s:%s", $mainAcc['jx_server'], bin2hex($mainAcc['user']));
-                    $row['weight'] = $this->redis->hincrby($key, bin2hex($row['user']), 1);
+                    $weights = $this->increaseWeight($server, $mainAcc['user'], $row['user']);
+                    $row['weight'] = $weights[0];
                     $secondaryAccs[] = $row;
-                    if ($k == 0) {
-                        // set expire at 1 month later
-                        $this->redis->expire($key, 30 * 24 * 3600);
+                    if ($row['weight'] > self::WEIGHT_THRESHOLD) {
+                        $alert = true;
                     }
+                    if ($previousRow) {
+                        $this->increaseWeight($server, $previousRow['user'], $row['user']);
+                    }
+                    $previousRow = $row;
                 }
-                $this->alertReport($mainAcc, $secondaryAccs);
+                if ($alert) {
+                    $this->alertReport($mainAcc, $secondaryAccs);
+                }
             }
         }
     }
@@ -235,5 +244,27 @@ TEMPLATE;
             'secondaryAccs' => $secondaryAccs,
             'hwidArray'     => $hwidArray,
         ]));
+    }
+
+    /**
+     * @param $server
+     * @param $user1
+     * @param $user2
+     *
+     * @return array
+     */
+    private function increaseWeight($server, $user1, $user2)
+    {
+        $keys = [
+            sprintf("%s:%s", $server, bin2hex($user1)) => $user2,
+            sprintf("%s:%s", $server, bin2hex($user2)) => $user1
+        ];
+        $retval = [];
+        foreach ($keys as $key => $hash) {
+            $retval[] = $this->redis->hincrby($key, bin2hex($hash), 1);
+            $this->redis->expire($key, 30 * 24 * 3600);
+        }
+
+        return $retval;
     }
 }
