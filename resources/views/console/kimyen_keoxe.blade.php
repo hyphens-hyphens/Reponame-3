@@ -30,11 +30,11 @@ $hwidColors = [];
     $sortingAccs = [];
     foreach ($secondaryAccs as $index => $acc) {
         $hwid = \T2G\Common\Util\CommonHelper::getFilteredHwid($acc['hwid']);
-        $sortingAccs[$hwid] = $acc;
+        $sortingAccs[$hwid . $index] = $acc;
     }
     ksort($sortingAccs);
 @endphp
-@foreach ($sortingAccs as $index => $acc)
+@foreach ($sortingAccs as $acc)
     @php
     $hwid = \T2G\Common\Util\CommonHelper::getFilteredHwid($acc['hwid']);
     @endphp
