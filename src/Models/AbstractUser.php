@@ -62,6 +62,7 @@ class AbstractUser extends \TCG\Voyager\Models\User
 {
     use Notifiable, RevisionableTrait, AdvanceRevisionable;
 
+    protected static $vipLevel;
     /** @var bool  */
     protected $systemUpdating = false;
 
@@ -97,19 +98,18 @@ class AbstractUser extends \TCG\Voyager\Models\User
     ];
 
     /**
+     * @param \DateTime|null $from
+     *
      * @return int|mixed
      */
-    public function getTotalPaid()
+    public function getTotalPaid(\DateTime $from = null)
     {
-        if ($this->payments->count() > 0) {
-            $paidArray = $this->payments->map(function ($item) {
-                return $item->status ? $item->amount : 0;
-            });
-
-            return $paidArray->sum();
+        $query = $this->payments()->where('status', true);
+        if ($from) {
+            $query->where('created_at', '>', $from);
         }
 
-        return 0;
+        return $query->sum('amount');
     }
 
     /**
@@ -117,15 +117,12 @@ class AbstractUser extends \TCG\Voyager\Models\User
      */
     public function getTotalDebt()
     {
-        if ($this->payments->count() > 0) {
-            $debtArray = $this->payments->map(function ($item) {
-                return $item->payment_type == Payment::PAYMENT_TYPE_ADVANCE_DEBT && $item->gold_added ? $item->amount : 0;
-            });
-
-            return $debtArray->sum();
-        }
-
-        return 0;
+        return $this->payments()
+            ->where([
+                'payment_type' => Payment::PAYMENT_TYPE_ADVANCE_DEBT,
+                'gold_added'   => true,
+            ])
+            ->sum('amount');
     }
 
     /**
@@ -201,5 +198,36 @@ class AbstractUser extends \TCG\Voyager\Models\User
     public static function encodePassword($password)
     {
         return base64_encode($password);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVipMember()
+    {
+        return $this->getVipLevel() > 0;
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function getVipLevel()
+    {
+        if (!is_null(self::$vipLevel)) {
+            return self::$vipLevel;
+        }
+        $startOfVipSystem = config('t2g_common.vip_system.start_date', null);
+        $totalPaid = $this->getTotalPaid($startOfVipSystem);
+        $vipLevels = config('t2g_common.vip_system.levels');
+        $vip = 0;
+        foreach ($vipLevels as $level => $amount) {
+            if ($totalPaid < $amount) {
+                $vip = $level;
+                break;
+            }
+        }
+        self::$vipLevel = $vip;
+
+        return self::$vipLevel;
     }
 }

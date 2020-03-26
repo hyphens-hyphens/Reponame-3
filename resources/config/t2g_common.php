@@ -93,5 +93,9 @@ return [
     ],
     'jx_monitor' => [
         'multi_login_excluded_accounts' => []
-    ]
+    ],
+    'vip_system' => [
+        'start_date' => new DateTime('@' . strtotime('2020-03-26')),
+        'levels'     => [],
+    ],
 ];
