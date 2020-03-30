@@ -14,7 +14,12 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
  */
 class T2GMiddleware
 {
-    protected $except = ['/'];
+    protected $except;
+
+    public function __construct()
+    {
+        $this->except = config('t2g_common.site.front_page_forbidden_except_uris', ['/']);
+    }
     /**
      * Handle an incoming request.
      *
@@ -31,12 +36,13 @@ class T2GMiddleware
         $user = $auth->user();
         if (
             $request->getMethod() == Request::METHOD_GET
-            && setting('site.front_page_forbidden')
+            && config('t2g_common.site.front_page_forbidden')
             && !in_array($request->getPathInfo(), $this->except)
         ) {
 
             if (!$user || !$user->hasRole(['admin', 'editor'])) {
-                throw new ServiceUnavailableHttpException(null, "Server bảo trì!!! Vui lòng quay lại sau");
+                $redirectRouteParams = config('t2g_common.site.front_page_forbidden_redirect_route');
+                return redirect(route(...$redirectRouteParams))->with('showWarning', true);
             }
         }
         view()->share('user', $user);

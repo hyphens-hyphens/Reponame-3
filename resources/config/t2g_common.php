@@ -16,7 +16,10 @@ return [
         'og' => [
             'section' => 'Gaming',
             'tag' => ''
-        ]
+        ],
+        'front_page_forbidden' => false,
+        'front_page_forbidden_except_uris' => ['/', '/thoat'],
+        'front_page_forbidden_redirect_url' => ['front.landing', []],
     ],
     'models'   => [
         'user_model_class'    => 'App\User',
