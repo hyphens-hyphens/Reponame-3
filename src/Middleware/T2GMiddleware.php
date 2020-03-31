@@ -40,7 +40,7 @@ class T2GMiddleware
             && !in_array($request->getPathInfo(), $this->except)
         ) {
 
-            if (!$user || !$user->hasRole(['admin', 'editor'])) {
+            if (!$user || !$user->hasRole(['admin', 'operator', 'dev'])) {
                 $redirectRouteParams = config('t2g_common.site.front_page_forbidden_redirect_route');
                 return redirect(route(...$redirectRouteParams))->with('showWarning', true);
             }
