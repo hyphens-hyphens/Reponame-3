@@ -134,7 +134,7 @@
 
                     {{--Additional Fields--}}
                     @php
-                        $exclude = ['title', 'body', 'excerpt', 'slug', 'status', 'category_id', 'author_id', 'featured', 'image', 'meta_description', 'meta_keywords', 'seo_title', 'publish_date'];
+                        $exclude = ['title', 'body', 'excerpt', 'slug', 'status', 'category_id', 'author_id', 'featured', 'image', 'meta_description', 'meta_keywords', 'seo_title', 'publish_date', 'group_name', 'group_title', 'group_order'];
                     @endphp
                     @if(count($dataTypeRows) > count($exclude))
                     <div class="panel">
@@ -157,6 +157,18 @@
 
                 </div>
                 <div class="col-md-4">
+                    <!-- ### IMAGE ### -->
+                    <div class="panel panel-bordered panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="icon wb-image"></i> {{ __('voyager::post.image') }}</h3>
+                            <div class="panel-actions">
+                                <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            {!! app('voyager')->formWidget(app('voyager')->getField($dataTypeRows, 'image'), $dataType, $dataTypeContent, false) !!}
+                        </div>
+                    </div>
                     <!-- ### DETAILS ### -->
                     <div class="panel panel panel-bordered panel-warning">
                         <div class="panel-heading">
@@ -190,20 +202,36 @@
                             {!! app('voyager')->formWidget(app('voyager')->getField($dataTypeRows, 'featured'), $dataType, $dataTypeContent) !!}
                         </div>
                     </div>
-
-                    <!-- ### IMAGE ### -->
-                    <div class="panel panel-bordered panel-primary">
+                    @if(config('t2g_common.features.post_grouping_enabled'))
+                    <div class="panel panel panel-bordered panel-dark">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="icon wb-image"></i> {{ __('voyager::post.image') }}</h3>
+                            <h3 class="panel-title"><i class="icon wb-clipboard"></i> Post Grouping</h3>
                             <div class="panel-actions">
                                 <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
                             </div>
                         </div>
                         <div class="panel-body">
-                            {!! app('voyager')->formWidget(app('voyager')->getField($dataTypeRows, 'image'), $dataType, $dataTypeContent, false) !!}
+                            <div class="form-group">
+                                <label for="group">Group Name</label>
+                                <input type="text" class="form-control" id="group_name" name="group_name"
+                                       placeholder="Group Name"
+                                       value="{{ $dataTypeContent->group_name ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="group_title">Post's Group Title</label>
+                                <input type="text" class="form-control" id="group_title" name="group_title"
+                                       placeholder="Group Title"
+                                       value="{{ $dataTypeContent->group_title ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="group_order">Group Order (Ascendant)</label>
+                                <input type="text" class="form-control" id="group_order" name="group_order"
+                                       placeholder="Group Order"
+                                       value="{{ $dataTypeContent->group_order ?? '' }}">
+                            </div>
                         </div>
                     </div>
-
+                    @endif
                     <!-- ### SEO CONTENT ### -->
                     <div class="panel panel-bordered panel-info">
                         <div class="panel-heading">

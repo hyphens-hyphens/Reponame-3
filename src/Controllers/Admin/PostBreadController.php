@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class PostBreadController extends BaseVoyagerController
 {
     protected $searchable = [
-        'title', 'slug', 'body', 'category_id', 'publish_date', 'created_at'
+        'title', 'slug', 'body', 'category_id', 'publish_date', 'created_at', 'group', 'group_title', 'group_order'
     ];
 
     protected function alterBreadBrowseEloquentQuery(Builder $query, Request $request)

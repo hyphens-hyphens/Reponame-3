@@ -101,4 +101,7 @@ return [
         'start_date' => new DateTime('@' . strtotime('2020-03-26')),
         'levels'     => [],
     ],
+    'features' => [
+        'post_grouping_enabled' => false
+    ],
 ];

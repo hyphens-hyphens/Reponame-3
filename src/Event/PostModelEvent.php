@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
  *
  * @package \App\Event
  */
-class PostCreatingEvent
+class PostModelEvent
 {
     use SerializesModels;
 

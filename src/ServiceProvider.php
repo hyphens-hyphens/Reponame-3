@@ -22,8 +22,9 @@ use T2G\Common\Console\Commands\UpdatePaymentProfitCommand;
 use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
 use T2G\Common\Console\Commands\UpdateUserLastLoginCommand;
 use T2G\Common\Contract\CardPaymentInterface;
-use T2G\Common\Event\PostCreatingEvent;
+use T2G\Common\Event\PostModelEvent;
 use T2G\Common\Listeners\PostCreatingListener;
+use T2G\Common\Listeners\PostSavingListener;
 use T2G\Common\Observers\PaymentObserver;
 use T2G\Common\Observers\UserObserver;
 use T2G\Common\Services\JXApiClient;
@@ -71,7 +72,8 @@ class ServiceProvider extends LaravelServiceProvider
 
         /** @var \Illuminate\Events\Dispatcher $dispatcher */
         $dispatcher = app(\Illuminate\Events\Dispatcher::class);
-        $dispatcher->listen(PostCreatingEvent::class, PostCreatingListener::class);
+        $dispatcher->listen(PostModelEvent::class, PostCreatingListener::class);
+        $dispatcher->listen(PostModelEvent::class, PostSavingListener::class);
     }
 
     /**

@@ -132,6 +132,12 @@ class PostRepository extends AbstractEloquentRepository
         return $query->paginate($limit);
     }
 
+    /**
+     * @param array $slugs
+     * @param int   $limit
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
+     */
     public function getPostsBySlugs(array $slugs, $limit = 10)
     {
         /** @var \Illuminate\Database\Query\Builder|Post $query */
@@ -144,5 +150,31 @@ class PostRepository extends AbstractEloquentRepository
         ;
 
         return $query->get();
+    }
+
+
+    /**
+     * @param      $groupSlug
+     * @param null $currentPostId
+     * @param int  $limit
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
+     */
+    public function getGroupPosts($groupSlug, $currentPostId = null, $limit = 8)
+    {
+        $posts = $this->query()
+            ->published()
+            ->with('category')
+            ->where('group_slug', $groupSlug)
+            ->orderBy('group_order', 'asc')
+            ->limit($limit)
+            ->get()
+        ;
+        if ($currentPostId && $posts->count() == 1 && $posts[0]->id == $currentPostId) {
+            // do not have other posts published
+            return new \Illuminate\Database\Eloquent\Collection();
+        }
+
+        return $posts;
     }
 }

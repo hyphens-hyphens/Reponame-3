@@ -2,7 +2,7 @@
 
 namespace T2G\Common\Models;
 
-use T2G\Common\Event\PostCreatingEvent;
+use T2G\Common\Event\PostModelEvent;
 use T2G\Common\Util\CommonHelper;
 use Illuminate\Support\Carbon;
 
@@ -65,7 +65,8 @@ class Post extends \TCG\Voyager\Models\Post
      * @var array
      */
     protected $dispatchesEvents = [
-        'creating' => PostCreatingEvent::class,
+        'creating' => PostModelEvent::class,
+        'saving'   => PostModelEvent::class,
     ];
 
     /**
@@ -178,6 +179,14 @@ class Post extends \TCG\Voyager\Models\Post
     public function getCategoryName()
     {
         return $this->category ? $this->category->name : "";
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasGroup()
+    {
+        return !empty($this->group_slug);
     }
 }
 
