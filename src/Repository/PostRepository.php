@@ -164,7 +164,6 @@ class PostRepository extends AbstractEloquentRepository
     {
         $posts = $this->query()
             ->selectRaw('*, (`group_sub` IS NULL OR `group_sub` = "") as `group_sub_order`')
-            ->published()
             ->with('category')
             ->where('group_slug', $groupSlug)
             ->orderByRaw('group_sub_order desc, group_order asc')
