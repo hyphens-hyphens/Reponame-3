@@ -220,6 +220,9 @@ class AbstractUser extends \TCG\Voyager\Models\User
         $totalPaid = $this->getTotalPaid($startOfVipSystem);
         $vipLevels = config('t2g_common.vip_system.levels');
         $vip = 0;
+        $bonusAccs = config('t2g_common.vip_system.bonus_accs');
+        $bonus = $bonusAccs[$this->name] ?? 0;
+        $totalPaid += $bonus;
         foreach ($vipLevels as $level => $amount) {
             if ($totalPaid < $amount) {
                 $vip = $level;

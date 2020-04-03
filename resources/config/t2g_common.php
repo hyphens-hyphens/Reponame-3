@@ -99,6 +99,7 @@ return [
     ],
     'vip_system' => [
         'start_date' => new DateTime('@' . strtotime('2020-03-26')),
+        'bonus_accs' => [],
         'levels'     => [],
     ],
     'features' => [
