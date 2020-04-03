@@ -17,7 +17,7 @@ class AlterPostsAddColumnsForGrouping extends Migration
             $table->string('group_name')->nullable();
             $table->string('group_slug')->nullable();
             $table->string('group_title')->nullable();
-            $table->integer('group_order')->default(0);
+            $table->integer('group_order')->nullable()->default(0);
         });
     }
 

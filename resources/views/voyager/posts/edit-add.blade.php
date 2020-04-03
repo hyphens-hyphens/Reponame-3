@@ -134,7 +134,7 @@
 
                     {{--Additional Fields--}}
                     @php
-                        $exclude = ['title', 'body', 'excerpt', 'slug', 'status', 'category_id', 'author_id', 'featured', 'image', 'meta_description', 'meta_keywords', 'seo_title', 'publish_date', 'group_name', 'group_title', 'group_order'];
+                        $exclude = ['title', 'body', 'excerpt', 'slug', 'status', 'category_id', 'author_id', 'featured', 'image', 'meta_description', 'meta_keywords', 'seo_title', 'publish_date', 'group_name', 'group_title', 'group_order', 'group_sub'];
                     @endphp
                     @if(count($dataTypeRows) > count($exclude))
                     <div class="panel">
@@ -225,9 +225,16 @@
                             </div>
                             <div class="form-group">
                                 <label for="group_order">Group Order (Ascendant)</label>
-                                <input type="text" class="form-control" id="group_order" name="group_order"
+                                <input type="number" class="form-control" id="group_order" name="group_order"
                                        placeholder="Group Order"
                                        value="{{ $dataTypeContent->group_order ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="group">Parent Group Post <span class="panel-desc">Parent <code>Post's Group Title</code></span></label>
+
+                                <input type="text" class="form-control" id="group_sub" name="group_sub"
+                                       placeholder="Parent Group Post"
+                                       value="{{ $dataTypeContent->group_sub ?? '' }}">
                             </div>
                         </div>
                     </div>

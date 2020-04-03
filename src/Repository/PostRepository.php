@@ -160,13 +160,14 @@ class PostRepository extends AbstractEloquentRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
      */
-    public function getGroupPosts($groupSlug, $currentPostId = null, $limit = 8)
+    public function getGroupPosts($groupSlug, $currentPostId = null, $limit = 20)
     {
         $posts = $this->query()
+            ->selectRaw('*, (`group_sub` IS NULL OR `group_sub` = "") as `group_sub_order`')
             ->published()
             ->with('category')
             ->where('group_slug', $groupSlug)
-            ->orderBy('group_order', 'asc')
+            ->orderByRaw('group_sub_order desc, group_order asc')
             ->limit($limit)
             ->get()
         ;
@@ -174,7 +175,20 @@ class PostRepository extends AbstractEloquentRepository
             // do not have other posts published
             return new \Illuminate\Database\Eloquent\Collection();
         }
+        $results = [];
+        $index = [];
+        foreach ($posts as $post) {
+            if (!empty($post->group_sub)) {
+                if (!isset($index[$post->group_sub])) {
+                    $index[$post->group_sub] = count($results) - 1;
+                }
+                $results[$index[$post->group_sub]]['sub_title'] = $post->group_sub;
+                $results[$index[$post->group_sub]]['subs'][] = $post;
+            } else {
+                $results[] = ['post' => $post];
+            }
+        }
 
-        return $posts;
+        return $results;
     }
 }
