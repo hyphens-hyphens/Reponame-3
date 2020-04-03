@@ -13,8 +13,17 @@ use Illuminate\Http\Request;
 class PostBreadController extends BaseVoyagerController
 {
     protected $searchable = [
-        'title', 'slug', 'body', 'category_id', 'publish_date', 'created_at', 'group', 'group_title', 'group_order'
+        'title', 'slug', 'body', 'category_id', 'publish_date', 'created_at', 'group_name'
     ];
+
+    /**
+     * @return array
+     */
+    protected function getEditableFields()
+    {
+        // Subclass should return list editable fields to perform quick edit action
+        return ['group_name', 'group_title', 'group_order', 'group_sub'];
+    }
 
     protected function alterBreadBrowseEloquentQuery(Builder $query, Request $request)
     {
