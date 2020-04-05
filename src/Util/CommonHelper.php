@@ -83,7 +83,7 @@ class CommonHelper
     public static function getFilteredHwid($rawHwid)
     {
         $hwidPieces = explode('-', $rawHwid);
-        $newHwidArray = [$hwidPieces[3], $hwidPieces[4], $hwidPieces[6]];
+        $newHwidArray = ['X', $hwidPieces[1], $hwidPieces[2], $hwidPieces[3], $hwidPieces[4], $hwidPieces[5], $hwidPieces[6], 'X'];
 
         return implode('-', $newHwidArray);
     }
