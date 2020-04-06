@@ -1,3 +1,7 @@
+@php
+    $colors = ['red', 'blue', 'green', 'orange', 'teal', 'violet', 'pink', 'brown', 'chocolate', 'darkcyan', 'crimson', 'deeppink', 'lime', 'darkorchid', 'coral'];
+    $hwidColors = [];
+@endphp
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,12 +13,8 @@
 </head>
 <body>
 <p>Server: <b>S{{ $mainAcc['jx_server'] }}</b> , Thời gian: <b>{{ date('d-m-Y H:i:s', $mainAcc['enter_at']) }}</b>.</p>
-<p>Acc chính: <b>{{ $mainAcc['user'] }}</b> level {{ $mainAcc['level'] }}. <b>{{ \T2G\Common\Util\CommonHelper::getFilteredHwid($mainAcc['hwid']) }}</b></p>
+<p>Acc chính: <b>{{ $mainAcc['user'] }}</b> level {{ $mainAcc['level'] }}. <b style="color: {{ $colors[0] }};">{{ \T2G\Common\Util\CommonHelper::getFilteredHwid($mainAcc['hwid']) }}</b></p>
 <p>Map: <b>{{ $mainAcc['map_name'] }} ({{ $mainAcc['map_id'] }}) -> {{ $mainAcc['move_map_name'] }} ({{ $mainAcc['move_map_id'] }})</b>.</p>
-@php
-$colors = ['red', 'blue', 'green', 'orange', 'teal', 'violet', 'pink', 'brown', 'chocolate', 'darkcyan', 'crimson'];
-$hwidColors = [];
-@endphp
 <p>HWIDs:</p>
 <ul>
 @foreach ($hwidArray as $index => $hwid)

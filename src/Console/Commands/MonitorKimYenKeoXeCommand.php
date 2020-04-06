@@ -208,7 +208,7 @@ TEMPLATE;
         );
         $this->discord->sendWithEmbed(
             "Cảnh báo Kéo xe Kim Yến",
-            $message,
+            str_limit($message, 2040),
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         $htmlFilename = "kimyen_{$token}.html";

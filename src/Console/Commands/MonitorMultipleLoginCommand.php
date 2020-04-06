@@ -94,11 +94,12 @@ TEMPLATE;
                     continue;
                 }
                 $listUsers .= sprintf(
-                    "- `%s (%s)`, lv %s, %s\n",
+                    "- `%s (%s)`, lv %s, %s, %s\n",
                     $user['user'],
                     $user['char'],
                     $user['level'],
-                    $user['map']
+                    $user['map'],
+                    $user['hwid']
                 );
                 $existed[] = $user['user'];
             }
@@ -106,7 +107,7 @@ TEMPLATE;
         $message = sprintf($template, $server, $file, $hwid, $listUsers);
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
-            $message,
+            str_limit($message, 2040),
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);

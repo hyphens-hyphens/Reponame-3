@@ -41,17 +41,4 @@ abstract class AbstractJXCommand extends Command
         $lastRunSetting->value = $lastRunTimestamp;
         $lastRunSetting->save();
     }
-
-    /**
-     * @param $rawHwid
-     *
-     * @return string
-     */
-    protected function getFilteredHwid($rawHwid)
-    {
-        $hwidPieces = explode('-', $rawHwid);
-        $newHwidArray = ['X', $hwidPieces[1], $hwidPieces[2], $hwidPieces[3], $hwidPieces[4], $hwidPieces[5], $hwidPieces[6], 'X'];
-
-        return implode('-', $newHwidArray);
-    }
 }
