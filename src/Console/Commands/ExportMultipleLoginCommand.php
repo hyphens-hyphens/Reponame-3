@@ -51,7 +51,7 @@ class ExportMultipleLoginCommand extends AbstractJXCommand
     {
         $multipleLoginDetectionService = app(MultipleLoginDetectionService::class);
         $days = $this->input->getArgument('days');
-        for($i = 0; $i < $days; $i++) {
+        for($i = $days; $i > 0; $i--) {
             $from = new \DateTime(date('Y-m-d 00:00:00', strtotime("-{$i} days")));
             $date = $from->format('Y-m-d');
             $file = storage_path("app/console_export/{$date}.txt");
@@ -59,6 +59,8 @@ class ExportMultipleLoginCommand extends AbstractJXCommand
             $results = $multipleLoginDetectionService->getMultipleLoginLogs($from, $interval, AbstractKibanaService::MAX_RESULTS_WINDOW);
 
             $this->doExport($file, $results);
+            // free memory
+            unset($results);
         }
     }
 
@@ -123,7 +125,9 @@ TEMPLATE;
                 $messages[] = $this->formatReportMessage($server, $logFile, $hwid, $userArray);
             }
         }
-        file_put_contents($file, implode("\n", $messages));
-        $this->output->text("Exported {$file}");
+        if (count($messages)) {
+            file_put_contents($file, implode("\n", $messages));
+            $this->output->text("Exported {$file}");
+        }
     }
 }
