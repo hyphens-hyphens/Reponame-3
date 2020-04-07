@@ -3,6 +3,7 @@
 namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
+use T2G\Common\Services\Kibana\AbstractKibanaService;
 use T2G\Common\Services\Kibana\MultipleLoginDetectionService;
 use T2G\Common\Util\CommonHelper;
 
@@ -14,7 +15,7 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
      *
      * @var string
      */
-    protected $signature = 't2g_common:monitor:multiple_login {interval=15}';
+    protected $signature = 't2g_common:monitor:multiple_login {minutes=15} {--interval=0}';
 
     /**
      * @var \T2G\Common\Services\DiscordWebHookClient
@@ -48,9 +49,11 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
     public function handle()
     {
         $multipleLoginDetectionService = app(MultipleLoginDetectionService::class);
-        $interval = $this->input->getArgument('interval');
-        $from = new \DateTime("-{$interval} minutes");
-        $results = $multipleLoginDetectionService->getMultipleLoginLogs($from);
+        $minutes = $this->input->getArgument('minutes');
+        $from = new \DateTime("-{$minutes} minutes");
+        $interval = intval($this->input->getOption('interval'));
+        $interval = $interval > 0 ? \DateInterval::createFromDateString("{$interval} minutes") : null;
+        $results = $multipleLoginDetectionService->getMultipleLoginLogs($from, $interval, AbstractKibanaService::MAX_RESULTS_WINDOW);
         $report = [];
         foreach ($results->getHits() as $hit) {
             $row = $hit['_source'];

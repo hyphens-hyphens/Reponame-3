@@ -12,7 +12,7 @@ use T2G\Common\Models\ElasticSearch\SearchResult;
  */
 abstract class AbstractKibanaService
 {
-
+    const MAX_RESULTS_WINDOW = 500000;
     /**
      * @var \Elasticsearch\Client
      */
