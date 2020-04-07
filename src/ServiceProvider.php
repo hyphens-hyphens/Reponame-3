@@ -6,6 +6,7 @@ use Illuminate\Log\LogManager;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use T2G\Common\Action\AcceptPaymentAction;
 use T2G\Common\Action\RejectPaymentAction;
+use T2G\Common\Console\Commands\ExportMultipleLoginCommand;
 use T2G\Common\Console\Commands\ImportUserLastLoginCommand;
 use T2G\Common\Console\Commands\MoMoTransactionNotifierCommand;
 use T2G\Common\Console\Commands\MonitorJXGMGoldCommand;
@@ -184,6 +185,7 @@ class ServiceProvider extends LaravelServiceProvider
                 MonitorJXGMGoldCommand::class,
                 MonitorMultipleLoginCommand::class,
                 MonitorKimYenKeoXeCommand::class,
+                ExportMultipleLoginCommand::class
             ]);
         }
     }
