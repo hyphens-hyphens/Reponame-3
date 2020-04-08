@@ -127,11 +127,12 @@ class AccountService extends AbstractKibanaService
      * @param array $usernames
      * @param int   $sizeHwids
      * @param null  $days
+     * @param null  $server
      *
      * @return array
      * @throws \Exception
      */
-    public function getHwidLogsByUsernames(array $usernames, $sizeHwids = 1, $days = null)
+    public function getHwidLogsByUsernames(array $usernames, $sizeHwids = 1, $days = null, $server = null)
     {
         $query = $this->getHwidByUsernamesAggregation($usernames, $sizeHwids);
         if ($days) {
@@ -144,6 +145,14 @@ class AccountService extends AbstractKibanaService
                 ]
             ];
         }
+        if ($server) {
+            $query['aggs']['filter_data']['filter']['bool']['filter'][] = [
+                'term' => [
+                    'jx_server' => $server
+                ]
+            ];
+        }
+
         $params = [
             'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
             'body'  => $query,

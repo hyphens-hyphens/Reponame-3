@@ -1,7 +1,3 @@
-@php
-    $colors = ['red', 'blue', 'green', 'orange', 'teal', 'violet', 'pink', 'brown', 'chocolate', 'darkcyan', 'crimson', 'deeppink', 'lime', 'darkorchid', 'coral'];
-    $hwidColors = [];
-@endphp
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,40 +6,43 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Log Kim Yến Kéo Xe</title>
+    @include('t2g_common::console.styles')
 </head>
 <body>
 <p>Server: <b>S{{ $mainAcc['jx_server'] }}</b> , Thời gian: <b>{{ date('d-m-Y H:i:s', $mainAcc['enter_at']) }}</b>.</p>
-<p>Acc chính: <b>{{ $mainAcc['user'] }}</b> level {{ $mainAcc['level'] }}. <b style="color: {{ $colors[0] }};">{{ \T2G\Common\Util\CommonHelper::getFilteredHwid($mainAcc['hwid']) }}</b></p>
 <p>Map: <b>{{ $mainAcc['map_name'] }} ({{ $mainAcc['map_id'] }}) -> {{ $mainAcc['move_map_name'] }} ({{ $mainAcc['move_map_id'] }})</b>.</p>
-<p>HWIDs:</p>
-<ul>
-@foreach ($hwidArray as $index => $hwid)
-    @php
-        $hwidColors[$hwid] = $colors[$index];
-    @endphp
-    <li><span style="color: {{ $colors[$index] }}">{{ $hwid }}</span></li>
-@endforeach
-</ul>
 <p>Dàn acc:</p>
-<ul>
 @php
-    $sortingAccs = [];
-    foreach ($secondaryAccs as $index => $acc) {
+    $sortingAccs = $usernames = [];
+    foreach ($listAccs as $index => $acc) {
         $hwid = \T2G\Common\Util\CommonHelper::getFilteredHwid($acc['hwid']);
         $sortingAccs[$hwid . $index] = $acc;
     }
     ksort($sortingAccs);
 @endphp
-@foreach ($sortingAccs as $acc)
-    @php
-    $hwid = \T2G\Common\Util\CommonHelper::getFilteredHwid($acc['hwid']);
-    @endphp
-    <li>
-        <b>{{ $acc['user'] }} ({{ $acc['char'] }})</b>,
-        <span style="color:{{ $hwidColors[$hwid] }}">{{ $hwid }}</span>,
-        <b>{{ $acc['weight'] }} lần</b>
-    </li>
-@endforeach
-</ul>
+<table>
+    <thead>
+        <tr>
+            <th>HWID</th>
+            <th>Số lần</th>
+            <th>Username</th>
+            <th>Char</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach ($sortingAccs as $acc)
+        @php
+            $usernames[] = $acc['user'];
+        @endphp
+        <tr>
+            <td class="hwid">{!! \T2G\Common\Util\CommonHelper::displayHwid($acc['hwid']) !!}</td>
+            <td>{{ $acc['weight'] > 0 ? $acc['weight'] : "Acc Chính" }}</td>
+            <td>{{ $acc['user'] }}</td>
+            <td>{{ $acc['char'] }}, LV {{ $acc['level'] }}</td>
+        </tr>
+    @endforeach
+    </tbody>
+</table>
+<p><a href="{{ route('voyager.console_log_viewer.hwid', ['d' => 1, 'u' => implode(',', $usernames), 's' => $mainAcc['jx_server']]) }}" target="_blank">Xem thêm</a></p>
 </body>
 </html>

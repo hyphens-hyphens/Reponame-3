@@ -83,8 +83,17 @@ class CommonHelper
     public static function getFilteredHwid($rawHwid)
     {
         $hwidPieces = explode('-', $rawHwid);
+        if (count($hwidPieces) < 8) {
+            dump($rawHwid);
+            return str_repeat('X-', 7) . "X";
+        }
         $newHwidArray = ['X', 'X', 'X', $hwidPieces[3], 'X', 'X', $hwidPieces[6], 'X'];
 
         return implode('-', $newHwidArray);
+    }
+
+    public static function displayHwid($hwid)
+    {
+        return '<span>' . str_replace('-','</span><span class="hwid-divider">-</span><span>', $hwid) . '</span>';
     }
 }

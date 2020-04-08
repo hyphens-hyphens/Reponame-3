@@ -3,6 +3,7 @@
 namespace T2G\Common\Controllers\Admin;
 
 use T2G\Common\Controllers\Controller;
+use T2G\Common\Services\Kibana\AbstractKibanaService;
 use T2G\Common\Services\Kibana\AccountService;
 
 /**
@@ -26,9 +27,10 @@ class ConsoleLogViewerController extends Controller
     public function viewLogHWID(AccountService $accountService)
     {
         $users = request('u');
+        $server = request('s');
         $days = intval(request('d', 10));
         $users = explode(',', $users);
-        $results = $accountService->getHwidLogsByUsernames($users, 100, $days);
+        $results = $accountService->getHwidLogsByUsernames($users, AbstractKibanaService::MAX_RESULTS_WINDOW_INNER, $days, $server);
 
         return view('t2g_common::console.hwid', ['results' => $results]);
     }

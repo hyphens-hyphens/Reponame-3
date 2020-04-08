@@ -162,32 +162,25 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
     {
         $token = md5($mainAcc['user'] . time());
         $template = <<<'TEMPLATE'
-        Server: S%s , Thời gian: `%s`
-        Acc chính: `%s (%s)` level %s. Map: `%s (%s)` -> `%s (%s)`
-        Link: %s
-        HWIDs:
-        - %s
-        Dàn acc:
-        %s
+Server: S%s , Thời gian: `%s`
+Map: `%s (%s)` -> `%s (%s)`
+Link: %s
+Dàn acc:
+%s
 TEMPLATE;
+        $mainAcc['weight'] = 0;
         $listUsers = [];
-        $hwidArray = [CommonHelper::getFilteredHwid($mainAcc['hwid'])];
+        array_unshift($secondaryAccs, $mainAcc);
         foreach ($secondaryAccs as $k => $acc) {
             $filteredHwid = CommonHelper::getFilteredHwid($acc['hwid']);
-            if (!in_array($filteredHwid, $hwidArray)) {
-                $hwidArray[] = $filteredHwid;
-            }
-            $index = array_search($filteredHwid, $hwidArray);
-            $wrapper = $this->getMarkdownWrapper($index);
-            $hwid = $wrapper . $filteredHwid . strrev($wrapper);
-            $key = $filteredHwid . $k;
+            $key = $filteredHwid . ($k + 1);
             $listUsers[$key] = sprintf(
-                "- `%s (%s)`, %s, `%s lần`\n",
+                "-`%s (%s)`, %s, LV %s, `%s`\n",
                 $acc['user'],
                 $acc['char'],
-//                $acc['level'],
-                $hwid,
-                $acc['weight']
+                $acc['hwid'],
+                $acc['level'],
+                $acc['weight'] > 0 ? "{$acc['weight']} lần" : "acc chính"
             );
         }
         ksort($listUsers);
@@ -195,15 +188,11 @@ TEMPLATE;
             $template,
             $mainAcc['jx_server'],
             date('d-m-Y H:i:s', $mainAcc['enter_at']),
-            $mainAcc['user'],
-            $mainAcc['char'],
-            $mainAcc['level'],
             $mainAcc['map_name'],
             $mainAcc['map_id'],
             $mainAcc['move_map_name'],
             $mainAcc['move_map_id'],
             route('voyager.console_log_viewer.kimyen', ['t' => $token]),
-            implode("\n- ", $hwidArray),
             implode('', array_values($listUsers))
         );
         $this->discord->sendWithEmbed(
@@ -212,37 +201,21 @@ TEMPLATE;
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         $htmlFilename = "kimyen_{$token}.html";
-        $this->saveHtml($htmlFilename, $mainAcc, $secondaryAccs, $hwidArray);
-        sleep(1);
-    }
-
-    /**
-     * @param $index
-     *
-     * @return mixed
-     */
-    private function getMarkdownWrapper($index)
-    {
-        $styleWrapper = [
-            '*', '**', '***', '__', '__*', '__**', '__***'
-        ];
-
-        return $index < count($styleWrapper) ? $styleWrapper[$index] : '*';
+        $this->saveHtml($htmlFilename, $mainAcc, $secondaryAccs);
+        sleep(2);
     }
 
     /**
      * @param       $filename
      * @param array $mainAcc
-     * @param array $secondaryAccs
-     * @param       $hwidArray
+     * @param array $listAccs
      */
-    private function saveHtml($filename, array $mainAcc, array $secondaryAccs, $hwidArray)
+    private function saveHtml($filename, array $mainAcc, array $listAccs)
     {
         $file = storage_path('app/console_log/' . $filename);
         file_put_contents($file, view('t2g_common::console/kimyen_keoxe', [
             'mainAcc'       => $mainAcc,
-            'secondaryAccs' => $secondaryAccs,
-            'hwidArray'     => $hwidArray,
+            'listAccs' => $listAccs,
         ]));
     }
 
