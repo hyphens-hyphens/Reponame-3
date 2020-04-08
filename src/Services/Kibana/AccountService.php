@@ -155,10 +155,11 @@ class AccountService extends AbstractKibanaService
         foreach ($aggs['user']['buckets'] as $row) {
             foreach ($row['top']['hits']['hits'] as $hit) {
                 $data[$row['key']][] = [
-                    'time' => new \DateTime($hit['_source']['@timestamp']),
+                    'time' => new \DateTime($hit['_source']['@timestamp'], new \DateTimeZone('UTC')),
                     'hwid' => $hit['_source']['hwid'],
                     'char' => $hit['_source']['char'],
                     'level' => $hit['_source']['level'],
+                    'server' => $hit['_source']['jx_server'],
                 ];
             }
         }

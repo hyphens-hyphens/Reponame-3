@@ -115,7 +115,10 @@
             display: flex;
             align-content: stretch;
         }
-
+        .input-group label {
+            text-align: right;
+            width: 40%;
+        }
         .input-group > input {
             flex: 1 0 auto;
             padding: 8px;
@@ -132,13 +135,21 @@
             border: 1px solid #ccc;
             padding: 0.5em 1em;
         }
+        label {
+            font-size: 16px;
+            margin-top: 10px;
+            padding-right: 10px;
+        }
     </style>
 </head>
 <body>
     <form action="" method="GET">
-        <label for="u">Nhập username để xem log đăng nhập, phân cách bởi dấu <b>,</b> </label>
-        <br/>
         <div class="input-group">
+            <label for="d">Số ngày truy</label>
+            <input type="text" name="d" id="d" value="{{ request('d', 10) }}">
+        </div>
+        <div class="input-group">
+            <label for="u">Nhập username để xem log đăng nhập, phân cách bởi dấu <b>,</b></label>
             <input type="text" name="u" id="u" value="{{ request('u') }}" placeholder="VD: admin01,admin02">
             <button type="submit">Search</button>
         </div>
@@ -150,22 +161,23 @@
                 <th>Username</th>
                 <th>HWID</th>
                 <th>Time</th>
+                <th>Server</th>
                 <th>Char</th>
+                <th>Level</th>
             </tr>
         </thead>
         <tbody>
         @foreach($results as $username => $hwids)
             <tr>
                 <td rowspan="{{ count($hwids) + 1 }}"><h3>{{ $username }}</h3></td>
-                <td></td>
-                <td></td>
-                <td></td>
             </tr>
             @foreach($hwids as $row)
             <tr>
                 <td>{{ $row['hwid'] }}</td>
-                <td>{{ $row['time']->format('d-m-Y H:i:s') }}</td>
-                <td>{{ $row['char'] }} (LV {{ $row['level'] }})</td>
+                <td>{{ $row['time']->setTimezone(new \DateTimeZone(config('app.timezone')))->format('d-m-Y H:i:s') }}</td>
+                <td>S{{ $row['server'] }}</td>
+                <td>{{ $row['char'] }}</td>
+                <td>{{ $row['level'] }}</td>
             </tr>
             @endforeach
         @endforeach

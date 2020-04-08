@@ -190,4 +190,25 @@ class PostRepository extends AbstractEloquentRepository
 
         return $results;
     }
+
+    /**
+     * @param      $groupSlug
+     * @param int  $limit
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
+     */
+    public function getGroupPostsWithoutSubs($groupSlug, $limit = 20)
+    {
+        $posts = $this->query()
+            ->published()
+            ->with('category')
+            ->where('group_slug', 'LIKE', $groupSlug)
+            ->whereRaw('`group_sub` IS NULL OR `group_sub` = ""')
+            ->orderBy('group_order', 'asc')
+            ->limit($limit)
+            ->get()
+        ;
+
+        return $posts;
+    }
 }

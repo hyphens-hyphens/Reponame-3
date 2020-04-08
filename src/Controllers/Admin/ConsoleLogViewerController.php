@@ -26,8 +26,9 @@ class ConsoleLogViewerController extends Controller
     public function viewLogHWID(AccountService $accountService)
     {
         $users = request('u');
+        $days = intval(request('d', 10));
         $users = explode(',', $users);
-        $results = $accountService->getHwidLogsByUsernames($users, 100, 10);
+        $results = $accountService->getHwidLogsByUsernames($users, 100, $days);
 
         return view('t2g_common::console.hwid', ['results' => $results]);
     }
