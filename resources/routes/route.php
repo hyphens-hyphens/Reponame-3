@@ -56,6 +56,11 @@ Route::group(['middleware' => 'web'], function () {
                     'uses' => 'Admin\ConsoleLogViewerController@viewLogKimYen',
                     'as' => 'kimyen',
                 ]);
+
+                Route::get('/hwid', [
+                    'uses' => 'Admin\ConsoleLogViewerController@viewLogHWID',
+                    'as' => 'hwid',
+                ]);
             });
         });
 

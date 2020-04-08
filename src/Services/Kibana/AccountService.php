@@ -100,13 +100,81 @@ class AccountService extends AbstractKibanaService
      *       "usernameX" => "93C39-E0310-D1AA5-41A7D-54976-F8E25-6306D-B0107"
      *       ...
      *   ]
+     *
      * @param array $usernames
      *
      * @return array
      */
     public function getHwidByUsernames(array $usernames)
     {
-        $query = [
+        $query = $this->getHwidByUsernamesAggregation($usernames, 1);
+        $params = [
+            'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
+            'body'  => $query,
+        ];
+        $data = $this->es->search($params);
+        $searchResult = new SearchResult($data);
+        $aggs = $searchResult->getAggs('filter_data');
+        $data = [];
+        foreach ($aggs['user']['buckets'] as $row) {
+            $data[$row['key']] = $row['top']['hits']['hits'][0]['_source']['hwid'];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $usernames
+     * @param int   $sizeHwids
+     * @param null  $days
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getHwidLogsByUsernames(array $usernames, $sizeHwids = 1, $days = null)
+    {
+        $query = $this->getHwidByUsernamesAggregation($usernames, $sizeHwids);
+        if ($days) {
+            $date = new \DateTime("-{$days} days", new \DateTimeZone(config('app.timezone')));
+            $query['aggs']['filter_data']['filter']['bool']['filter'][] = [
+                'range' => [
+                    '@timestamp' => [
+                        'gte' => $date->format('c')
+                    ]
+                ]
+            ];
+        }
+        $params = [
+            'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
+            'body'  => $query,
+        ];
+        $data = $this->es->search($params);
+        $searchResult = new SearchResult($data);
+        $aggs = $searchResult->getAggs('filter_data');
+        $data = [];
+        foreach ($aggs['user']['buckets'] as $row) {
+            foreach ($row['top']['hits']['hits'] as $hit) {
+                $data[$row['key']][] = [
+                    'time' => new \DateTime($hit['_source']['@timestamp']),
+                    'hwid' => $hit['_source']['hwid'],
+                    'char' => $hit['_source']['char'],
+                    'level' => $hit['_source']['level'],
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $usernames
+     * @param int   $size
+     *
+     * @return array
+     */
+    private function getHwidByUsernamesAggregation(array $usernames, int $size = 1)
+    {
+        return $query = [
             "size" => 0,
             "aggs" => [
                 "filter_data" => [
@@ -133,9 +201,9 @@ class AccountService extends AbstractKibanaService
                                             "@timestamp" => ["order" => "desc"]
                                         ],
                                         "_source" => [
-                                            "includes" => ['user', 'hwid', '@timestamp', 'jx_server', 'level'],
+                                            "includes" => ['user', 'hwid', '@timestamp', 'jx_server', 'level', 'char'],
                                         ],
-                                        "size" => 1
+                                        "size" => $size
                                     ],
                                 ]
                             ]
@@ -144,18 +212,5 @@ class AccountService extends AbstractKibanaService
                 ],
             ],
         ];
-        $params = [
-            'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
-            'body'  => $query,
-        ];
-        $data = $this->es->search($params);
-        $searchResult = new SearchResult($data);
-        $aggs = $searchResult->getAggs('filter_data');
-        $data = [];
-        foreach ($aggs['user']['buckets'] as $row) {
-            $data[$row['key']] = $row['top']['hits']['hits'][0]['_source']['hwid'];
-        }
-
-        return $data;
     }
 }

@@ -3,6 +3,7 @@
 namespace T2G\Common\Controllers\Admin;
 
 use T2G\Common\Controllers\Controller;
+use T2G\Common\Services\Kibana\AccountService;
 
 /**
  * Class ConsoleViewerController
@@ -20,5 +21,14 @@ class ConsoleLogViewerController extends Controller
         $dataFile = storage_path('app/console_log/kimyen_' . $timestamp . '.html');
 
         return response(file_get_contents($dataFile));
+    }
+
+    public function viewLogHWID(AccountService $accountService)
+    {
+        $users = request('u');
+        $users = explode(',', $users);
+        $results = $accountService->getHwidLogsByUsernames($users, 100, 10);
+
+        return view('t2g_common::console.hwid', ['results' => $results]);
     }
 }
