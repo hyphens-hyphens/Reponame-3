@@ -27,7 +27,7 @@ class UserObserver
     public function __construct()
     {
         $this->userRepository = app(UserRepository::class);
-        $this->gameApiClient = app(JXApiClient::class);
+        $this->gameApiClient = app(config('t2g_common.game_api.api_client_classname', JXApiClient::class));
     }
 
     private function _setPasswordForGame(AbstractUser $user)

@@ -26,12 +26,13 @@ return [
         'payment_model_class' => 'T2G\Common\Models\Payment',
     ],
     'game_api' => [
-        'base_url'         => env('GAME_API_BASE_URL'),
-        'api_key'          => env('GAME_API_KEY'),
-        'timeout'          => 10, // seconds
-        'legacy'           => true,
-        'is_mocked'        => env('GAME_API_MOCK', true),
-        'maintenance_time' => [
+        'api_client_classname' => \T2G\Common\Services\JXApiClient::class,
+        'base_url'             => env('GAME_API_BASE_URL'),
+        'api_key'              => env('GAME_API_KEY'),
+        'timeout'              => 10, // seconds
+        'legacy'               => true,
+        'is_mocked'            => env('GAME_API_MOCK', true),
+        'maintenance_time'     => [
             'start' => 1620, // in int format, see CCUController::getCCUPeakChartData
             'end'   => 1710,
         ],

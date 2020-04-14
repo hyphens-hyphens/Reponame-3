@@ -96,7 +96,7 @@ class ServiceProvider extends LaravelServiceProvider
                 config('t2g_common.payment.recard.merchant_id'),
                 config('t2g_common.payment.recard.secret_key')
             );
-            $service->setLogger($this->getLogger());
+            $service->setLogger($this->getCardPaymentLogger());
 
             return $service;
         });
@@ -106,7 +106,7 @@ class ServiceProvider extends LaravelServiceProvider
                 config('t2g_common.payment.napthenhanh.partner_id'),
                 config('t2g_common.payment.napthenhanh.partner_key')
             );
-            $service->setLogger($this->getLogger());
+            $service->setLogger($this->getCardPaymentLogger());
 
             return $service;
         });
@@ -130,7 +130,7 @@ class ServiceProvider extends LaravelServiceProvider
     /**
      * @return \Illuminate\Log\LogManager
      */
-    private function getLogger()
+    private function getCardPaymentLogger()
     {
         /** @var LogManager $logger */
         $logger = app(LogManager::class);

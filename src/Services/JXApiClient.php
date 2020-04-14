@@ -62,7 +62,7 @@ class JXApiClient
     {
         return [
             'http_errors' => false,
-            'timeout'     => 2,
+            'timeout'     => config('t2g_common.game_api.timeout', 10),
         ];
     }
 
