@@ -89,6 +89,9 @@ class BaseFrontController extends Controller
      */
     protected function setMetaDescription($description)
     {
+        if (strlen($description) < 50) {
+            return $this;
+        }
         view()->share('meta_description', str_limit($description, 255) ?? config('t2g_common.site.seo.meta_description'));
 
         return $this;
