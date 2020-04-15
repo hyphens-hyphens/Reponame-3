@@ -7,12 +7,8 @@
             <span class="voyager-activity"></span> CCU
         </h3>
         <div class="panel-body">
-            <div data-toggle="tooltip" title="CCU hiện tại, tự cập nhật mỗi 3s">
-                @foreach($ccus as $server => $ccu)
-                    <div class="h5 col-xs-12 col-sm-6" style="margin-top: 0;">
-                        {{ \Illuminate\Support\Str::words($server, 2, '') }}: <span class="h6 ccu-count label label-success" data-server="{{ $server }}">{{ number_format($ccu) }}</span>
-                    </div>
-                @endforeach
+            <div id="ccu-list" data-toggle="tooltip" title="CCU hiện tại, tự cập nhật mỗi 3s">
+
             </div>
             <div id="ccuChart" style="width: 100%; height: 200px;"></div>
         </div>
@@ -88,19 +84,24 @@
             $.ajax({
                 url: '{{ route('voyager.ccus.tick') }}',
                 success: function (result) {
-                    for (var property in result) {
-                        let $ccuCount = $('.ccu-count[data-server="' + property + '"]');
-                        $ccuCount.text(parseInt(result[property]).toLocaleString())
-                            .removeClass('label-danger')
-                            .addClass('label-success')
-                            .addClass('blinking-text')
-                        ;
-                        setTimeout(function () {
-                            $ccuCount.removeClass('blinking-text');
-                        }, 900);
+                    let html = '';
+                    for (let property in result) {
+                        let ccuCount = (parseInt(result[property])).toLocaleString();
+                        html += `
+                         <div class="h5 col-xs-12 col-sm-6" style="margin-top: 0;">
+                            ${property}:
+                            <span class="h6 ccu-count label label-success blinking-text" data-server="${property}">
+                                ${ccuCount}
+                            </span>
+                        </div>
+                        `;
                         clearTimeout(ccuUpdateTimeout);
                         ccuUpdateTimeout = setTimeout(refresh, {{ config('t2g_common.game_api.ccu_tick_interval', 3000) }});
                     }
+                    $('#ccu-list').html(html);
+                    setTimeout(function () {
+                        $('.ccu-count').removeClass('blinking-text');
+                    }, 900);
                 },
                 dataType: 'JSON',
                 error: function () {

@@ -44,9 +44,7 @@ class CCUWidget extends AbstractWidget
      */
     protected function getData()
     {
-        $data = [
-            'ccus'  => $this->api->getCCUs(),
-        ];
+        $data = [];
         $chartData = $this->repository->getCCUChartForWidget();
         // https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json
         // prepare data for line time series chart

@@ -37,6 +37,8 @@
                     </div>
                 </form>
                 <div class="col-xs-12" id="dashboardReport">
+                    <div><b style="font-size: 16px">NRU: <span class="h5 label label-info">{{ $nru }}</span></b></div>
+                    <hr>
                     <div>
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs nav-" role="tablist">

@@ -147,6 +147,7 @@ class UserBreadController extends BaseVoyagerController
      */
     protected function getUsersReportData($fromDate, $toDate)
     {
+        $nru = 0;
         $userRepository = app(UserRepository::class);
         list($reportData, $campaigns) = $userRepository->getUserRegisteredReport($fromDate, $toDate);
         // prepare chart data
@@ -160,6 +161,7 @@ class UserBreadController extends BaseVoyagerController
             $direct = 0;
             $mkt = 0;
             foreach ($reportDatum['details'] as $cid => $total) {
+                $nru += $total;
                 if ($cid == 'not-set|not-set|not-set') {
                     $direct += $total;
                 } else {
@@ -180,7 +182,8 @@ class UserBreadController extends BaseVoyagerController
             'chart'                      => [
                 'xAxisData' => $dateArray,
                 'yAxisData' => $yAxisData
-            ]
+            ],
+            'nru' => $nru
         ];
 
         return $data;
