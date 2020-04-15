@@ -32,6 +32,7 @@ return [
         'timeout'              => 10, // seconds
         'legacy'               => true,
         'is_mocked'            => env('GAME_API_MOCK', true),
+        'ccu_tick_interval'    => 3000, // miliseconds
         'maintenance_time'     => [
             'start' => 1620, // in int format, see CCUController::getCCUPeakChartData
             'end'   => 1710,

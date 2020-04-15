@@ -99,7 +99,7 @@
                             $ccuCount.removeClass('blinking-text');
                         }, 900);
                         clearTimeout(ccuUpdateTimeout);
-                        ccuUpdateTimeout = setTimeout(refresh, 3000);
+                        ccuUpdateTimeout = setTimeout(refresh, {{ config('t2g_common.game_api.ccu_tick_interval', 3000) }});
                     }
                 },
                 dataType: 'JSON',
