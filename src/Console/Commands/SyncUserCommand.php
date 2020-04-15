@@ -3,7 +3,6 @@
 namespace T2G\Common\Console\Commands;
 
 use Illuminate\Console\Command;
-use T2G\Common\Services\JXApiClient;
 
 class SyncUserCommand extends Command
 {
@@ -47,7 +46,7 @@ class SyncUserCommand extends Command
         }
         $users = $query->get();
 
-        $jx = app(JXApiClient::class);
+        $jx = getGameApiClient();
         /** @var \T2G\Common\Models\AbstractUser $user */
         foreach ($users as $user) {
             $set = $jx->setPassword($user->name, $user->getRawPassword());

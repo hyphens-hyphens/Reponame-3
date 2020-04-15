@@ -37,7 +37,7 @@ class MockedJXApiClient
             'options' => $options,
         ]);
         $response = "1: Success";
-        if ($uri == JXApiClient::ENDPOINT_CCU) {
+        if (strpos($uri, 'ccu') !== false) {
             $response = json_encode(['N/A' => 0]);
         }
 

@@ -12,7 +12,7 @@ use T2G\Common\Exceptions\GameApiException;
 /**
  * Class JXApiClient
  */
-class JXApiClient
+class JXApiClient implements GameApiClientInterface
 {
     const ENDPOINT_CREATE_USER            = '/api/register.php';
     const ENDPOINT_SET_PASSWORD           = '/api/changepass1.php';

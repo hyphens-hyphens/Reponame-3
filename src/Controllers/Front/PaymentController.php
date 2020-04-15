@@ -7,7 +7,6 @@ use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Models\Payment;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\JXApiClient;
 use T2G\Common\Services\NapTheNhanhPayment;
 use T2G\Common\Services\RecardPayment;
 use T2G\Common\Services\SmsNotifierParser;
@@ -116,8 +115,9 @@ class PaymentController extends BaseFrontController
         return false;
     }
 
-    public function cardPaymentCallback(PaymentRepository $paymentRepository, JXApiClient $gameApiClient, Request $request)
+    public function cardPaymentCallback(PaymentRepository $paymentRepository, Request $request)
     {
+        $gameApiClient = getGameApiClient();
         $this->getCardPaymentService();
         $cardPayment = $this->getCardPaymentServiceForCallback($request);
         $cardPayment->logCallbackRequest($request);

@@ -1,4 +1,7 @@
 <?php
+
+use T2G\Common\Services\JXApiClient;
+
 if (!function_exists('t2g_model')) {
     /**
      * @param string $name model name
@@ -21,3 +24,14 @@ if (!function_exists('voyager')) {
         return app('voyager');
     }
 }
+
+if (!function_exists('getGameApiClient')) {
+    /**
+     *
+     * @return \T2G\Common\Services\GameApiClientInterface
+     */
+    function getGameApiClient() {
+        return app(config('t2g_common.game_api.api_client_classname', JXApiClient::class));
+    }
+}
+

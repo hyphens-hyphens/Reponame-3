@@ -4,7 +4,6 @@ namespace T2G\Common\Controllers\Admin;
 
 use T2G\Common\Controllers\Controller;
 use T2G\Common\Repository\CCURepository;
-use T2G\Common\Services\JXApiClient;
 
 /**
  * Class CCUController
@@ -13,12 +12,12 @@ use T2G\Common\Services\JXApiClient;
  */
 class CCUController extends Controller
 {
-    public function report(JXApiClient $JXApiClient)
+    public function report()
     {
         $fromDate = request('fromDate', date('Y-m-d 00:00:00', strtotime("-1 week")));
         $toDate = request('toDate', date('Y-m-d 23:59:59'));
         $data = [
-            'ccus'     => $JXApiClient->getCCUs(),
+            'ccus'     => getGameApiClient()->getCCUs(),
             'fromDate' => $fromDate,
             'toDate'   => $toDate,
             'timeSeriesChart'    => $this->getCCUTimeSeriesChartData($fromDate, $toDate),
@@ -29,13 +28,11 @@ class CCUController extends Controller
     }
 
     /**
-     * @param \T2G\Common\Services\JXApiClient $JXApiClient
-     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function tick(JXApiClient $JXApiClient)
+    public function tick()
     {
-        $ccus = $JXApiClient->getCCUs();
+        $ccus = getGameApiClient()->getCCUs();
 
         return response()->json($ccus);
     }

@@ -3,7 +3,6 @@
 namespace T2G\Common\Widget;
 
 use T2G\Common\Repository\CCURepository;
-use T2G\Common\Services\JXApiClient;
 
 /**
  * Class PaymentWidget
@@ -18,14 +17,14 @@ class CCUWidget extends AbstractWidget
     protected $repository;
 
     /**
-     * @var \T2G\Common\Services\JXApiClient
+     * @var \T2G\Common\Services\GameApiClientInterface
      */
-    protected $jxApi;
+    protected $api;
 
-    public function __construct(CCURepository $CCURepository, JXApiClient $jxApi)
+    public function __construct(CCURepository $CCURepository)
     {
         $this->repository = $CCURepository;
-        $this->jxApi = $jxApi;
+        $this->api = getGameApiClient();
     }
 
     /**
@@ -40,11 +39,13 @@ class CCUWidget extends AbstractWidget
 
     /**
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \T2G\Common\Exceptions\GameApiException
      */
     protected function getData()
     {
         $data = [
-            'ccus'  => $this->jxApi->getCCUs(),
+            'ccus'  => $this->api->getCCUs(),
         ];
         $chartData = $this->repository->getCCUChartForWidget();
         // https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json

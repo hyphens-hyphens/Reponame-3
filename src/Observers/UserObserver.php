@@ -4,7 +4,6 @@ namespace T2G\Common\Observers;
 
 use T2G\Common\Models\AbstractUser;
 use T2G\Common\Repository\UserRepository;
-use T2G\Common\Services\JXApiClient;
 
 class UserObserver
 {
@@ -20,14 +19,14 @@ class UserObserver
     protected $userRepository;
 
     /**
-     * @var JXApiClient
+     * @var \T2G\Common\Services\GameApiClientInterface
      */
     protected $gameApiClient;
 
     public function __construct()
     {
         $this->userRepository = app(UserRepository::class);
-        $this->gameApiClient = app(config('t2g_common.game_api.api_client_classname', JXApiClient::class));
+        $this->gameApiClient = getGameApiClient();
     }
 
     private function _setPasswordForGame(AbstractUser $user)

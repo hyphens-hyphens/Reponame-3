@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use T2G\Common\Observers\UserObserver;
 use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\JXApiClient;
 use T2G\Common\Services\Kibana\AccountService;
 use T2G\Common\Services\Kibana\MultiplePCDetectionService;
 
@@ -119,7 +118,7 @@ TEMPLATE;
     private function banUser($username)
     {
         $bannedPassword = 'keoxe_PM_bikhoa';
-        $api = app(JXApiClient::class);
+        $api = getGameApiClient();
         $userRepository = app(UserRepository::class);
         /** @var \T2G\Common\Models\AbstractUser $user */
         $user = $userRepository->findUserByUsername($username);

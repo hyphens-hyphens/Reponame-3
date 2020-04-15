@@ -10,7 +10,6 @@ use T2G\Common\Models\Payment;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\DiscordWebHookClient;
-use T2G\Common\Services\JXApiClient;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use TCG\Voyager\Events\BreadDataAdded;
@@ -75,7 +74,6 @@ class PaymentBreadController extends BaseVoyagerController
 
     /**
      * @param \T2G\Common\Models\Payment               $payment
-     * @param \T2G\Common\Services\JXApiClient         $JXApiClient
      * @param \T2G\Common\Repository\PaymentRepository $paymentRepository
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -83,8 +81,9 @@ class PaymentBreadController extends BaseVoyagerController
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \T2G\Common\Exceptions\GameApiException
      */
-    public function accept(Payment $payment, JXApiClient $JXApiClient, PaymentRepository $paymentRepository)
+    public function accept(Payment $payment, PaymentRepository $paymentRepository)
     {
+        $JXApiClient = getGameApiClient();
         $this->authorize('edit', $payment);
         if (!Payment::isAcceptable($payment)) {
             $error = "Record đã ghi nhận thành công, hành động không được phép.";
@@ -413,8 +412,7 @@ class PaymentBreadController extends BaseVoyagerController
             $paymentRepository->setDone($payment, true, false);
             return $payment;
         }
-        /** @var JXApiClient $jxApi */
-        $jxApi = app(JXApiClient::class);
+        $jxApi = getGameApiClient();
         if ($addGoldStatus = $jxApi->addGold($user->name, $knb, $soxu, $payment->id)) {
             $paymentRepository->updateRecordAddedGold($payment, $addGoldStatus);
             $this->sendPaymentNotification($payment);

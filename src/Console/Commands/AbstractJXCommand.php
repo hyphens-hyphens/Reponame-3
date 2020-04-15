@@ -5,7 +5,6 @@ namespace T2G\Common\Console\Commands;
 use Illuminate\Console\Command;
 use T2G\Common\Observers\UserObserver;
 use T2G\Common\Repository\UserRepository;
-use T2G\Common\Services\JXApiClient;
 use TCG\Voyager\Models\Setting;
 
 /**
@@ -17,7 +16,7 @@ abstract class AbstractJXCommand extends Command
 {
     protected function banUser($username, $bannedPassword = 'keoxe_PM_bikhoa')
     {
-        $api = app(JXApiClient::class);
+        $api = getGameApiClient();
         $userRepository = app(UserRepository::class);
         /** @var \T2G\Common\Models\AbstractUser $user */
         $user = $userRepository->findUserByUsername($username);

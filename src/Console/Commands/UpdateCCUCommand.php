@@ -4,7 +4,6 @@ namespace T2G\Common\Console\Commands;
 
 use Illuminate\Console\Command;
 use T2G\Common\Models\CCU;
-use T2G\Common\Services\JXApiClient;
 
 class UpdateCCUCommand extends Command
 {
@@ -27,8 +26,7 @@ class UpdateCCUCommand extends Command
      */
     public function handle()
     {
-        /** @var JXApiClient $api */
-        $api = app(JXApiClient::class);
+        $api = getGameApiClient();
         $ccus = $api->getCCUs();
         $this->output->text("Updating CCU of game servers");
         foreach ($ccus as $server => $ccu) {
