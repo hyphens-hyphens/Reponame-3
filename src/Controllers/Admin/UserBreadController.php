@@ -78,7 +78,7 @@ class UserBreadController extends BaseVoyagerController
 
     protected function alterBreadBrowseEloquentQuery(\Illuminate\Database\Eloquent\Builder $query, Request $request)
     {
-        $query->with(['payments', 'roles']);
+        $query->with(['payments', 'roles', 'role']);
     }
 
     /**

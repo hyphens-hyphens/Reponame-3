@@ -3,8 +3,7 @@
 namespace T2G\Common\Models;
 
 use Illuminate\Notifications\Notifiable;
-use T2G\Common\Repository\PaymentRepository;
-use T2G\Common\Util\CommonHelper;
+use T2G\Common\Services\VipSystemService;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -213,28 +212,11 @@ class AbstractUser extends \TCG\Voyager\Models\User
     }
 
     /**
-     * @return int|mixed|string
+     * @return int
      */
     public function getVipLevel()
     {
-        if (!is_null($this->vipLevel)) {
-            return $this->vipLevel;
-        }
-        $totalPaid = $this->getTotalVipPaid();
-        $vipLevels = config('t2g_common.vip_system.levels');
-        $vip = 0;
-        $bonusAccs = config('t2g_common.vip_system.bonus_accs');
-        $bonus = $bonusAccs[CommonHelper::cleanPhoneValue($this->phone)] ?? 0;
-        $totalPaid += $bonus;
-        foreach ($vipLevels as $level => $amount) {
-            if ($totalPaid < $amount) {
-                $vip = $level;
-                break;
-            }
-        }
-        $this->vipLevel = $vip;
-
-        return $this->vipLevel;
+        return VipSystemService::getVipLevel($this);
     }
 
     /**
@@ -242,13 +224,6 @@ class AbstractUser extends \TCG\Voyager\Models\User
      */
     public function getTotalVipPaid()
     {
-        if (!is_null($this->vipTotalPaid)) {
-            return $this->vipTotalPaid;
-        }
-        $paymentRepository = app(PaymentRepository::class);
-
-        $this->vipTotalPaid = $paymentRepository->getTotalPaidForVipSystem($this);
-
-        return $this->vipTotalPaid;
+        return VipSystemService::getTotalVipPaidOfUser($this);
     }
 }
