@@ -3,6 +3,8 @@
 namespace T2G\Common\Models;
 
 use Illuminate\Notifications\Notifiable;
+use T2G\Common\Repository\PaymentRepository;
+use T2G\Common\Util\CommonHelper;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -62,7 +64,9 @@ class AbstractUser extends \TCG\Voyager\Models\User
 {
     use Notifiable, RevisionableTrait, AdvanceRevisionable;
 
-    protected static $vipLevel;
+    protected $vipLevel;
+    protected $vipTotalPaid;
+
     /** @var bool  */
     protected $systemUpdating = false;
 
@@ -213,15 +217,14 @@ class AbstractUser extends \TCG\Voyager\Models\User
      */
     public function getVipLevel()
     {
-        if (!is_null(self::$vipLevel)) {
-            return self::$vipLevel;
+        if (!is_null($this->vipLevel)) {
+            return $this->vipLevel;
         }
-        $startOfVipSystem = config('t2g_common.vip_system.start_date', null);
-        $totalPaid = $this->getTotalPaid($startOfVipSystem);
+        $totalPaid = $this->getTotalVipPaid();
         $vipLevels = config('t2g_common.vip_system.levels');
         $vip = 0;
         $bonusAccs = config('t2g_common.vip_system.bonus_accs');
-        $bonus = $bonusAccs[$this->name] ?? 0;
+        $bonus = $bonusAccs[CommonHelper::cleanPhoneValue($this->phone)] ?? 0;
         $totalPaid += $bonus;
         foreach ($vipLevels as $level => $amount) {
             if ($totalPaid < $amount) {
@@ -229,8 +232,23 @@ class AbstractUser extends \TCG\Voyager\Models\User
                 break;
             }
         }
-        self::$vipLevel = $vip;
+        $this->vipLevel = $vip;
 
-        return self::$vipLevel;
+        return $this->vipLevel;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalVipPaid()
+    {
+        if (!is_null($this->vipTotalPaid)) {
+            return $this->vipTotalPaid;
+        }
+        $paymentRepository = app(PaymentRepository::class);
+
+        $this->vipTotalPaid = $paymentRepository->getTotalPaidForVipSystem($this);
+
+        return $this->vipTotalPaid;
     }
 }

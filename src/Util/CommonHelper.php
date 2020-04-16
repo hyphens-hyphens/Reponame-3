@@ -96,4 +96,14 @@ class CommonHelper
     {
         return '<span>' . str_replace('-','</span><span class="hwid-divider">-</span><span>', $hwid) . '</span>';
     }
+
+    /**
+     * @param string|null $phone
+     *
+     * @return string
+     */
+    public static function cleanPhoneValue(?string $phone)
+    {
+        return trim(str_replace([' ', '-', '.'], ['', '', ''], $phone));
+    }
 }

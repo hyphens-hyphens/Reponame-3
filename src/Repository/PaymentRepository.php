@@ -375,4 +375,20 @@ class PaymentRepository extends AbstractEloquentRepository
         return $query->count();
     }
 
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     *
+     * @return mixed
+     */
+    public function getTotalPaidForVipSystem(AbstractUser $user)
+    {
+        $query = $this->query();
+        $query->whereRaw("
+            `user_id` IN (SELECT id FROM {$user->getTable()} WHERE `phone` = ?)
+            AND `status_code` = ?
+        ", [$user->phone, 1]);
+
+        return $query->sum('amount');
+    }
+
 }
