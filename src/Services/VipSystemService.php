@@ -48,7 +48,7 @@ class VipSystemService
         }
         $totalPaid = self::getTotalVipPaidOfUser($user);
         $vipLevels = config('t2g_common.vip_system.levels');
-        $vip = 0;
+        $vip = last(array_keys($vipLevels)) + 1;
         foreach ($vipLevels as $level => $amount) {
             if ($totalPaid < $amount) {
                 $vip = $level;
