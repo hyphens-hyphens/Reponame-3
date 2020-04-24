@@ -47,7 +47,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
                 });
             }
             if ($field == 'code') {
-                $query->where("`{$giftCodeItemTable}`.`code`", $keyword);
+                $query->where("{$giftCodeItemTable}.code", $keyword);
             }
         }
 
