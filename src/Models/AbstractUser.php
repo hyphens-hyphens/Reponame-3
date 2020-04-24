@@ -32,9 +32,9 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @property string|null                                                                                                    $note
  * @property mixed                                                                                                          $locale
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read \TCG\Voyager\Models\Role|null                                                                             $role
- * @property-read \Illuminate\Database\Eloquent\Collection|\TCG\Voyager\Models\Role[]                                       $roles
- * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Payment[]                                     $payments
+ * @property-read \TCG\Voyager\Models\Role|null                                          $role
+ * @property-read \Illuminate\Database\Eloquent\Collection|\TCG\Voyager\Models\Role[]    $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Payment[]  $payments
  * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Revision[] $advancedRevisionHistory
  * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereAvatar($value)

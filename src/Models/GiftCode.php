@@ -3,18 +3,21 @@
 namespace T2G\Common\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * T2G\Common\Models\GiftCode
  *
- * @property int $id
- * @property string $code
- * @property int|null $is_used
- * @property string|null $expired_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $user_id
+ * @property int                                       $id
+ * @property string                                    $code
+ * @property int|null                                  $is_used
+ * @property string|null                               $expired_date
+ * @property \Illuminate\Support\Carbon|null           $created_at
+ * @property \Illuminate\Support\Carbon|null           $updated_at
+ * @property int|null                                  $user_id
  * @property-read \T2G\Common\Models\AbstractUser|null $user
+ * @property mixed                                     prefix
+ * @property mixed                                     type
  * @method static Builder|GiftCode active()
  * @method static Builder|GiftCode notExpires()
  * @method static Builder|GiftCode notOwned()
@@ -31,34 +34,21 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class GiftCode extends BaseEloquentModel
 {
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user()
-    {
-        $userModelClass = config('t2g_common.models.user_model_class');
+    use Notifiable;
 
-        return $this->belongsTo($userModelClass);
-    }
+    const TYPE_PER_ACCOUNT   = 'per-account';
+    const TYPE_PER_SERVER    = 'per-server';
+    const TYPE_PER_CHARACTER = 'per-character';
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return mixed
-     */
-    public function scopeUnused(Builder $query)
-    {
-        return $query->where('is_used', false);
-    }
+    /** @var array  */
+    protected $fillable = ['prefix', 'type', 'expired_at'];
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function scopeNotOwned(Builder $query)
+    public function details()
     {
-        return $query->where('user_id', NULL);
+        return $this->hasMany(GiftCodeItem::class, 'gift_code_id');
     }
 
     /**
@@ -71,5 +61,14 @@ class GiftCode extends BaseEloquentModel
         $now = time();
 
         return $query->whereRaw("(expired_date < {$now} OR expired_date is NULL)");
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getNumberOfUsedCodes()
+    {
+        return $this->details()->whereNotNull('user_id')->count();
     }
 }

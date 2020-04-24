@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Front;
+namespace T2G\Common\Controllers\Front;
 
-use T2G\Common\Controllers\Front\BaseFrontController;
 use T2G\Common\Repository\GiftCodeRepository;
 
 /**

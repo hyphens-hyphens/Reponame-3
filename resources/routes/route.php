@@ -69,6 +69,15 @@ Route::group(['middleware' => 'web'], function () {
         Route::group(['as' => 'voyager.', 'middleware' => 'admin.user', 'namespace' => 'T2G\Common\Controllers'], function () {
             Route::get('/', ['uses' => 'Admin\DashboardController@index', 'as' => 'dashboard']);
         });
+
+        Route::group(['as' => 'voyager.', 'middleware' => 'admin.user', 'namespace' => 'T2G\Common\Controllers'], function () {
+            Route::group(['as' => 'gift_code.', 'prefix' => '/gift-code'], function () {
+                Route::post('/use', [
+                    'uses' => 'Admin\GiftCodeBreadController@useCode',
+                    'as' => 'use',
+                ]);
+            });
+        });
     });
 
     Route::group(['prefix' => 'autocomplete', 'as' => 'autocomplete.', 'namespace' => 'T2G\Common\Controllers'], function () {

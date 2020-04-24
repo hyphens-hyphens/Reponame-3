@@ -24,10 +24,12 @@ use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
 use T2G\Common\Console\Commands\UpdateUserLastLoginCommand;
 use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Event\PostModelEvent;
+use T2G\Common\FormFields\GiftCodeTypeFormField;
 use T2G\Common\Listeners\PostCreatingListener;
 use T2G\Common\Listeners\PostSavingListener;
 use T2G\Common\Observers\PaymentObserver;
 use T2G\Common\Observers\UserObserver;
+use T2G\Common\Services\GameApiClientInterface;
 use T2G\Common\Services\JXApiClient;
 use T2G\Common\Services\NapTheNhanhPayment;
 use T2G\Common\Services\RecardPayment;
@@ -70,6 +72,7 @@ class ServiceProvider extends LaravelServiceProvider
         // Add Voyager actions for Payment
         voyager()->addAction(AcceptPaymentAction::class);
         voyager()->addAction(RejectPaymentAction::class);
+        voyager()->addFormField(GiftCodeTypeFormField::class);
 
         /** @var \Illuminate\Events\Dispatcher $dispatcher */
         $dispatcher = app(\Illuminate\Events\Dispatcher::class);
@@ -148,6 +151,16 @@ class ServiceProvider extends LaravelServiceProvider
             $apiKey = config('t2g_common.game_api.api_key');
 
             return new JXApiClient($baseUrls, $apiKey);
+        });
+
+        $this->app->singleton(GameApiClientInterface::class, function ($app) {
+            // support multiple Game API base URLs
+            $class = config('t2g_common.game_api.api_client_classname', JXApiClient::class);
+            $baseUrl = config('t2g_common.game_api.base_url');
+            $baseUrls = explode(',', $baseUrl);
+            $apiKey = config('t2g_common.game_api.api_key');
+
+            return new $class($baseUrls, $apiKey);
         });
     }
 

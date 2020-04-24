@@ -39,6 +39,14 @@ interface GameApiClientInterface
     public function addGold($username, $knb = 0, $xu = 0, $orderId = null);
 
     /**
+     * @param $username
+     * @param $codeId
+     *
+     * @return bool
+     */
+    public function addGiftCode($username, $codeId);
+
+    /**
      * @return array
      */
     public function getCCUs();

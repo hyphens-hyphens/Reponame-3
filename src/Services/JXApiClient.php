@@ -362,4 +362,8 @@ class JXApiClient implements GameApiClientInterface
 
         return json_decode($body, 1);
     }
+
+    public function addGiftCode($username, $codeId) {
+        // not implemented yet
+    }
 }

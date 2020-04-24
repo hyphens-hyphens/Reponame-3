@@ -6,10 +6,10 @@ return [
     ],
     'site'     => [
         'domains' => [], // example.com, example.net...
-        'seo'     => [
+        'seo' => [
             'title'            => '',
             'meta_description' => '',
-            'meta_keyword'    => '',
+            'meta_keyword'     => '',
             'meta_image'       => '',
         ],
         // Open Graph configs
