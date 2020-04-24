@@ -39,7 +39,10 @@ class Slider extends BaseEloquentModel
     public function displayLink()
     {
         $domains = config('t2g_common.site.domains');
-        $siteDomain = $_SERVER['HTTP_HOST'];
+        $siteDomain = $_SERVER['HTTP_HOST'] ?? null;
+        if (empty($siteDomain)) {
+            return $this->link;
+        }
         $urlParsed = parse_url($this->link);
         if (!empty($urlParsed['host']) && in_array($urlParsed['host'], $domains) && $urlParsed['host'] != $siteDomain) {
             return str_replace($urlParsed['host'], $siteDomain, $this->link);
