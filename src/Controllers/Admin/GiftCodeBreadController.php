@@ -50,7 +50,7 @@ class GiftCodeBreadController extends BaseVoyagerController
     {
         voyager()->onLoadingView('voyager::gift-codes.edit-add', function ($view, &$params) use ($id, $request) {
             $giftCode = GiftCode::find($id);
-            $params['codes'] = app(GiftCodeItemRepository::class)->getCodesDetails($giftCode, $request);
+            $params['codes'] = app(GiftCodeItemRepository::class)->getCodeItems($giftCode, $request);
         });
 
         return parent::edit($request, $id);

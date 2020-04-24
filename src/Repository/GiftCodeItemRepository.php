@@ -31,13 +31,14 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getCodesDetails(GiftCode $giftCode, Request $request, $perPage = 50)
+    public function getCodeItems(GiftCode $giftCode, Request $request, $perPage = 50)
     {
         $keyword = $request->get('s');
         $field = $request->get('key');
+        $giftCodeItemTable = $this->model->getTable();
         $query = $giftCode->details()
-            ->selectRaw("(gift_code_details.user_id is not null) as is_used, gift_code_details.*")
-            ->orderByRaw('is_used ASC, updated_at DESC')
+            ->selectRaw("(`{$giftCodeItemTable}`.`user_id` is not null) as `is_used`, `{$giftCodeItemTable}`.*")
+            ->orderByRaw('`is_used` ASC, `updated_at` DESC')
         ;
         if ($keyword && $field) {
             if ($field == 'user') {
@@ -46,7 +47,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
                 });
             }
             if ($field == 'code') {
-                $query->where('gift_code_details.code', $keyword);
+                $query->where("`{$giftCodeItemTable}`.`code`", $keyword);
             }
         }
 
