@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use T2G\Common\Exceptions\GameApiException;
+use T2G\Common\Models\GiftCode;
 
 /**
  * Class JXApiClient
@@ -363,7 +364,8 @@ class JXApiClient implements GameApiClientInterface
         return json_decode($body, 1);
     }
 
-    public function addGiftCode($username, $codeId) {
+    public function addGiftCode($username, GiftCode $giftCode)
+    {
         // not implemented yet
     }
 }

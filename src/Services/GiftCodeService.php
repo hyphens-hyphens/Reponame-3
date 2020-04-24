@@ -110,7 +110,7 @@ class GiftCodeService
         }
 
         // add gift code
-        if (!$this->gameApi->addGiftCode($user->name, $giftCodeItem->id)) {
+        if (!$this->gameApi->addGiftCode($user->name, $giftCode)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_API_ERROR, $giftCodeItem);
         }
         $this->giftCodeItemRepo->updateUsedCode($giftCodeItem, $user);

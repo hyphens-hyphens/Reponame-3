@@ -2,6 +2,8 @@
 
 namespace T2G\Common\Services;
 
+use T2G\Common\Models\GiftCode;
+
 interface GameApiClientInterface
 {
     /**
@@ -40,11 +42,11 @@ interface GameApiClientInterface
 
     /**
      * @param $username
-     * @param $codeId
+     * @param $giftCode
      *
      * @return bool
      */
-    public function addGiftCode($username, $codeId);
+    public function addGiftCode($username, GiftCode $giftCode);
 
     /**
      * @return array
