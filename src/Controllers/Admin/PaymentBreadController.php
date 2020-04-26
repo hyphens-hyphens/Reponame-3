@@ -336,7 +336,7 @@ class PaymentBreadController extends BaseVoyagerController
     /**
      * @param \T2G\Common\Models\Payment $payment
      */
-    private function sendPaymentNotification(Payment $payment)
+    protected function sendPaymentNotification(Payment $payment)
     {
         $paymentTypes = Payment::getPaymentTypes();
         $now = date('Y-m-d H:i:s');
@@ -364,7 +364,7 @@ class PaymentBreadController extends BaseVoyagerController
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function returnToListWithError(string $error, $id = null)
+    protected function returnToListWithError(string $error, $id = null)
     {
         $message = $id ? "[#{$id}] {$error}" : "$error";
 
@@ -384,7 +384,7 @@ class PaymentBreadController extends BaseVoyagerController
      * @throws \T2G\Common\Exceptions\GameApiException
      * @throws \T2G\Common\Exceptions\PaymentApiException
      */
-    private function addNewPayment(Request $request)
+    protected function addNewPayment(Request $request)
     {
         /** @var PaymentRepository $paymentRepository */
         $paymentRepository = app(PaymentRepository::class);
@@ -425,14 +425,14 @@ class PaymentBreadController extends BaseVoyagerController
         return $payment;
     }
 
-    private function preventPaymentDuplicated(Payment $payment)
+    protected function preventPaymentDuplicated(Payment $payment)
     {
         $key = "ADD_GOLD_LOCKED_{$payment->user_id}_{$payment->amount}";
         $message = sprintf("User %s vừa được add %s Xu bởi %s vào lúc %s. Vui lòng thử lại sau 5 phút", $payment->username, $payment->gamecoin, $payment->creator->name, $payment->created_at->format('H:i'));
         app('cache.store')->set($key, $message, 5);
     }
 
-    private function isPaymentAdded($userId, $amount)
+    protected function isPaymentAdded($userId, $amount)
     {
         $key = "ADD_GOLD_LOCKED_{$userId}_{$amount}";
 
@@ -483,7 +483,7 @@ class PaymentBreadController extends BaseVoyagerController
     /**
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    private function getCurrentUser()
+    protected function getCurrentUser()
     {
         return \Auth::user();
     }

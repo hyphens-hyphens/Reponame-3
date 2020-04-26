@@ -20,11 +20,13 @@ class DashboardController extends Controller
 
     /**
      * DashboardController constructor.
+     *
+     * @param \T2G\Common\Repository\UserRepository $userRepository
      */
-    public function __construct()
+    public function __construct(UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
         parent::__construct();
-        $this->userRepository = app(UserRepository::class);
     }
 
     /**
@@ -64,7 +66,7 @@ class DashboardController extends Controller
     /**
      * @return \Illuminate\View\View
      */
-    private function getCCUWidget()
+    protected function getCCUWidget()
     {
         $widget = app(CCUWidget::class);
 

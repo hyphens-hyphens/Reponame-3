@@ -180,6 +180,7 @@ class PaymentController extends BaseFrontController
         if (!$message) {
             exit();
         }
+        \Log::info("SMS Received.", [$message, $createdAt]);
         $stkDongA = config('t2g_common.payment.banking_account_dong_a');
         $stkVCB = config('t2g_common.payment.banking_account_vietcombank');
         if ($stkDongA && strpos($message, "TK {$stkDongA}") !== false) {
