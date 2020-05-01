@@ -47,7 +47,7 @@ class SmsNotifierParser
             return null;
         }
 
-        $beginOfAmount = $checkReceivedMoney + count($stkVCB) + 5;
+        $beginOfAmount = $checkReceivedMoney + strlen($stkVCB) + 5;
         $endOfAmount = strpos(substr($message, $beginOfAmount), 'VND');
         $amount = trim(substr($message, $beginOfAmount, $endOfAmount));
         $note = trim(substr($message, strpos($message, '. Ref') + 6));
