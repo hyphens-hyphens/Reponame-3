@@ -21,6 +21,7 @@ class JXApiClient implements GameApiClientInterface
     const ENDPOINT_ADD_GOLD               = '/api/donate.php';
     const ENDPOINT_CCU                    = '/api/ccu.php';
     const ENDPOINT_USER_LAST_LOGIN        = '/api/user_last_login.php';
+    const ENDPOINT_ADD_CODE               = '/api/add_code.php';
 
     static $responseStack = [];
     /**
@@ -364,8 +365,30 @@ class JXApiClient implements GameApiClientInterface
         return json_decode($body, 1);
     }
 
+    /**
+     * @param                             $username
+     * @param \T2G\Common\Models\GiftCode $giftCode
+     *
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \T2G\Common\Exceptions\GameApiException
+     */
     public function addGiftCode($username, GiftCode $giftCode)
     {
-        // not implemented yet
+        $sign = md5($this->apiKey . $giftCode->code_name . $username);
+        $response = $this->post(self::ENDPOINT_ADD_CODE, [
+            'form_params' => ['code' => $giftCode->code_name, 'username' => $username, 'sign' => $sign]
+        ]);
+        $body = $this->getResponseText($response);
+        $data = json_decode($body, true);
+        if ($response->getStatusCode() != Response::HTTP_OK || empty($data['success'])) {
+            $this->logger->critical(
+                "Cannot add code `{$giftCode->code_name}` for user `{$username}`. ",
+                ['response' => $this->getLastResponse()]
+            );
+            return false;
+        }
+
+        return true;
     }
 }

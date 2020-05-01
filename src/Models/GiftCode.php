@@ -16,8 +16,9 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null           $updated_at
  * @property int|null                                  $user_id
  * @property-read \T2G\Common\Models\AbstractUser|null $user
- * @property mixed                                     prefix
- * @property mixed                                     type
+ * @property string                                     prefix
+ * @property string                                     type
+ * @property string                                     code_name
  * @method static Builder|GiftCode active()
  * @method static Builder|GiftCode notExpires()
  * @method static Builder|GiftCode notOwned()

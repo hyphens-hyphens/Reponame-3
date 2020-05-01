@@ -98,7 +98,7 @@ class GiftCodeBreadController extends BaseVoyagerController
     {
         /** @var \T2G\Common\Models\GiftCode $giftCode */
         $giftCode = $data;
-        $giftCode->fill(array_only($request->all(), ['prefix', 'type', 'expired_at']));
+        $giftCode->fill(array_only($request->all(), ['prefix', 'type', 'expired_at', 'code_name']));
         $giftCode->save();
         if ($giftCode->type == GiftCode::TYPE_PER_ACCOUNT && $request->get('quantity')) {
             app(GiftCodeService::class)->generateCode($giftCode, $request->get('quantity'));

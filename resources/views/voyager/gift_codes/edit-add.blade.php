@@ -36,6 +36,12 @@
                                     @endif
                                 >
                             </div>
+                            @if(\Auth::user()->hasRole('admin'))
+                            <div class="form-group col-md-12">
+                                <label for="code_name">Code Name</label>
+                                <input required="" type="text" class="form-control" name="code_name" placeholder="Code Name" value="{{ $dataTypeContent->code_name ?? '' }}">
+                            </div>
+                            @endif
                             @foreach($dataTypeRows as $row)
                                 @if($row->field == 'type')
                                 <div class="form-group @if($row->type == 'hidden') hidden @endif col-md-{{ isset($display_options->width) ? $display_options->width : 12 }}" @if(isset($display_options->id)){{ "id=$display_options->id" }}@endif>

@@ -86,7 +86,7 @@
                 success: function (result) {
                     let html = '';
                     for (let property in result) {
-                        let ccuCount = (parseInt(result[property])).toLocaleString();
+                        let ccuCount = result[property];
                         html += `
                          <div class="h5 col-xs-12 col-sm-6" style="margin-top: 0;">
                             ${property}:
