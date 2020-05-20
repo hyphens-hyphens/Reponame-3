@@ -4,6 +4,7 @@ namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\KimYenKeoXeDetectionService;
+use T2G\Common\Services\Kibana\LogLanQueryService;
 use T2G\Common\Util\CommonHelper;
 
 class MonitorKimYenKeoXeCommand extends AbstractJXCommand
@@ -209,13 +210,18 @@ TEMPLATE;
      * @param       $filename
      * @param array $mainAcc
      * @param array $listAccs
+     *
+     * @throws \Exception
      */
     private function saveHtml($filename, array $mainAcc, array $listAccs)
     {
+        $usernames = array_column($listAccs, 'user');
+        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $mainAcc['jx_server'], new \DateTime($mainAcc['enter_at']));
         $file = storage_path('app/console_log/' . $filename);
         file_put_contents($file, view('t2g_common::console/kimyen_keoxe', [
-            'mainAcc'       => $mainAcc,
+            'mainAcc'  => $mainAcc,
             'listAccs' => $listAccs,
+            'ips'      => $listIp,
         ]));
     }
 

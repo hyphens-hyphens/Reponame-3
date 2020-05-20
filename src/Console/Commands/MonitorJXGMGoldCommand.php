@@ -52,6 +52,9 @@ class MonitorJXGMGoldCommand extends AbstractJXCommand
         $results = $kibana->getGMGoldWithdrawingLogs($startDate);
         $data = $results->getHits();
         foreach ($data as $log) {
+            if (in_array('_grokparsefailure', $log['_source']['tags'])) {
+                continue;
+            }
             $message = sprintf(
                 "GM `%s` server S%s (`%s`) rút `%s` Xu vào lúc %s",
                 $log['_source']['user'],

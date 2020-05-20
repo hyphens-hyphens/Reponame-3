@@ -135,13 +135,16 @@
     .clear {
         clear: both;
     }
-    tr td.hwid span {
+    tr td .hwid span {
         display: block;
         float: left;
         width: 60px;
     }
-    tr td.hwid span.hwid-divider {
+    tr td .hwid span.hwid-divider {
         width: 4px;
         padding-right: 15px;
+    }
+    .text-center {
+        text-align: center;
     }
 </style>

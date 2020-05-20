@@ -4,6 +4,7 @@ namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\AbstractKibanaService;
+use T2G\Common\Services\Kibana\LogLanQueryService;
 use T2G\Common\Services\Kibana\MultipleLoginDetectionService;
 use T2G\Common\Util\CommonHelper;
 
@@ -62,7 +63,8 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
             }
 
             $filteredHwid = CommonHelper::getFilteredHwid($row['hwid']);
-            $report[$row['jx_server'] . "|" . $row['log']['file']['path']][$filteredHwid][$row['user']][] = $row;
+            $key = $row['jx_server'] . "|" . $row['log']['file']['path'];
+            $report[$key][$filteredHwid][] = $row;
         }
         foreach ($report as $serverAndLogFile => $hwidArray) {
             $serverAndLogFileSplitted = explode('|', $serverAndLogFile);
@@ -72,47 +74,71 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
                 if (count($userArray) <= self::MAX_ACCOUNT_PER_PC ) {
                     continue;
                 }
-                $this->alertReport($server, $logFile, $hwid, $userArray);
+                $url = $this->saveHtml($userArray, $server);
+                $this->alertReport($server, $logFile, $hwid, $userArray, $url);
             }
         }
 
     }
 
-    private function alertReport($server, $logFile, $hwid, array $userArray)
+    private function alertReport($server, $logFile, $hwid, array $userArray, $url)
     {
         $file = explode('/', $logFile);
         $file = last($file);
         $template = <<<'TEMPLATE'
         Server: S%s
         File: `%s`
+        Link: %s
         HWID: `%s`
         Dàn acc:
         %s
 TEMPLATE;
         $listUsers = '';
-        foreach ($userArray as $username => $charArray) {
+        foreach ($userArray as $user) {
             $existed = [];
-            foreach ($charArray as $user) {
-                if (in_array($user['user'], $existed)) {
-                    continue;
-                }
-                $listUsers .= sprintf(
-                    "- `%s (%s)`, lv %s, %s, %s\n",
-                    $user['user'],
-                    $user['char'],
-                    $user['level'],
-                    $user['map'],
-                    $user['hwid']
-                );
-                $existed[] = $user['user'];
+            if (in_array($user['user'], $existed)) {
+                continue;
             }
+            $listUsers .= sprintf(
+                "- `%s`, `%s (%s)`, lv %s, %s\n",
+                $user['hwid'],
+                $user['user'],
+                $user['char'],
+                $user['level'],
+                $user['map']
+            );
+            $existed[] = $user['user'];
         }
-        $message = sprintf($template, $server, $file, $hwid, $listUsers);
+        $message = sprintf($template, $server, $file, $url, $hwid, $listUsers);
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
             str_limit($message, 2040),
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);
+    }
+
+    /**
+     * @param array $listAcc
+     * @param       $server
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function saveHtml(array $listAcc, $server)
+    {
+        $usernames = array_column($listAcc, 'user');
+        $firstAcc = array_first($listAcc);
+        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $server, new \DateTime($firstAcc['@timestamp']));
+        $now = time();
+        $filename = "multi_login_{$now}.html";
+        $file = storage_path('app/console_log/' . $filename);
+        file_put_contents($file, view('t2g_common::console/multi_login', [
+            'server' => $firstAcc['jx_server'],
+            'accs'   => $listAcc,
+            'ips'    => $listIp,
+        ]));
+
+        return route('voyager.console_log_viewer.multi_login', ['t' => $now]);
     }
 }

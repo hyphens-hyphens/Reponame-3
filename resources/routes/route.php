@@ -61,6 +61,11 @@ Route::group(['middleware' => 'web'], function () {
                     'uses' => 'Admin\ConsoleLogViewerController@viewLogHWID',
                     'as' => 'hwid',
                 ]);
+
+                Route::get('/multi_login', [
+                    'uses' => 'Admin\ConsoleLogViewerController@viewLogMultiLogin',
+                    'as' => 'multi_login',
+                ]);
             });
         });
 

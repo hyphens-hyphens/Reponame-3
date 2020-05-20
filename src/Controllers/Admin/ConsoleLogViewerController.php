@@ -32,6 +32,17 @@ class ConsoleLogViewerController extends Controller
         $users = explode(',', $users);
         $results = $accountService->getHwidLogsByUsernames($users, AbstractKibanaService::MAX_RESULTS_WINDOW_INNER, $days, $server);
 
-        return view('t2g_common::console.hwid', ['results' => $results]);
+        return view('t2g_common::console.log_hwid', ['results' => $results]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function viewLogMultiLogin()
+    {
+        $timestamp = request('t');
+        $dataFile = storage_path('app/console_log/multi_login_' . $timestamp . '.html');
+
+        return response(file_get_contents($dataFile));
     }
 }
