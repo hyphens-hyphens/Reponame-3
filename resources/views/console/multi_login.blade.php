@@ -19,9 +19,10 @@
         <thead>
         <tr>
             <th>HWID</th>
+            <th>IP LAN</th>
             <th>Username</th>
             <th>Char</th>
-            <th>IP LAN</th>
+            <th>Map</th>
         </tr>
         </thead>
         <tbody>
@@ -31,9 +32,10 @@
             @endphp
             <tr>
                 <td>@include('t2g_common::console.partials.hwid', ['hwid' => $acc['hwid']])</td>
+                <td>{{ !empty($ips[$acc['user']]) ? implode(' - ', $ips[$acc['user']]) : '' }}</td>
                 <td>{{ $acc['user'] }}</td>
                 <td>{{ $acc['char'] }}, LV {{ $acc['level'] }}</td>
-                <td>{{ !empty($ips[$acc['user']]) ? implode(' - ', $ips[$acc['user']]) : '' }}</td>
+                <td>{{ $acc['map'] }}</td>
             </tr>
         @endforeach
         </tbody>
