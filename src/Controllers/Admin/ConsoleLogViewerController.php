@@ -2,6 +2,7 @@
 
 namespace T2G\Common\Controllers\Admin;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use T2G\Common\Controllers\Controller;
 use T2G\Common\Services\Kibana\AbstractKibanaService;
 use T2G\Common\Services\Kibana\AccountService;
@@ -18,10 +19,20 @@ class ConsoleLogViewerController extends Controller
      */
     public function viewLogKimYen()
     {
-        $timestamp = request('t');
-        $dataFile = storage_path('app/console_log/kimyen_' . $timestamp . '.html');
+        $token = request('t');
+        $dataFile = storage_path('app/console_log/kimyen_' . $token);
+        if (file_exists($dataFile . ".html")) {
+            // old data file with complete view rendered
+            return response(file_get_contents($dataFile . ".html"));
+        }
 
-        return response(file_get_contents($dataFile));
+        try {
+            $data = json_decode(file_get_contents($dataFile), 1);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return view('t2g_common::console.kimyen_keoxe', $data);
     }
 
     public function viewLogHWID(AccountService $accountService)
@@ -41,8 +52,18 @@ class ConsoleLogViewerController extends Controller
     public function viewLogMultiLogin()
     {
         $timestamp = request('t');
-        $dataFile = storage_path('app/console_log/multi_login_' . $timestamp . '.html');
+        $dataFile = storage_path('app/console_log/multi_login_' . $timestamp);
+        if (file_exists($dataFile . ".html")) {
+            // old data file with complete view rendered
+            return response(file_get_contents($dataFile . ".html"));
+        }
 
-        return response(file_get_contents($dataFile));
+        try {
+            $data = json_decode(file_get_contents($dataFile), 1);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return view('t2g_common::console.multi_login', $data);
     }
 }

@@ -74,8 +74,9 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
                 if (count($userArray) <= self::MAX_ACCOUNT_PER_PC ) {
                     continue;
                 }
-                $url = $this->saveHtml($userArray, $server);
+                $url = $this->saveDataFile($userArray, $server);
                 $this->alertReport($server, $logFile, $hwid, $userArray, $url);
+                sleep(1);
             }
         }
 
@@ -125,15 +126,15 @@ TEMPLATE;
      * @return string
      * @throws \Exception
      */
-    private function saveHtml(array $listAcc, $server)
+    private function saveDataFile(array $listAcc, $server)
     {
         $usernames = array_column($listAcc, 'user');
         $firstAcc = array_first($listAcc);
         $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $server, new \DateTime($firstAcc['@timestamp']));
         $now = time();
-        $filename = "multi_login_{$now}.html";
+        $filename = "multi_login_{$now}";
         $file = storage_path('app/console_log/' . $filename);
-        file_put_contents($file, view('t2g_common::console/multi_login', [
+        file_put_contents($file, json_encode([
             'server' => $firstAcc['jx_server'],
             'accs'   => $listAcc,
             'ips'    => $listIp,

@@ -161,7 +161,6 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
 
     private function alertReport(array $mainAcc, array $secondaryAccs)
     {
-        $token = md5($mainAcc['user'] . time());
         $template = <<<'TEMPLATE'
 Server: S%s , Thời gian: `%s`
 Map: `%s (%s)` -> `%s (%s)`
@@ -185,6 +184,8 @@ TEMPLATE;
             );
         }
         ksort($listUsers);
+        $url = $this->saveDataFile($mainAcc, $secondaryAccs);
+
         $message = sprintf(
             $template,
             $mainAcc['jx_server'],
@@ -193,7 +194,7 @@ TEMPLATE;
             $mainAcc['map_id'],
             $mainAcc['move_map_name'],
             $mainAcc['move_map_id'],
-            route('voyager.console_log_viewer.kimyen', ['t' => $token]),
+            $url,
             implode('', array_values($listUsers))
         );
         $this->discord->sendWithEmbed(
@@ -201,28 +202,30 @@ TEMPLATE;
             str_limit($message, 2040),
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
-        $htmlFilename = "kimyen_{$token}.html";
-        $this->saveHtml($htmlFilename, $mainAcc, $secondaryAccs);
-        sleep(2);
+        sleep(1);
     }
 
     /**
-     * @param       $filename
      * @param array $mainAcc
      * @param array $listAccs
      *
+     * @return string
      * @throws \Exception
      */
-    private function saveHtml($filename, array $mainAcc, array $listAccs)
+    private function saveDataFile(array $mainAcc, array $listAccs)
     {
+        $token = md5($mainAcc['user'] . time());
         $usernames = array_column($listAccs, 'user');
-        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $mainAcc['jx_server'], new \DateTime($mainAcc['enter_at']));
+        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $mainAcc['jx_server'], new \DateTime('@' . $mainAcc['enter_at']));
+        $filename = "kimyen_{$token}";
         $file = storage_path('app/console_log/' . $filename);
-        file_put_contents($file, view('t2g_common::console/kimyen_keoxe', [
+        file_put_contents($file, json_encode([
             'mainAcc'  => $mainAcc,
             'listAccs' => $listAccs,
             'ips'      => $listIp,
         ]));
+
+        return route('voyager.console_log_viewer.kimyen', ['t' => $token]);
     }
 
     /**
