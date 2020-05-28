@@ -199,7 +199,7 @@ TEMPLATE;
         );
         $this->discord->sendWithEmbed(
             "Cảnh báo Kéo xe Kim Yến",
-            str_limit($message, 2040),
+            $message,
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);

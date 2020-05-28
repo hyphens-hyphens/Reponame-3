@@ -9,6 +9,8 @@
     @include('t2g_common::console.styles')
 </head>
 <body>
-    @yield('content')
+    <div class="wrapper">
+        @yield('content')
+    </div>
 </body>
 </html>

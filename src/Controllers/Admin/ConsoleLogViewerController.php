@@ -63,7 +63,8 @@ class ConsoleLogViewerController extends Controller
         } catch (\Exception $e) {
             throw new NotFoundHttpException();
         }
+        $version = $data['version'] ?? '';
 
-        return view('t2g_common::console.multi_login', $data);
+        return view('t2g_common::console.multi_login' . $version, $data);
     }
 }

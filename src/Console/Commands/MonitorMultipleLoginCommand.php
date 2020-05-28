@@ -4,6 +4,7 @@ namespace T2G\Common\Console\Commands;
 
 use T2G\Common\Services\DiscordWebHookClient;
 use T2G\Common\Services\Kibana\AbstractKibanaService;
+use T2G\Common\Services\Kibana\AccountService;
 use T2G\Common\Services\Kibana\LogLanQueryService;
 use T2G\Common\Services\Kibana\MultipleLoginDetectionService;
 use T2G\Common\Util\CommonHelper;
@@ -11,6 +12,7 @@ use T2G\Common\Util\CommonHelper;
 class MonitorMultipleLoginCommand extends AbstractJXCommand
 {
     const MAX_ACCOUNT_PER_PC = 4;
+
     /**
      * The name and signature of the console command.
      *
@@ -56,33 +58,57 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
         $interval = $interval > 0 ? \DateInterval::createFromDateString("{$interval} minutes") : null;
         $results = $multipleLoginDetectionService->getMultipleLoginLogs($from, $interval, AbstractKibanaService::MAX_RESULTS_WINDOW);
         $report = [];
+        $usernames = [];
+        $logTime = null;
+        foreach ($results->getHits() as $hit) {
+            if (in_array($hit['_source']['user'], $usernames)) {
+                continue;
+            }
+            $usernames[] = $hit['_source']['user'];
+            if (!$logTime) {
+                $logTime = new \DateTime($hit['_source']['@timestamp']);
+            }
+        }
+
+        $hwidArray = app(AccountService::class)->getHwidByUsernames($usernames, $logTime);
         foreach ($results->getHits() as $hit) {
             $row = $hit['_source'];
-            if (empty($row['hwid']) || in_array($row['user'], $this->excluded)) {
+            $hwid = $hwidArray[$row['user']] ?? null;
+            if (empty($hwid) || in_array($row['user'], $this->excluded)) {
                 continue;
             }
 
-            $filteredHwid = CommonHelper::getFilteredHwid($row['hwid']);
+            $filteredHwid = CommonHelper::getFilteredHwid($hwid);
             $key = $row['jx_server'] . "|" . $row['log']['file']['path'];
             $report[$key][$filteredHwid][] = $row;
         }
-        foreach ($report as $serverAndLogFile => $hwidArray) {
+        foreach ($report as $serverAndLogFile => $hwids) {
             $serverAndLogFileSplitted = explode('|', $serverAndLogFile);
             $server = $serverAndLogFileSplitted[0];
             $logFile = $serverAndLogFileSplitted[1];
-            foreach ($hwidArray as $hwid => $userArray) {
+            foreach ($hwids as $hwid => $userArray) {
                 if (count($userArray) <= self::MAX_ACCOUNT_PER_PC ) {
                     continue;
                 }
-                $url = $this->saveDataFile($userArray, $server);
-                $this->alertReport($server, $logFile, $hwid, $userArray, $url);
+                $url = $this->saveDataFile($userArray, $server, $hwidArray);
+                $this->alertReport($server, $logFile, $hwid, $userArray, $hwidArray, $url);
                 sleep(1);
             }
         }
 
     }
 
-    private function alertReport($server, $logFile, $hwid, array $userArray, $url)
+    /**
+     * @param       $server
+     * @param       $logFile
+     * @param       $filteredHwid
+     * @param array $userArray
+     * @param array $hwidArray
+     * @param       $url
+     *
+     * @throws \Exception
+     */
+    private function alertReport($server, $logFile, $filteredHwid, array $userArray, array $hwidArray, $url)
     {
         $file = explode('/', $logFile);
         $file = last($file);
@@ -97,12 +123,13 @@ TEMPLATE;
         $listUsers = '';
         foreach ($userArray as $user) {
             $existed = [];
-            if (in_array($user['user'], $existed)) {
+            $hwid = $hwidArray[$user['user']] ?? null;
+            if (!$hwid || in_array($user['user'], $existed)) {
                 continue;
             }
             $listUsers .= sprintf(
                 "- `%s`, `%s (%s)`, lv %s, %s\n",
-                $user['hwid'],
+                $hwid,
                 $user['user'],
                 $user['char'],
                 $user['level'],
@@ -110,10 +137,10 @@ TEMPLATE;
             );
             $existed[] = $user['user'];
         }
-        $message = sprintf($template, $server, $file, $url, $hwid, $listUsers);
+        $message = sprintf($template, $server, $file, $url, $filteredHwid, $listUsers);
         $this->discord->sendWithEmbed(
             "Cảnh báo Multi Login",
-            str_limit($message, 2040),
+            $message,
             DiscordWebHookClient::EMBED_COLOR_NOTICE
         );
         sleep(1);
@@ -122,11 +149,12 @@ TEMPLATE;
     /**
      * @param array $listAcc
      * @param       $server
+     * @param array $hwidArray
      *
      * @return string
      * @throws \Exception
      */
-    private function saveDataFile(array $listAcc, $server)
+    private function saveDataFile(array $listAcc, $server, array $hwidArray)
     {
         $usernames = array_column($listAcc, 'user');
         $firstAcc = array_first($listAcc);
@@ -135,9 +163,12 @@ TEMPLATE;
         $filename = "multi_login_{$now}";
         $file = storage_path('app/console_log/' . $filename);
         file_put_contents($file, json_encode([
-            'server' => $firstAcc['jx_server'],
-            'accs'   => $listAcc,
-            'ips'    => $listIp,
+            'server'       => $firstAcc['jx_server'],
+            'hwidFiltered' => CommonHelper::getFilteredHwid($hwidArray[$firstAcc['user']] ?? ''),
+            'accs'         => $listAcc,
+            'ips'          => $listIp,
+            'hwids'        => $hwidArray,
+            'version'      => '_v2',
         ]));
 
         return route('voyager.console_log_viewer.multi_login', ['t' => $now]);

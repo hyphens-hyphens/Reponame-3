@@ -1,11 +1,15 @@
 <style>
+    .wrapper {
+        width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+    }
     table {
         border-spacing: 1;
         border-collapse: collapse;
         background: white;
         border-radius: 6px;
         overflow: hidden;
-        max-width: 1200px;
         width: 100%;
         margin: 0 auto;
         position: relative;

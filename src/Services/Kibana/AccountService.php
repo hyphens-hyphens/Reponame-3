@@ -101,13 +101,25 @@ class AccountService extends AbstractKibanaService
      *       ...
      *   ]
      *
-     * @param array $usernames
+     * @param array          $usernames
+     * @param \DateTime|null $before
      *
      * @return array
      */
-    public function getHwidByUsernames(array $usernames)
+    public function getHwidByUsernames(array $usernames, \DateTime $before = null)
     {
         $query = $this->getHwidByUsernamesAggregation($usernames, 1);
+        if ($before) {
+            $query['aggs']['filter_data']['filter']['bool']['filter'][] = [
+                'range' => [
+                    '@timestamp' => [
+                        'lt' => $before->setTimezone(new \DateTimeZone(config('app.timezone')))->format('c'),
+                        'gte' => $before->sub(\DateInterval::createFromDateString("1 day"))->format('c')
+                    ]
+                ]
+            ];
+        }
+
         $params = [
             'index' => $this->getIndex(self::INDEX_PREFIX_ACTIVE_USER),
             'body'  => $query,
@@ -202,7 +214,8 @@ class AccountService extends AbstractKibanaService
                     "aggs" => [
                         "user" => [
                             "terms" => [
-                                "field" => "user.keyword"
+                                "field" => "user.keyword",
+                                "size" => count($usernames)
                             ],
                             "aggs" => [
                                 "top" => [

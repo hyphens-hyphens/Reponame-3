@@ -75,7 +75,7 @@ class DiscordWebHookClient
             "embeds" => [
                 [
                     "title"       => $title,
-                    "description" => $message,
+                    "description" => str_limit($message, 2040),
                     "timestamp"   => (new \DateTime())->setTimezone(new \DateTimeZone('UTC'))->format('c'),
                     "color"       => $color,
                 ],
