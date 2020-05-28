@@ -215,7 +215,7 @@ class AccountService extends AbstractKibanaService
                         "user" => [
                             "terms" => [
                                 "field" => "user.keyword",
-                                "size" => count($usernames)
+                                "size"  => (count($usernames) ?: 3000) * 5,
                             ],
                             "aggs" => [
                                 "top" => [
