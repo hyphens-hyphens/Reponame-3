@@ -16,7 +16,7 @@ class MonitorMultiplePCCommand extends Command
      *
      * @var string
      */
-    protected $signature = 't2g_common:monitor:multiple_pc_pm {interval=5}';
+    protected $signature = 't2g_common:monitor:multiple_pc_pm {interval=5} {--ban=0}';
 
     /**
      * @var \T2G\Common\Services\DiscordWebHookClient
@@ -65,7 +65,6 @@ class MonitorMultiplePCCommand extends Command
                 }
             }
         }
-        dd($data);
         foreach ($data as $server => $chars) {
             foreach ($chars as $char => $char2Arr) {
                 $user = $accountService->getUsernameByChar($server, $char);
@@ -96,10 +95,13 @@ class MonitorMultiplePCCommand extends Command
         %s
 TEMPLATE;
         $listUsers = '';
+        $isBan = $this->input->getOption('ban');
         foreach ($report as $server => $items) {
             foreach ($items as $item) {
                 $user = $item['user'];
-                $this->banUser($user['user']);
+                if ($isBan) {
+                    $this->banUser($user['user']);
+                }
                 $listUsers = '';
                 foreach ($item['users2'] as $user2) {
                     $listUsers .= sprintf("- `%s (%s)` level %s \n", $user2['user'], $user2['char'], $user2['level']);

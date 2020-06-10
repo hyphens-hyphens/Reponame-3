@@ -21,11 +21,7 @@ class LogLanQueryService extends AbstractKibanaService
      * @return array
      * @throws \Exception
      */
-    public function getIpLanByUsernames(
-        array $usernames,
-        $server = null,
-        \DateTime $time = null
-    )
+    public function getIpLanByUsernames(array $usernames, $server = null, \DateTime $time = null)
     {
         $query = $this->getIpLabByUsernamesAggregation($usernames, 1);
         if ($time) {
@@ -33,6 +29,7 @@ class LogLanQueryService extends AbstractKibanaService
                 'range' => [
                     '@timestamp' => [
                         'lte' => $time->setTimezone(new \DateTimeZone(config('app.timezone')))->format('c'),
+                        'gt' => $time->sub(\DateInterval::createFromDateString("1 day"))->format('c')
                     ]
                 ]
             ];
@@ -88,7 +85,8 @@ class LogLanQueryService extends AbstractKibanaService
                     "aggs" => [
                         "user" => [
                             "terms" => [
-                                "field" => "user.keyword"
+                                "field" => "user.keyword",
+                                "size" => 1000,
                             ],
                             "aggs" => [
                                 "top" => [
