@@ -117,17 +117,17 @@ class MoMoTransactionNotifierCommand extends Command
     private function parseAlertMessage($emailBody, $linkReview)
     {
         $crawler = new Crawler($emailBody);
-        $senderPhoneNode = $crawler->filterXPath("(//*[contains(text(),'Số điện thoại người gửi')])/../..//td[last()]/span");
+        $senderPhoneNode = $crawler->filterXPath("(//*[contains(text(),'Số điện thoại người gửi')])/../..//td[last()]/div");
         if (!$senderPhoneNode->text('')) {
             return "";
         }
-        $amountNode = $crawler->filterXPath("(//*[contains(text(),'Số tiền nhận được')])/../..//td[last()]/span");
-        $senderNode = $crawler->filterXPath("(//*[contains(text(),'Người gửi')])/../..//td[last()]/span");
-        $noteNode = $crawler->filterXPath("(//*[contains(text(),'Tin nhắn')])/../..//td[last()]/span");
+        $amountNode = $crawler->filterXPath("(//*[contains(text(),'Số tiền')])/../..//td[last()]/div");
+        $senderNode = $crawler->filterXPath("(//*[contains(text(),'Người gửi')])/../..//td[last()]/div");
+        $noteNode = $crawler->filterXPath("(//*[contains(text(),'Tin nhắn')])/../..//td[last()]/div");
         if (!$noteNode->text('')) {
-            $noteNode = $crawler->filterXPath("(//*[contains(text(),'Lời chúc')])/../..//td[last()]/span");
+            $noteNode = $crawler->filterXPath("(//*[contains(text(),'Lời chúc')])/../..//td[last()]/div");
         }
-        $timeNode = $crawler->filterXPath("(//*[contains(text(),'Thời gian')])/../..//td[last()]/span");
+        $timeNode = $crawler->filterXPath("(//*[contains(text(),'Thời gian')])/../..//td[last()]/div");
 
         $alert = sprintf(
             "[MoMo] Nhận được số tiền `%s` từ `%s` vào lúc %s.",
