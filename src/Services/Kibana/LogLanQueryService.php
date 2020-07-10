@@ -50,6 +50,9 @@ class LogLanQueryService extends AbstractKibanaService
         $searchResult = new SearchResult($data);
         $aggs = $searchResult->getAggs('filter_data');
         $data = [];
+        if (empty($aggs['user'])) {
+            return $data;
+        }
         foreach ($aggs['user']['buckets'] as $row) {
             foreach ($row['top']['hits']['hits'] as $hit) {
                 $data[$row['key']] = $hit['_source']['ip'];
