@@ -131,11 +131,11 @@ class MoMoTransactionNotifierCommand extends Command
 
         $alert = sprintf(
             "[MoMo] Nhận được số tiền `%s` từ `%s` vào lúc %s.",
-            $amountNode->text(''),
-            $senderNode->text(''),
-            $timeNode->text('')
+            trim($amountNode->text('')),
+            trim($senderNode->text('')),
+            trim($timeNode->text(''))
         );
-        if ($note = $noteNode->text('')) {
+        if ($note = trim($noteNode->text(''))) {
             $alert .= " Nội dung: `{$note}`.";
         }
         $alert .= " $linkReview";
