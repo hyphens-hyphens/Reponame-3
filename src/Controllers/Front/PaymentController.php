@@ -150,7 +150,7 @@ class PaymentController extends BaseFrontController
     /**
      * @return \T2G\Common\Util\MobileCard
      */
-    private function createCardInstance()
+    protected function createCardInstance()
     {
         $type   = trim(request('card_type'));
         $amount = intval(trim(request('card_amount')));
@@ -211,7 +211,7 @@ class PaymentController extends BaseFrontController
     /**
      * @return CardPaymentInterface
      */
-    private function getCardPaymentService()
+    protected function getCardPaymentService()
     {
         $autoSwitch = boolval(voyager()->setting('site.card_payment_auto_switch', false));
         // auto switch handle
@@ -267,7 +267,7 @@ class PaymentController extends BaseFrontController
      *
      * @return string
      */
-    private function getPayMethod(MobileCard $card, CardPaymentInterface $cardPayment)
+    protected function getPayMethod(MobileCard $card, CardPaymentInterface $cardPayment)
     {
         if ($card->getType() == MobileCard::TYPE_ZING) {
             return Payment::PAY_METHOD_ZING_CARD;
