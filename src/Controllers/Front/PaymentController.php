@@ -199,7 +199,7 @@ class PaymentController extends BaseFrontController
     /**
      * @return bool
      */
-    private function isInMaintenancePeriod()
+    protected function isInMaintenancePeriod()
     {
         $now = time();
         $startMaintenance = (\DateTime::createFromFormat('Y-m-d H:i', date('Y-m-d 16:25')))->getTimestamp();
@@ -228,7 +228,7 @@ class PaymentController extends BaseFrontController
      * @param \Illuminate\Http\Request $request
      * @return CardPaymentInterface
      */
-    private function getCardPaymentServiceForCallback(Request $request)
+    protected function getCardPaymentServiceForCallback(Request $request)
     {
         if ($request->get('secret_key') && $request->get('transaction_code')) {
             return app(RecardPayment::class);
@@ -248,7 +248,7 @@ class PaymentController extends BaseFrontController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function responseForCallback(CardPaymentInterface $cardPayment, $message, $statusCode = 200, $responseStatus = false)
+    protected function responseForCallback(CardPaymentInterface $cardPayment, $message, $statusCode = 200, $responseStatus = false)
     {
         $response = [
             'status'  => $responseStatus,
