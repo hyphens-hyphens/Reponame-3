@@ -12,4 +12,12 @@
     </div>
 
     </div>
+    <style>
+        .panel.widget {
+            padding: 20px 10px;
+        }
+        .panel-body {
+            padding: 15px 5px;
+        }
+    </style>
 @stop
