@@ -29,8 +29,8 @@ class PageRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->where([
-            'uri' => $uri,
-            'status' => true
+            'uri'    => $uri,
+            'status' => true,
         ]);
 
         return $query->first();

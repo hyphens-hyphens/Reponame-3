@@ -43,7 +43,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         if ($keyword && $field) {
             if ($field == 'user') {
                 $query->whereHas('owner', function (Builder $query) use ($keyword) {
-                    $query->where('name', 'LIKE', "%{$keyword}%");
+                    $query->whereRaw('name LIKE ?', ["%{$keyword}%"]);
                 });
             }
             if ($field == 'code') {

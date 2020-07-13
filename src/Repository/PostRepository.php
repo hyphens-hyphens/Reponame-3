@@ -125,7 +125,7 @@ class PostRepository extends AbstractEloquentRepository
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
         $query->published()
-            ->whereRaw("title LIKE '%{$keyword}%'")
+            ->whereRaw("title LIKE ?", ["%{$keyword}%"])
             ->orderBy('updated_at', 'desc')
         ;
 

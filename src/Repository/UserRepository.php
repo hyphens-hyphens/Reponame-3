@@ -83,7 +83,7 @@ class UserRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->select(['id', 'name as text'])
-            ->where('name', 'LIKE', "{$term}%")
+            ->whereRaw('name LIKE "?%"', [$term])
             ->orderBy('name', 'ASC')
             ->limit($limit)
         ;
@@ -103,7 +103,7 @@ class UserRepository extends AbstractEloquentRepository
         $toDate = strtotime($toDate) + (24*3600) - 1;
         $data = $this->db->table($this->model->getTable())
             ->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, CONCAT(COALESCE(utm_campaign, ''), '|', COALESCE(utm_medium, ''), '|', COALESCE(utm_source, '')) as `cid`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
-            ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN {$fromDate} AND $toDate")
+            ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN ? AND ?", [$fromDate, $toDate])
             ->groupBy('date', 'ordered_date', 'cid')
             ->orderByRaw("ordered_date ASC, total DESC")
             ->get()
@@ -164,7 +164,7 @@ class UserRepository extends AbstractEloquentRepository
         $toDate = strtotime(date('Y-m-d 00:00'));
         $results = $this->db->table($this->model->getTable())
             ->selectRaw("DATE_FORMAT(created_at, '%d-%m') as `date`, DATE_FORMAT(created_at, '%m-%d') as ordered_date, COUNT(id) as `total`")
-            ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN {$fromDate} AND $toDate")
+            ->whereRaw("UNIX_TIMESTAMP(CONVERT_TZ(created_at, '+07:00', '+00:00')) BETWEEN ? AND ?", [$fromDate, $toDate])
             ->groupBy('date', 'ordered_date')
             ->orderByRaw("ordered_date ASC, total DESC")
             ->get()
@@ -203,11 +203,11 @@ class UserRepository extends AbstractEloquentRepository
         $query->whereRaw("
             `id` IN (
                 SELECT `user_id` 
-                FROM `{$lastLoginTable}` 
+                FROM ? 
                 WHERE `last_login_date` 
-                BETWEEN '{$fromDate}' AND '{$toDate}'
+                BETWEEN ? AND ?
             )
-        ");
+        ", [$lastLoginTable, $fromDate, $toDate]);
 
         return $query->count();
     }

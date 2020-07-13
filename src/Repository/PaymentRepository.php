@@ -252,7 +252,10 @@ class PaymentRepository extends AbstractEloquentRepository
             DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`,
             SUM(`profit`)/1000 as `total_profit`
             ")
-            ->whereRaw("`created_at` BETWEEN '{$fromDate} 00:00:00' AND '{$toDate} 23:59:59' AND `status_code` = 1")
+            ->whereRaw(
+                "`created_at` BETWEEN ? AND ? AND `status_code` = ?",
+                [$fromDate . " 00:00:00", $toDate . " 23:59:59", 1]
+            )
             ->groupBy('pay_method', 'date')
             ->orderBy('date', 'ASC')
             ->get()
@@ -338,7 +341,10 @@ class PaymentRepository extends AbstractEloquentRepository
             SUM(`amount`) as `total`,
             DATE_FORMAT(created_at, '%m-%d') as `ordered_date`
             ")
-            ->whereRaw("`created_at` BETWEEN '{$fromDate}' AND '{$toDate}' AND `status_code` = 1")
+            ->whereRaw(
+                "`created_at` BETWEEN ? AND ? AND `status_code` = ?",
+                [$fromDate, $toDate, 1]
+            )
             ->groupBy('date', 'ordered_date')
             ->orderBy('ordered_date', 'ASC')
             ->get()
@@ -384,9 +390,9 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->whereRaw("
-            `user_id` IN (SELECT id FROM {$user->getTable()} WHERE `phone` = ?)
+            `user_id` IN (SELECT id FROM ? WHERE `phone` = ?)
             AND `status_code` = ?
-        ", [$user->phone, 1]);
+        ", [$user->getTable(), $user->phone, 1]);
 
         return $query->sum('amount');
     }
