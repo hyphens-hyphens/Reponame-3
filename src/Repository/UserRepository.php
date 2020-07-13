@@ -83,7 +83,7 @@ class UserRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->select(['id', 'name as text'])
-            ->whereRaw('name LIKE "?%"', [$term])
+            ->whereRaw('name LIKE ?', ["{$term}}%"])
             ->orderBy('name', 'ASC')
             ->limit($limit)
         ;
@@ -203,11 +203,11 @@ class UserRepository extends AbstractEloquentRepository
         $query->whereRaw("
             `id` IN (
                 SELECT `user_id` 
-                FROM ? 
+                FROM `{$lastLoginTable}`
                 WHERE `last_login_date` 
-                BETWEEN ? AND ?
+                BETWEEN '{$fromDate}' AND '{$toDate}'
             )
-        ", [$lastLoginTable, $fromDate, $toDate]);
+        ");
 
         return $query->count();
     }

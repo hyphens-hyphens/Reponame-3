@@ -390,9 +390,9 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->whereRaw("
-            `user_id` IN (SELECT id FROM ? WHERE `phone` = ?)
-            AND `status_code` = ?
-        ", [$user->getTable(), $user->phone, 1]);
+            `user_id` IN (SELECT id FROM {$user->getTable()} WHERE `phone` = '{$user->phone}')
+            AND `status_code` = 1
+        ");
 
         return $query->sum('amount');
     }
