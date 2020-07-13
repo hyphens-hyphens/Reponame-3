@@ -83,7 +83,7 @@ class UserRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $query->select(['id', 'name as text'])
-            ->whereRaw('name LIKE ?', ["{$term}}%"])
+            ->whereRaw('name LIKE ?', ["{$term}%"])
             ->orderBy('name', 'ASC')
             ->limit($limit)
         ;
