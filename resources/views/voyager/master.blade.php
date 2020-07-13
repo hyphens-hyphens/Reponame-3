@@ -30,15 +30,6 @@
 <body class="voyager @if(isset($dataType) && isset($dataType->slug)){{ $dataType->slug }}@endif">
 <div id="app">
 
-    <div id="voyager-loader">
-        <?php $admin_loader_img = Voyager::setting('admin.loader', ''); ?>
-        @if($admin_loader_img == '')
-            <img src="{{ voyager_asset('images/logo-icon.png') }}" alt="Voyager Loader">
-        @else
-            <img src="{{ Voyager::image($admin_loader_img) }}" alt="Voyager Loader">
-        @endif
-    </div>
-
     <?php
     if (starts_with(Auth::user()->avatar, 'http://') || starts_with(Auth::user()->avatar, 'https://')) {
         $user_avatar = Auth::user()->avatar;
@@ -57,7 +48,6 @@
                     var appContainer = document.querySelector('.app-container'),
                         sidebar = appContainer.querySelector('.side-menu'),
                         navbar = appContainer.querySelector('nav.navbar.navbar-top'),
-                        loader = document.getElementById('voyager-loader'),
                         hamburgerMenu = document.querySelector('.hamburger'),
                         sidebarTransition = sidebar.style.transition,
                         navbarTransition = navbar.style.transition,
@@ -69,7 +59,6 @@
 
                     if (window.localStorage && window.localStorage['voyager.stickySidebar'] == 'true') {
                         appContainer.className += ' expanded no-animation';
-                        loader.style.left = (sidebar.clientWidth/2)+'px';
                         hamburgerMenu.className += ' is-active no-animation';
                     }
 
