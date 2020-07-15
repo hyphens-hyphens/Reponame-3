@@ -4,8 +4,6 @@
     @php
     $assetVersion = config('t2g_common.asset.version')
     @endphp
-    <link rel="preload" href="{{ voyager_asset('css/app.css?v=' . $assetVersion) }}" as="style">
-    <link rel="preload" href="{{ voyager_asset('js/app.js?v=' . $assetVersion) }}" as="script">
     <title>@yield('page_title', setting('admin.title') . " - " . setting('admin.description'))</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
