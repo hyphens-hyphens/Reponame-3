@@ -35,3 +35,28 @@ if (!function_exists('getGameApiClient')) {
     }
 }
 
+if (!function_exists( 'staticUrl')) {
+    /**
+     * @param      $path
+     * @param bool $useMix
+     *
+     * @return string
+     * @throws \Exception
+     */
+    function staticUrl($path, $useMix = false) {
+        $root = config('t2g_common.asset.base_url');
+        if ($useMix) {
+            $path = mix($path);
+        }
+        $generator = app(\Illuminate\Routing\UrlGenerator::class);
+
+        return $root ? $generator->assetFrom($root, $path) : $generator->asset($path);
+    }
+}
+
+if (!function_exists('voyagerStaticUrl')) {
+    function voyagerStaticUrl($path, $secure = null)
+    {
+        return staticUrl(config('voyager.assets_path').'/'.$path, $secure);
+    }
+}

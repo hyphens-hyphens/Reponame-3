@@ -10,15 +10,15 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ voyagerStaticUrl('images/logo-icon.png') }}" type="image/x-icon">
     <!-- App CSS -->
-    <link rel="stylesheet" href="{{ voyager_asset('css/app.css?v=' . $assetVersion) }}">
+    <link rel="stylesheet" href="{{ voyagerStaticUrl('css/app.css?v=' . $assetVersion) }}">
 @yield('css')
 @include('t2g_common::voyager.partials.dynamic_styles')
 
 @if(!empty(config('voyager.additional_css')))<!-- Additional CSS -->
     @foreach(config('voyager.additional_css') as $css)
-        <link rel="stylesheet" type="text/css" href="{{ asset($css . '?v=' . $assetVersion) }}">
+        <link rel="stylesheet" type="text/css" href="{{ voyagerStaticUrl($css . '?v=' . $assetVersion) }}">
     @endforeach
     @endif
 
@@ -91,9 +91,9 @@
     </div>
 </div>
 
-<script type="text/javascript" src="{{ voyager_asset('js/app.js?v=' . $assetVersion) }}"></script>
+<script type="text/javascript" src="{{ voyagerStaticUrl('js/app.js?v=' . $assetVersion) }}"></script>
 <script>
-            @if(Session::has('alerts'))
+    @if(Session::has('alerts'))
     let alerts = {!! json_encode(Session::get('alerts')) !!};
     helpers.displayAlerts(alerts, toastr);
     @endif
@@ -124,7 +124,7 @@
 
 @if(!empty(config('voyager.additional_js')))<!-- Additional Javascript -->
 @foreach(config('voyager.additional_js') as $js)
-    <script type="text/javascript" src="{{ asset($js . '?v=' . $assetVersion) }}"></script>
+    <script type="text/javascript" src="{{ staticUrl($js . '?v=' . $assetVersion) }}"></script>
 @endforeach
 @endif
 
