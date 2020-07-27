@@ -18,7 +18,7 @@
 
 @if(!empty(config('voyager.additional_css')))<!-- Additional CSS -->
     @foreach(config('voyager.additional_css') as $css)
-        <link rel="stylesheet" type="text/css" href="{{ voyagerStaticUrl($css . '?v=' . $assetVersion) }}">
+        <link rel="stylesheet" type="text/css" href="{{ staticUrl($css . '?v=' . $assetVersion) }}">
     @endforeach
     @endif
 
