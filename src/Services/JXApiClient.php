@@ -240,7 +240,7 @@ class JXApiClient implements GameApiClientInterface
             if (json_last_error() == JSON_ERROR_NONE) {
                 return $CCUs;
             }
-        } catch (GameApiException $e) {
+        } catch (\Exception $e) {
             $this->logger->notice(
                 "Cannot get CCUs",
                 ['api_response' => $body]
