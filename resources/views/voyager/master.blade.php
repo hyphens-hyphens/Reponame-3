@@ -5,6 +5,8 @@
     $assetVersion = config('t2g_common.asset.version')
     @endphp
     <title>@yield('page_title', setting('admin.title') . " - " . setting('admin.description'))</title>
+    <link rel="reload" href="{{ voyagerStaticUrl('css/app.css?v=' . $assetVersion) }}" as="style">
+    <link rel="reload" href="{{ voyagerStaticUrl('js/app.js?v=' . $assetVersion) }}" as="script">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <!-- Google Fonts -->
@@ -18,6 +20,7 @@
 
 @if(!empty(config('voyager.additional_css')))<!-- Additional CSS -->
     @foreach(config('voyager.additional_css') as $css)
+        <link rel="reload" href="{{ staticUrl($css . '?v=' . $assetVersion) }}" as="style">
         <link rel="stylesheet" type="text/css" href="{{ staticUrl($css . '?v=' . $assetVersion) }}">
     @endforeach
     @endif

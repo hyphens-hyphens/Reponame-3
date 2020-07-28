@@ -230,22 +230,22 @@ class JXApiClient implements GameApiClientInterface
     /**
      * @return array
      *         ["Server name" => 234 // CCU, ...]
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \T2G\Common\Exceptions\GameApiException
      */
     public function getCCUs()
     {
-        $response = $this->get(self::ENDPOINT_CCU);
-        $body = $this->getResponseText($response);
-        $CCUs = json_decode($body, true);
-        if (json_last_error() == JSON_ERROR_NONE) {
-            return $CCUs;
+        try {
+            $response = $this->get(self::ENDPOINT_CCU);
+            $body = $this->getResponseText($response);
+            $CCUs = json_decode($body, true);
+            if (json_last_error() == JSON_ERROR_NONE) {
+                return $CCUs;
+            }
+        } catch (GameApiException $e) {
+            $this->logger->notice(
+                "Cannot get CCUs",
+                ['api_response' => $body]
+            );
         }
-
-        $this->logger->notice(
-            "Cannot get CCUs",
-            ['api_response' => $body]
-        );
 
         return [];
     }
