@@ -13,6 +13,10 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
     const ACTION_MOVE_TO   = 'MoveTo';
     const WEIGHT_THRESHOLD = 2;
 
+    protected $excludedMaps = [
+        959, // Chiến Long Động
+    ];
+
     /**
      * The name and signature of the console command.
      *
@@ -61,7 +65,7 @@ class MonitorKimYenKeoXeCommand extends AbstractJXCommand
         $report = $queue = [];
         foreach ($results->getHits() as $hit) {
             $row = $hit['_source'];
-            if (empty($row['action']) || empty($row['map_id'])) {
+            if (empty($row['action']) || empty($row['map_id']) || ($row['action'] == self::ACTION_MOVE_TO && in_array($row['map_id'], $this->excludedMaps))) {
                 continue;
             }
             // Server|Username|LeaveMap
