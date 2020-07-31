@@ -3,7 +3,7 @@
 return [
     'asset' => [
         'version' => '',
-        'base_url' => 'https://static.volamtuyetpham.com',
+        'base_url' => '',
     ],
     'site'     => [
         'domains' => [], // example.com, example.net...
