@@ -3,7 +3,7 @@
 return [
     'asset' => [
         'version' => '',
-        'base_url' => '',
+        'base_url' => env('ASSET_BASE_URL'),
     ],
     'site'     => [
         'domains' => [], // example.com, example.net...

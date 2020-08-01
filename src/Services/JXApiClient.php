@@ -243,7 +243,7 @@ class JXApiClient implements GameApiClientInterface
         } catch (\Exception $e) {
             $this->logger->notice(
                 "Cannot get CCUs",
-                ['api_response' => $body]
+                ['api_response' => $this->getLastResponse()]
             );
         }
 
