@@ -56,7 +56,7 @@ class DiscordMonologHandler extends AbstractProcessingHandler
      *
      * @throws \Exception
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         if (env('APP_ENV') == 'local') {
             return;
