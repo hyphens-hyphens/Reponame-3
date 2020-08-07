@@ -72,7 +72,7 @@ class PostRepository extends AbstractEloquentRepository
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
         $query->published()
-            ->orderByPublishDate()
+            ->orderBy('updated_at', 'desc')
         ;
         if ($categorySlug) {
             $query->categorySlug($categorySlug);
@@ -93,7 +93,7 @@ class PostRepository extends AbstractEloquentRepository
         $query = $this->query();
         $query->published()
             ->where("id", '!=', $post->id)
-            ->orderByPublishDate()
+            ->orderBy('updated_at', 'desc')
             ->limit($limit)
             ->with('category')
         ;
@@ -115,12 +115,13 @@ class PostRepository extends AbstractEloquentRepository
     }
 
     /**
-     * @param     $keyword
-     * @param int $limit
+     * @param      $keyword
+     * @param int  $limit
+     * @param bool $searchExcerpt
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function searchPost($keyword, $limit = 10)
+    public function searchPost($keyword, $limit = 10, $searchExcerpt = false)
     {
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
@@ -128,6 +129,9 @@ class PostRepository extends AbstractEloquentRepository
             ->whereRaw("title LIKE ?", ["%{$keyword}%"])
             ->orderBy('updated_at', 'desc')
         ;
+        if ($searchExcerpt) {
+            $query->orWhereRaw("excerpt LIKE ?", ["%{$keyword}%"]);
+        }
 
         return $query->paginate($limit);
     }
