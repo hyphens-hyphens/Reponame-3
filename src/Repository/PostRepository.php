@@ -11,6 +11,7 @@ use T2G\Common\Models\Post;
  */
 class PostRepository extends AbstractEloquentRepository
 {
+    use FullTextSearchTrait;
     /**
      * @var Post
      */
@@ -25,6 +26,11 @@ class PostRepository extends AbstractEloquentRepository
     {
         return Post::class;
     }
+
+    /**
+     * @var string[]
+     */
+    protected $searchable = ['title', 'excerpt'];
 
     /**
      * @param string $categorySlug
@@ -117,21 +123,18 @@ class PostRepository extends AbstractEloquentRepository
     /**
      * @param      $keyword
      * @param int  $limit
-     * @param bool $searchExcerpt
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function searchPost($keyword, $limit = 10, $searchExcerpt = false)
+    public function searchPost($keyword, $limit = 10)
     {
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
         $query->published()
-            ->whereRaw("title LIKE ?", ["%{$keyword}%"])
             ->orderBy('updated_at', 'desc')
+            ->with('category')
         ;
-        if ($searchExcerpt) {
-            $query->orWhereRaw("excerpt LIKE ?", ["%{$keyword}%"]);
-        }
+        $this->search($query, $keyword);
 
         return $query->paginate($limit);
     }
