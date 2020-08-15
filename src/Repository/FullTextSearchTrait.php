@@ -45,6 +45,9 @@ trait FullTextSearchTrait
      */
     public function search($query, $term)
     {
+        if (empty($term)) {
+            return $query;
+        }
         $columns = implode(',', $this->searchable);
 
         $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", "*{$term}*");
