@@ -21,13 +21,17 @@ use T2G\Common\Console\Commands\SyncUserCommand;
 use T2G\Common\Console\Commands\UpdateCCUCommand;
 use T2G\Common\Console\Commands\UpdatePaymentProfitCommand;
 use T2G\Common\Console\Commands\UpdatePaymentStatusCodeCommand;
+use T2G\Common\Console\Commands\UpdatePostKeywordsCommand;
 use T2G\Common\Console\Commands\UpdateUserLastLoginCommand;
 use T2G\Common\Contract\CardPaymentInterface;
 use T2G\Common\Event\PostModelEvent;
 use T2G\Common\FormFields\GiftCodeTypeFormField;
 use T2G\Common\Listeners\PostCreatingListener;
 use T2G\Common\Listeners\PostSavingListener;
+use T2G\Common\Models\Payment;
+use T2G\Common\Models\Post;
 use T2G\Common\Observers\PaymentObserver;
+use T2G\Common\Observers\PostObserver;
 use T2G\Common\Observers\UserObserver;
 use T2G\Common\Services\GameApiClientInterface;
 use T2G\Common\Services\JXApiClient;
@@ -67,7 +71,8 @@ class ServiceProvider extends LaravelServiceProvider
 
         // register observers
         t2g_model('user')->observe(UserObserver::class);
-        t2g_model('payment')->observe(PaymentObserver::class);
+        t2g_model('payment', Payment::class)->observe(PaymentObserver::class);
+        t2g_model('post', Post::class)->observe(PostObserver::class);
 
         // Add Voyager actions for Payment
         voyager()->addAction(AcceptPaymentAction::class);
@@ -187,6 +192,7 @@ class ServiceProvider extends LaravelServiceProvider
                 MysqlBackupCommand::class,
                 UpdatePaymentStatusCodeCommand::class,
                 UpdatePaymentProfitCommand::class,
+                UpdatePostKeywordsCommand::class,
                 UpdateCCUCommand::class,
                 UpdateUserLastLoginCommand::class,
                 ImportUserLastLoginCommand::class,

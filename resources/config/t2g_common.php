@@ -25,6 +25,7 @@ return [
     'models'   => [
         'user_model_class'    => 'App\User',
         'payment_model_class' => 'T2G\Common\Models\Payment',
+        'post_model_class' => 'T2G\Common\Models\Post',
     ],
     'game_api' => [
         'api_client_classname' => \T2G\Common\Services\JXApiClient::class,

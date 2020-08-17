@@ -5,11 +5,15 @@ use T2G\Common\Services\JXApiClient;
 if (!function_exists('t2g_model')) {
     /**
      * @param string $name model name
+     * @param string $default
      *
      * @return \Illuminate\Database\Eloquent\Model|mixed
      */
-    function t2g_model(string $name) {
+    function t2g_model(string $name, $default = '') {
         $modelClassName = config("t2g_common.models.{$name}_model_class");
+        if (!$modelClassName && $default) {
+            $modelClassName = $default;
+        }
 
         return app($modelClassName);
     }

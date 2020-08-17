@@ -3,6 +3,7 @@
 namespace T2G\Common\Repository;
 
 use T2G\Common\Models\Post;
+use T2G\Common\Util\CommonHelper;
 
 /**
  * Class PostRepository
@@ -11,7 +12,6 @@ use T2G\Common\Models\Post;
  */
 class PostRepository extends AbstractEloquentRepository
 {
-    use FullTextSearchTrait;
     /**
      * @var Post
      */
@@ -26,11 +26,6 @@ class PostRepository extends AbstractEloquentRepository
     {
         return Post::class;
     }
-
-    /**
-     * @var string[]
-     */
-    protected $searchable = ['title', 'excerpt'];
 
     /**
      * @param string $categorySlug
@@ -121,20 +116,21 @@ class PostRepository extends AbstractEloquentRepository
     }
 
     /**
-     * @param      $keyword
+     * @param      $text
      * @param int  $limit
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function searchPost($keyword, $limit = 10)
+    public function searchPost($text, $limit = 10)
     {
+        $keyword = CommonHelper::makeKeyword($text);
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
         $query->published()
             ->orderBy('updated_at', 'desc')
+            ->whereRaw("`title_keyword` LIKE ? OR `excerpt_keyword` LIKE ?", ["%{$keyword}%", "%{$keyword}%", "%{$keyword}%"])
             ->with('category')
         ;
-        $this->search($query, $keyword);
 
         return $query->paginate($limit);
     }

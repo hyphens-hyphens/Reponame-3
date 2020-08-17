@@ -2,6 +2,7 @@
 
 namespace T2G\Common\Util;
 
+use Illuminate\Support\Str;
 use T2G\Common\Models\Payment;
 
 /**
@@ -84,7 +85,6 @@ class CommonHelper
     {
         $hwidPieces = explode('-', $rawHwid);
         if (count($hwidPieces) < 8) {
-            dump($rawHwid);
             return str_repeat('X-', 7) . "X";
         }
         $newHwidArray = ['X', 'X', 'X', $hwidPieces[3], 'X', 'X', $hwidPieces[6], 'X'];
@@ -105,5 +105,15 @@ class CommonHelper
     public static function cleanPhoneValue(?string $phone)
     {
         return trim(str_replace([' ', '-', '.'], ['', '', ''], $phone));
+    }
+
+    /**
+     * @param $text
+     *
+     * @return string
+     */
+    public static function makeKeyword($text)
+    {
+        return Str::slug($text, ' ');
     }
 }

@@ -50,7 +50,7 @@ trait FullTextSearchTrait
         }
         $columns = implode(',', $this->searchable);
 
-        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", "*{$term}*");
+        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $this->fullTextWildcards($term));
         return $query;
     }
 }
