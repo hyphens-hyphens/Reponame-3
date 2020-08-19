@@ -146,4 +146,38 @@ class GiftCodeService
 
         return $giftCodeItem;
     }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param \T2G\Common\Models\GiftCode     $giftCode
+     *
+     * @return GiftCodeItem|null
+     * @throws \T2G\Common\Exceptions\GiftCodeException
+     */
+    public function issueCodeToUser(AbstractUser $user, GiftCode $giftCode)
+    {
+        $code = $this->giftCodeItemRepo->getAvailableCodeForIssuing($giftCode);
+        if (!$code) {
+            throw new GiftCodeException(GiftCodeException::ERROR_CODE_NOT_AVAILABLE);
+        }
+        $code->issued_for = $user->id;
+        $code->save();
+
+        return $code;
+    }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Relations\HasMany|object|null
+     */
+    public function getRegisteredGiftCode(AbstractUser $user)
+    {
+        if (empty(config('site.gift_code.gift_code_issuing_id'))) {
+            return null;
+        }
+        $giftCode = GiftCode::find(config('site.gift_code.gift_code_issuing_id'));
+
+        return $this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode);
+    }
 }

@@ -3,6 +3,7 @@
 namespace T2G\Common\Models;
 
 use Illuminate\Notifications\Notifiable;
+use T2G\Common\Services\GiftCodeService;
 use T2G\Common\Services\VipSystemService;
 use Venturecraft\Revisionable\RevisionableTrait;
 
@@ -225,5 +226,19 @@ class AbstractUser extends \TCG\Voyager\Models\User
     public function getTotalVipPaid()
     {
         return VipSystemService::getTotalVipPaidOfUser($this);
+    }
+
+    public function getIssuedGiftCode()
+    {
+        $giftCodeService = app(GiftCodeService::class);
+
+        return $giftCodeService->getRegisteredGiftCode($this);
+    }
+
+    public function scopeRegisteredNumber($query)
+    {
+        $query->where('created_at', '>', '2020-08-15');
+
+        return $query->count() + 5000;
     }
 }

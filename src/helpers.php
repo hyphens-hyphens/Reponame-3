@@ -59,6 +59,13 @@ if (!function_exists( 'staticUrl')) {
 }
 
 if (!function_exists('voyagerStaticUrl')) {
+    /**
+     * @param      $path
+     * @param null $secure
+     *
+     * @return string
+     * @throws \Exception
+     */
     function voyagerStaticUrl($path, $secure = null)
     {
         return staticUrl(config('voyager.assets_path').'/'.$path, $secure);

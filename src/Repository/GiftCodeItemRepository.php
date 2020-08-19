@@ -57,13 +57,14 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
     /**
      * @param string|null $code
      *
-     * @return GiftCodeItem|null
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|\T2G\Common\Models\GiftCodeItem|null
      */
     public function getByCode(?string $code)
     {
         return $this->query()
-            ->whereCode(strtoupper($code))
-            ->first();
+            ->where('code', strtoupper($code))
+            ->first()
+        ;
     }
 
     /**
@@ -92,5 +93,41 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         ]);
 
         return $query->count() > 0;
+    }
+
+    /**
+     * @param \T2G\Common\Models\GiftCode $giftCode
+     *
+     * @return GiftCodeItem|null
+     */
+    public function getAvailableCodeForIssuing(GiftCode $giftCode)
+    {
+        $query = $this->query();
+        /** @var GiftCodeItem|null $code */
+        $code = $query->where('gift_code_id', $giftCode->id)
+            ->whereNull('issued_for')
+            ->whereNull('user_id')
+            ->first()
+        ;
+
+        return $code ?: null;
+    }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param \T2G\Common\Models\GiftCode     $giftCode
+     *
+     * @return GiftCodeItem|null
+     */
+    public function getIssuedCodeForUser(AbstractUser $user, GiftCode $giftCode)
+    {
+        $query = $this->query();
+        $query->where('gift_code_id', $giftCode->id)
+            ->where('issued_for', $user->id)
+        ;
+        /** @var GiftCodeItem $code */
+        $code = $query->first();
+
+        return $code;
     }
 }
