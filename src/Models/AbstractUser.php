@@ -66,6 +66,7 @@ class AbstractUser extends \TCG\Voyager\Models\User
 
     protected $vipLevel;
     protected $vipTotalPaid;
+    protected $issuedCode;
 
     /** @var bool  */
     protected $systemUpdating = false;
@@ -230,9 +231,17 @@ class AbstractUser extends \TCG\Voyager\Models\User
 
     public function getIssuedGiftCode()
     {
+        if (!empty($this->issuedCode)) {
+            return $this->issuedCode;
+        }
         $giftCodeService = app(GiftCodeService::class);
 
-        return $giftCodeService->getRegisteredGiftCode($this);
+        $code = $giftCodeService->getRegisteredGiftCode($this);
+        if ($code) {
+            $this->issuedCode = $code;
+        }
+
+        return $code;
     }
 
     public function scopeRegisteredNumber($query)

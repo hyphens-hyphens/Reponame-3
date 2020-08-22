@@ -128,7 +128,7 @@ class PostRepository extends AbstractEloquentRepository
         $query = $this->query();
         $query->published()
             ->orderBy('updated_at', 'desc')
-            ->whereRaw("`title_keyword` LIKE ? OR `excerpt_keyword` LIKE ?", ["%{$keyword}%", "%{$keyword}%", "%{$keyword}%"])
+            ->whereRaw("(`title_keyword` LIKE ? OR `excerpt_keyword` LIKE ?)", ["%{$keyword}%", "%{$keyword}%"])
             ->with('category')
         ;
 
