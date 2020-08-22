@@ -42,7 +42,7 @@ class GiftCode extends BaseEloquentModel
     const TYPE_PER_CHARACTER = 'per-character';
 
     /** @var array  */
-    protected $fillable = ['prefix', 'type', 'expired_at', 'code_name'];
+    protected $fillable = ['name', 'prefix', 'type', 'expired_at', 'code_name'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

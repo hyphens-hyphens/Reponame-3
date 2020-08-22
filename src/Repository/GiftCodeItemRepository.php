@@ -46,6 +46,11 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
                     $query->whereRaw('name LIKE ?', ["%{$keyword}%"]);
                 });
             }
+            if ($field == 'issued_for') {
+                $query->whereHas('issuedFor', function (Builder $query) use ($keyword) {
+                    $query->whereRaw('name LIKE ?', ["%{$keyword}%"]);
+                });
+            }
             if ($field == 'code') {
                 $query->where("{$giftCodeItemTable}.code", $keyword);
             }

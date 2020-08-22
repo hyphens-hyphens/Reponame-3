@@ -12,7 +12,8 @@
                     <form method="get" class="form-search">
                         <div id="search-input">
                             <select id="search_key" name="key">
-                                <option value="user" @if(request('key') == 'user') selected="selected" @endif>User</option>
+                                <option value="user" @if(request('key') == 'user') selected="selected" @endif>User sử dụng</option>
+                                <option value="issued_for" @if(request('key') == 'issued_for') selected="selected" @endif>User được cấp</option>
                                 <option value="code" @if(request('key') == 'code') selected="selected" @endif>Code</option>
                             </select>
                             <div class="input-group col-md-12">
@@ -36,13 +37,15 @@
             <table class="table table-hover dataTable no-footer" role="grid" aria-describedby="dataTable_info">
                 <tr>
                     <th>Code</th>
-                    <th>Tài khoản sử dụng</th>
+                    <th>User sử dụng</th>
+                    <th>User được cấp</th>
                     <th>Thời gian</th>
                 </tr>
                 @foreach($codes as $code)
                     <tr>
                         <td><code class="text-primary">{{ $code->code }}</code></td>
                         <td>{{ $code->owner->name ?? '' }}</td>
+                        <td>{{ $code->issuedFor->name ?? '' }}</td>
                         <td>{{ $code->updated_at ? $code->updated_at->format('Y-m-d H:i:s') : '' }}</td>
                     </tr>
                 @endforeach

@@ -382,8 +382,9 @@ class JXApiClient implements GameApiClientInterface
         $body = $this->getResponseText($response);
         $data = json_decode($body, true);
         if ($response->getStatusCode() != Response::HTTP_OK || empty($data['success'])) {
+            $statusCode = $data['status_code'] ?? '';
             $this->logger->critical(
-                "Cannot add code `{$giftCode->code_name}` for user `{$username}`. ",
+                "Cannot add code `{$giftCode->code_name}` for user `{$username}`, Status Code: {$statusCode}. ",
                 ['response' => $this->getLastResponse()]
             );
             return false;

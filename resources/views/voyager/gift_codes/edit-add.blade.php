@@ -29,6 +29,10 @@
                                 </div>
                             @endif
                             <div class="form-group col-md-12">
+                                <label for="name">Name</label>
+                                <input required="" type="text" class="form-control" name="name" placeholder="Name" value="{{ $dataTypeContent->name ?? '' }}">
+                            </div>
+                            <div class="form-group col-md-12">
                                 <label for="prefix">Code Prefix</label>
                                 <input required="" type="text" class="form-control" name="prefix" placeholder="Code Prefix" value="{{ $dataTypeContent->prefix ?? '' }}"
                                     @if(!empty($dataTypeContent->id))
@@ -54,7 +58,7 @@
                                             <code>Nhập để add thêm code</code>
                                         @endif
                                     </label>
-                                    <input required="" type="text" class="form-control" name="quantity" placeholder="Số lượng" value="">
+                                    <input type="text" class="form-control" name="quantity" placeholder="Số lượng" value="">
                                 </div>
                                 @endif
                             @endforeach

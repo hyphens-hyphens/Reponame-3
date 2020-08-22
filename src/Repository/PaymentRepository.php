@@ -388,11 +388,16 @@ class PaymentRepository extends AbstractEloquentRepository
      */
     public function getTotalPaidForVipSystem(AbstractUser $user)
     {
-        $query = $this->query();
-        $query->whereRaw("
+        $query = $this->query()
+            ->where('status_code', Payment::PAYMENT_STATUS_SUCCESS)
+        ;
+        if (empty($user->phone)) {
+            $query->where('user_id', $user->id);
+        } else {
+            $query->whereRaw("
             `user_id` IN (SELECT id FROM {$user->getTable()} WHERE `phone` = '{$user->phone}')
-            AND `status_code` = 1
-        ");
+            ");
+        }
 
         return $query->sum('amount');
     }

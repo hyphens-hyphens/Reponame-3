@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AlterGiftCodeAddCodeName extends Migration
+class AlterGiftcodeAddColumnName extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AlterGiftCodeAddCodeName extends Migration
     public function up()
     {
         Schema::table('gift_codes', function (Blueprint $table){
-            $table->string('code_name')->nullable(); // use for API call
+            $table->string('name')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AlterGiftCodeAddCodeName extends Migration
     public function down()
     {
         Schema::table('gift_codes', function (Blueprint $table){
-            $table->dropColumn('code_name');
+            $table->dropColumn('name');
         });
     }
 }

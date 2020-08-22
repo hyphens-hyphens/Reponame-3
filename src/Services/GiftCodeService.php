@@ -97,6 +97,10 @@ class GiftCodeService
 //        if ($this->checkRaceCondition($giftCodeItem->code)) {
 //            return false;
 //        }
+        if (!empty($giftCodeItem->issued_for) && $user->id != $giftCodeItem->issued_for) {
+            throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
+        }
+
         if ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem->gift_code_id)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_CLAIMED, $giftCodeItem);
         }

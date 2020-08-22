@@ -12,12 +12,13 @@ use T2G\Common\Models\GiftCodeItem;
  */
 class GiftCodeException extends \Exception
 {
-    const ERROR_CODE_DISABLE   = 100;
-    const ERROR_CODE_NOT_FOUND = 101;
-    const ERROR_CODE_USED      = 102;
-    const ERROR_CODE_API_ERROR = 103;
-    const ERROR_CODE_CLAIMED   = 104;
-    const ERROR_CODE_NOT_AVAILABLE   = 105;
+    const ERROR_CODE_DISABLE          = 100;
+    const ERROR_CODE_NOT_FOUND        = 101;
+    const ERROR_CODE_USED             = 102;
+    const ERROR_CODE_API_ERROR        = 103;
+    const ERROR_CODE_CLAIMED          = 104;
+    const ERROR_CODE_NOT_AVAILABLE    = 105;
+    const ERROR_CODE_ISSUER_NOT_MATCH = 106;
 
     /**
      * @var \T2G\Common\Models\GiftCodeItem
@@ -42,12 +43,13 @@ class GiftCodeException extends \Exception
     {
         $this->giftCode = $giftCodeItem;
         $messages       = [
-            self::ERROR_CODE_DISABLE       => "This gift code is disabled",
-            self::ERROR_CODE_NOT_FOUND     => "Gift code not found",
-            self::ERROR_CODE_USED          => "Gift code was used",
-            self::ERROR_CODE_API_ERROR     => "Cannot use code, API server return an error",
-            self::ERROR_CODE_CLAIMED       => "This user already claimed this type of gift code before",
-            self::ERROR_CODE_NOT_AVAILABLE => "Out of Gift Code for issuing",
+            self::ERROR_CODE_DISABLE          => "This gift code is disabled",
+            self::ERROR_CODE_NOT_FOUND        => "Gift code not found",
+            self::ERROR_CODE_USED             => "Gift code was used",
+            self::ERROR_CODE_API_ERROR        => "Cannot use code, API server return an error",
+            self::ERROR_CODE_CLAIMED          => "This user already claimed this type of gift code before",
+            self::ERROR_CODE_NOT_AVAILABLE    => "Out of Gift Code for issuing",
+            self::ERROR_CODE_ISSUER_NOT_MATCH => "This gift code was issued for another user",
         ];
 
         parent::__construct($messages[$code] ?? "Unknown Error", $code);

@@ -80,7 +80,7 @@ class GiftCodeBreadController extends BaseVoyagerController
             'type'     => [
                 'required', Rule::in(array_keys(GiftCodeRepository::getTypes()))
             ],
-            'quantity' => 'integer|min:1|max:10000',
+            'quantity' => 'min:0|max:10000',
         ];
 
         return app(\Illuminate\Validation\Factory::class)->make($request, $rules);
@@ -98,7 +98,7 @@ class GiftCodeBreadController extends BaseVoyagerController
     {
         /** @var \T2G\Common\Models\GiftCode $giftCode */
         $giftCode = $data;
-        $giftCode->fill(array_only($request->all(), ['prefix', 'type', 'expired_at', 'code_name']));
+        $giftCode->fill(array_only($request->all(), ['name', 'prefix', 'type', 'expired_at', 'code_name']));
         $giftCode->save();
         if ($giftCode->type == GiftCode::TYPE_PER_ACCOUNT && $request->get('quantity')) {
             app(GiftCodeService::class)->generateCode($giftCode, $request->get('quantity'));

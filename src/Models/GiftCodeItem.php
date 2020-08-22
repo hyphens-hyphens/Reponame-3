@@ -39,6 +39,16 @@ class GiftCodeItem extends BaseEloquentModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function issuedFor()
+    {
+        $userModelClass = config('t2g_common.models.user_model_class');
+
+        return $this->belongsTo($userModelClass, 'issued_for');
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return mixed
