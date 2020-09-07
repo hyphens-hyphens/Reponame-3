@@ -123,7 +123,7 @@ class MoMoTransactionNotifierCommand extends Command
         }
         $amountNode = $crawler->filterXPath("(//*[contains(text(),'Số tiền')])/../..//td[last()]/div");
         $senderNode = $crawler->filterXPath("(//*[contains(text(),'Người gửi')])/../..//td[last()]/div");
-        $noteNode = $crawler->filterXPath("(//*[contains(text(),'Tin nhắn')])/../..//td[last()]/div");
+        $noteNode = $crawler->filterXPath("(//*[contains(text(),'Lời nhắn')])/../..//td[last()]/div");
         if (!$noteNode->text('')) {
             $noteNode = $crawler->filterXPath("(//*[contains(text(),'Lời chúc')])/../..//td[last()]/div");
         }
