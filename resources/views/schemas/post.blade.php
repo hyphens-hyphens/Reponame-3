@@ -13,8 +13,8 @@
     "@type": "WebPage",
     "@id": "{{ url()->current() }}"
   },
-  "headline": "{{ $post->title }}",
-  "description": "{{ $post->getDescription() ?? '' }}",
+  "headline": "{{ trim($post->title) }}",
+  "description": "{{ htmlentities(str_replace("\n", '', $post->getDescription(250))) ?? '' }}",
   "image": {
     "@type": "ImageObject",
     "url": "{{ $post->getImage() }}",

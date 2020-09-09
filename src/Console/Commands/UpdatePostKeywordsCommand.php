@@ -43,6 +43,7 @@ class UpdatePostKeywordsCommand extends Command
         foreach ($posts as $post) {
             $post->title_keyword   = CommonHelper::makeKeyword($post->title);
             $post->excerpt_keyword = CommonHelper::makeKeyword($post->excerpt);
+            $post->timestamps = false;
             $post->save();
             $processed++;
         }

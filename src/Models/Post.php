@@ -93,11 +93,13 @@ class Post extends \TCG\Voyager\Models\Post
     }
 
     /**
+     * @param int $limit
+     *
      * @return string
      */
-    public function getDescription()
+    public function getDescription($limit = 150)
     {
-        return $this->excerpt ?: str_limit(strip_tags($this->body), 150);
+        return str_limit($this->excerpt, $limit) ?: str_limit(strip_tags($this->body), $limit);
     }
 
     /**
