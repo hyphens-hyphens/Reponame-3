@@ -87,7 +87,7 @@ class CommonHelper
         if (count($hwidPieces) < 8) {
             return str_repeat('X-', 7) . "X";
         }
-        $newHwidArray = ['X', 'X', 'X', $hwidPieces[3], 'X', 'X', $hwidPieces[6], 'X'];
+        $newHwidArray = ['X', $hwidPieces[1], $hwidPieces[2], $hwidPieces[3], $hwidPieces[4], $hwidPieces[5], 'X', 'X'];
 
         return implode('-', $newHwidArray);
     }
