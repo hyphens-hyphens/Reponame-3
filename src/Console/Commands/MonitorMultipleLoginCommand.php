@@ -90,7 +90,11 @@ class MonitorMultipleLoginCommand extends AbstractJXCommand
                 if (count($userArray) <= self::MAX_ACCOUNT_PER_PC ) {
                     continue;
                 }
-                $url = $this->saveDataFile($userArray, $server, $hwidArray);
+                $listIps = $this->getListIps($userArray, $server);
+                if ($this->isSkippedByIps($listIps)) {
+                    continue;
+                }
+                $url = $this->saveDataFile($userArray, $hwidArray, $listIps);
                 $this->alertReport($server, $logFile, $hwid, $userArray, $hwidArray, $url);
                 sleep(1);
             }
@@ -148,17 +152,14 @@ TEMPLATE;
 
     /**
      * @param array $listAcc
-     * @param       $server
      * @param array $hwidArray
+     * @param       $listIp
      *
      * @return string
-     * @throws \Exception
      */
-    private function saveDataFile(array $listAcc, $server, array $hwidArray)
+    private function saveDataFile(array $listAcc, array $hwidArray, $listIp)
     {
-        $usernames = array_column($listAcc, 'user');
         $firstAcc = array_first($listAcc);
-        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $server, new \DateTime($firstAcc['@timestamp']));
         $now = time();
         $filename = "multi_login_{$now}";
         $file = storage_path('app/console_log/' . $filename);
@@ -172,5 +173,42 @@ TEMPLATE;
         ]));
 
         return route('voyager.console_log_viewer.multi_login', ['t' => $now]);
+    }
+
+    /**
+     * @param $listIps
+     *
+     * @return bool
+     */
+    private function isSkippedByIps($listIps)
+    {
+        $combinedIps = [];
+        foreach ($listIps as $acc => $ips) {
+            $combinedIp = implode(', ', $ips);
+            $combinedIps[$combinedIp][] = $acc;
+        }
+        foreach ($combinedIps as $ip => $accs) {
+            if (count($accs) > self::MAX_ACCOUNT_PER_PC) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $userArray
+     * @param $server
+     *
+     * @return array
+     * @throws \Exception
+     */
+    private function getListIps($userArray, $server)
+    {
+        $firstAcc = array_first($userArray);
+        $usernames = array_column($userArray, 'user');
+        $listIp = app(LogLanQueryService::class)->getIpLanByUsernames($usernames, $server, new \DateTime($firstAcc['@timestamp']));
+
+        return $listIp;
     }
 }
