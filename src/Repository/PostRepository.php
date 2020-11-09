@@ -138,15 +138,18 @@ class PostRepository extends AbstractEloquentRepository
     /**
      * @param array $slugs
      * @param int   $limit
+     * @param bool  $requirePublished
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
      */
-    public function getPostsBySlugs(array $slugs, $limit = 10)
+    public function getPostsBySlugs(array $slugs, $limit = 20, $requirePublished = true)
     {
         /** @var \Illuminate\Database\Query\Builder|Post $query */
         $query = $this->query();
-        $query->published()
-            ->whereIn("slug", $slugs)
+        if ($requirePublished) {
+            $query->published();
+        }
+        $query->whereIn("slug", $slugs)
             ->limit($limit)
             ->with('category')
             ->orderByRaw("FIELD(slug, '". implode("','", $slugs) ."')")

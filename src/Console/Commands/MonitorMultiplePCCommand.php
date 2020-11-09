@@ -94,18 +94,23 @@ class MonitorMultiplePCCommand extends Command
         Dàn xe:
         %s
 TEMPLATE;
-        $listUsers = '';
         $isBan = $this->input->getOption('ban');
         foreach ($report as $server => $items) {
+            $listUsers = '';
             foreach ($items as $item) {
                 $user = $item['user'];
+                if (in_array($user, config('t2g_common.jx_monitor.multi_login_excluded_accounts'))) {
+                    continue;
+                }
                 if ($isBan) {
                     $this->banUser($user['user']);
                 }
-                $listUsers = '';
                 foreach ($item['users2'] as $user2) {
                     $listUsers .= sprintf("- `%s (%s)` level %s \n", $user2['user'], $user2['char'], $user2['level']);
                 }
+            }
+            if (!$listUsers) {
+                continue;
             }
             $message = sprintf($template, $server, $user['user'], $user['char'], $user['level'], $listUsers);
             $this->discord->sendWithEmbed(

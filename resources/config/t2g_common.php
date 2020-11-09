@@ -99,7 +99,8 @@ return [
         'index_suffix' => '_*'
     ],
     'jx_monitor' => [
-        'multi_login_excluded_accounts' => []
+        'multi_login_excluded_accounts' => [],
+        'multiple_pc_pm_excluded_accounts' => [],
     ],
     'vip_system' => [
         'start_date' => new DateTime('@' . strtotime('2020-03-26')),
