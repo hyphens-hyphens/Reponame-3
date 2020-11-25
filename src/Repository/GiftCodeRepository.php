@@ -31,4 +31,31 @@ class GiftCodeRepository extends AbstractEloquentRepository
         ];
     }
 
+    public function getAvailableGiftcodes()
+    {
+        $query = $this->query();
+        $query->where('status', 1)
+            ->where('is_claimable', 1)
+            ->orderBy('updated_at', 'desc')
+        ;
+
+        return $query->get();
+    }
+
+    /**
+     * @return array
+     */
+    public function getGiftCodeTypes()
+    {
+        $query = $this->query();
+        $codes = $query->where('status', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+        if (!$codes) {
+            return [];
+        }
+
+        return array_column($codes->toArray(), 'name', 'id');
+    }
+
 }

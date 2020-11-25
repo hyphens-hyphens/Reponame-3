@@ -26,6 +26,9 @@ namespace T2G\Common\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Revision whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Revision whereUserId($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Revision newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Revision newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Revision query()
  */
 class Revision extends \Venturecraft\Revisionable\Revision
 {

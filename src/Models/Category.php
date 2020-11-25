@@ -30,6 +30,11 @@ namespace T2G\Common\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Category withTranslation($locale = null, $fallback = true)
  * @method static \Illuminate\Database\Eloquent\Builder|Category withTranslations($locales = null, $fallback = true)
  * @mixin \Eloquent
+ * @property-read int|null $posts_count
+ * @property-read int|null $translations_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Category newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Category newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Category query()
  */
 class Category extends \TCG\Voyager\Models\Category
 {

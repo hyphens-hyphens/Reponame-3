@@ -19,6 +19,11 @@ namespace T2G\Common\Models;
  * @mixin \Eloquent
  * @property string|null $hwid
  * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin whereHwid($value)
+ * @property int|null $server
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\UserLastLogin whereServer($value)
  */
 class UserLastLogin extends BaseEloquentModel
 {

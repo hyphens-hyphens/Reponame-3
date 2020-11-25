@@ -26,6 +26,9 @@ use TCG\Voyager\Traits\Resizable;
  * @method static \Illuminate\Database\Eloquent\Builder|Gallery whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Gallery whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Gallery newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Gallery newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Gallery query()
  */
 class Gallery extends BaseEloquentModel
 {

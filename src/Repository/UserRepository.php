@@ -174,6 +174,18 @@ class UserRepository extends AbstractEloquentRepository
     }
 
     /**
+     * @param string $username
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|AbstractUser|object
+     */
+    public function getUserByName(string $username)
+    {
+        $query = $this->query()->where('name', $username);
+
+        return $query->first();
+    }
+
+    /**
      * @param array $usernames
      *
      * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model[]

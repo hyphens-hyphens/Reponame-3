@@ -135,4 +135,21 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
 
         return $code;
     }
+
+    /**
+     * @param \App\User|null $user
+     * @param int            $perPage
+     *
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getGiftcodeHistories(?\App\User $user, $perPage = 20)
+    {
+        $query = $this->query();
+        $query->where('issued_for', $user->id)
+            ->orWhere('user_id', $user->id)
+            ->orderBy('updated_at', 'desc')
+        ;
+
+        return $query->paginate($perPage);
+    }
 }

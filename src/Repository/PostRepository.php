@@ -49,6 +49,12 @@ class PostRepository extends AbstractEloquentRepository
         return $query->get();
     }
 
+    /**
+     * @param string $eventSlug
+     * @param int    $limit
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\T2G\Common\Models\Post[]
+     */
     public function getHomeEvents($eventSlug = 'su-kien', $limit = self::DEFAULT_PER_PAGE)
     {
         /** @var \Illuminate\Database\Query\Builder|Post $query */

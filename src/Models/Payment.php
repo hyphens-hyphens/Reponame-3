@@ -75,6 +75,9 @@ use T2G\Common\Util\MobileCard;
  * @mixin \Eloquent
  * @property-read \T2G\Common\Models\AbstractUser|null $creator
  * @property-read \T2G\Common\Models\AbstractUser|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Payment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Payment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Payment query()
  */
 class Payment extends BaseEloquentModel
 {

@@ -26,6 +26,9 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder|Server whereStatus($value)
  * @method static Builder|Server whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Server newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Server newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Server query()
  */
 class Server extends BaseEloquentModel
 {

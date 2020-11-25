@@ -28,6 +28,9 @@ use TCG\Voyager\Traits\Resizable;
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Slider whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Slider newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Slider newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Slider query()
  */
 class Slider extends BaseEloquentModel
 {

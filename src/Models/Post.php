@@ -52,6 +52,24 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Post withTranslation($locale = null, $fallback = true)
  * @method static \Illuminate\Database\Eloquent\Builder|Post withTranslations($locales = null, $fallback = true)
  * @mixin \Eloquent
+ * @property string|null $group_name
+ * @property string|null $group_slug
+ * @property string|null $group_title
+ * @property int|null $group_order
+ * @property string|null $group_sub
+ * @property string|null $title_keyword
+ * @property string|null $excerpt_keyword
+ * @property-read int|null $translations_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereExcerptKeyword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereGroupName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereGroupOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereGroupSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereGroupSub($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereGroupTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Post whereTitleKeyword($value)
  */
 class Post extends \TCG\Voyager\Models\Post
 {

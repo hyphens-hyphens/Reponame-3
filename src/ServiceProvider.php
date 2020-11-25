@@ -62,7 +62,7 @@ class ServiceProvider extends LaravelServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../resources/migrations');
 
-        $this->loadRoutesFrom(__DIR__.'/../resources/routes/route.php');
+        $this->loadRoutesFrom(__DIR__.'/../resources/routes/routes.php');
 
         $this->registerHelpers();
         $this->registerCommands();

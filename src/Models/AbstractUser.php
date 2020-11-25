@@ -59,6 +59,16 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUtmMedium($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AbstractUser whereUtmSource($value)
  * @mixin \Eloquent
+ * @property int $status
+ * @property-read int|null $advanced_revision_history_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $roles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\AbstractUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\AbstractUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\AbstractUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\AbstractUser registeredNumber()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\AbstractUser whereStatus($value)
  */
 class AbstractUser extends \TCG\Voyager\Models\User
 {

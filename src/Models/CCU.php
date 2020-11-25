@@ -16,6 +16,9 @@ namespace T2G\Common\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CCU whereOnline($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CCU whereServer($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\CCU newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\CCU newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\CCU query()
  */
 class CCU extends BaseEloquentModel
 {

@@ -32,6 +32,22 @@ use Illuminate\Notifications\Notifiable;
  * @method static Builder|GiftCode whereUpdatedAt($value)
  * @method static Builder|GiftCode whereUserId($value)
  * @mixin \Eloquent
+ * @property int $status
+ * @property string|null $name
+ * @property int $is_claimable
+ * @property-read \Illuminate\Database\Eloquent\Collection|\T2G\Common\Models\GiftCodeItem[] $details
+ * @property-read int|null $details_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode whereCodeName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode whereIsClaimable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode wherePrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\GiftCode whereType($value)
  */
 class GiftCode extends BaseEloquentModel
 {
@@ -71,5 +87,22 @@ class GiftCode extends BaseEloquentModel
     public function getNumberOfUsedCodes()
     {
         return $this->details()->whereNotNull('user_id')->count();
+    }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     *
+     * @return bool
+     */
+    public function isUserClaimed(AbstractUser $user)
+    {
+        $query = $this
+            ->where('id', $this->id)
+            ->whereHas('details', function (Builder $query) use ($user){
+                $query->where('issued_for', $user->id);
+            })
+        ;
+
+        return $query->count() > 0;
     }
 }

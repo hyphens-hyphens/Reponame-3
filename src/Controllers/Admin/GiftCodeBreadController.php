@@ -8,6 +8,7 @@ use T2G\Common\Models\GiftCode;
 use T2G\Common\Repository\GiftCodeItemRepository;
 use T2G\Common\Repository\GiftCodeRepository;
 use Illuminate\Http\Request;
+use T2G\Common\Repository\UserRepository;
 use T2G\Common\Services\GiftCodeService;
 
 /**
@@ -44,6 +45,15 @@ class GiftCodeBreadController extends BaseVoyagerController
         }
 
         return $response;
+    }
+
+    public function index(Request $request)
+    {
+        voyager()->onLoadingView('voyager::gift-codes.browse', function ($view, &$params) {
+            $params['codeTypes'] = app(GiftCodeRepository::class)->getGiftCodeTypes();
+        });
+
+        return parent::index($request);
     }
 
     public function edit(Request $request, $id)
@@ -109,6 +119,23 @@ class GiftCodeBreadController extends BaseVoyagerController
 
     protected function alterBreadBrowseEloquentQuery(\Illuminate\Database\Eloquent\Builder $query, Request $request)
     {
-        $query->with('details');
+//        $query->with('details');
+    }
+
+    public function addCode(Request $request, GiftCodeService $giftCodeService, UserRepository $userRepository)
+    {
+        $id = $request->get('code_id');
+        $username = trim($request->get('username'));
+        $from = intval($request->get('from'));
+        $to = intval($request->get('to'));
+
+        $giftCode = GiftCode::find($id);
+        if (!$giftCode) {
+            return back()->withErrors(['code' => "Loại Gift Code không hợp lệ"]);
+        }
+        $this->authorize('edit', $giftCode);
+        $messages = $giftCodeService->addCodeForUsers($giftCode, $username, $from, $to);
+
+        return back()->with('messages', $messages);
     }
 }

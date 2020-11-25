@@ -28,6 +28,9 @@ use TCG\Voyager\Traits\Resizable;
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Banner newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Banner newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\Banner query()
  */
 class Banner extends BaseEloquentModel
 {

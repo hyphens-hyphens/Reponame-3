@@ -9,6 +9,7 @@ use T2G\Common\Models\GiftCode;
 use T2G\Common\Models\GiftCodeItem;
 use T2G\Common\Repository\GiftCodeItemRepository;
 use T2G\Common\Repository\GiftCodeRepository;
+use T2G\Common\Repository\UserRepository;
 
 /**
  * Class GiftCodeService
@@ -42,12 +43,18 @@ class GiftCodeService
      *
      * @param \T2G\Common\Repository\GiftCodeRepository     $giftCodeRepo
      * @param \T2G\Common\Repository\GiftCodeItemRepository $giftCodeItemRepo
+     * @param \T2G\Common\Repository\UserRepository         $userRepository
      * @param \T2G\Common\Services\GameApiClientInterface   $gameApi
      */
-    public function __construct(GiftCodeRepository $giftCodeRepo, GiftCodeItemRepository $giftCodeItemRepo, GameApiClientInterface $gameApi)
-    {
+    public function __construct(
+        GiftCodeRepository $giftCodeRepo,
+        GiftCodeItemRepository $giftCodeItemRepo,
+        UserRepository $userRepository,
+        GameApiClientInterface $gameApi
+    ) {
         $this->giftCodeRepo = $giftCodeRepo;
         $this->giftCodeItemRepo = $giftCodeItemRepo;
+        $this->userRepo = $userRepository;
         $this->gameApi = $gameApi;
         $this->redis = app('redis.connection');;
     }
@@ -57,7 +64,7 @@ class GiftCodeService
      * @param                             $quantity
      * @param int                         $suffixLength
      *
-     * @return bool
+     * @return array
      */
     public function generateCode(GiftCode $giftCode, $quantity, $suffixLength = 6)
     {
@@ -77,12 +84,15 @@ class GiftCodeService
                 'code'         => $codeValue,
                 'gift_code_id' => $giftCode->id,
             ];
-            $codes[] = $code;
-            $existedCode[] = $code;
+            $id = GiftCodeItem::insertGetId($code);
+            $code['id'] = $id;
+            $giftCodeItem = new GiftCodeItem($code);
+            $codes[] = $giftCodeItem;
+            $existedCode[] = $codeValue;
             $created++;
         }
 
-        return GiftCodeItem::insert($codes);
+        return $codes;
     }
 
     /**
@@ -183,5 +193,86 @@ class GiftCodeService
         $giftCode = GiftCode::find(config('site.gift_code.gift_code_issuing_id'));
 
         return $this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode);
+    }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param \T2G\Common\Models\GiftCode     $giftCode
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function claimCode(AbstractUser $user, GiftCode $giftCode)
+    {
+        $codes = $this->generateCode($giftCode, 1);
+        $code = $codes[0];
+        /** @var \Illuminate\Database\Eloquent\Model $code */
+        $code->fresh();
+        $code->issued_for = $user->id;
+        $code->save();
+
+        return $code;
+    }
+
+    /**
+     * @param \T2G\Common\Models\GiftCode $giftCode
+     * @param string                      $username
+     * @param int                         $from
+     * @param int                         $to
+     *
+     * @return array $messages
+     */
+    public function addCodeForUsers(GiftCode $giftCode, string $username, int $from = 0, int $to = 1)
+    {
+        $messages = [];
+        if ($from == $to) {
+            $from = 0;
+            $to = 1;
+        }
+        if ($from >= $to || $from < 0 || $to < 0 || ($to - $from > 20)) {
+            $messages[] = "Số bắt đầu và kết thúc không hợp lệ";
+            return $messages;
+        }
+        for ($i = $from; $i < $to; $i++) {
+            $name = ($to - $from) > 1 ? $username . $i : $username;
+            $user = $this->userRepo->getUserByName($name);
+            if (!$user) {
+                $messages[] = "Tài khoản `{$name}` không tồn tại";
+                continue;
+            }
+            $message = $this->_addCodeForUser($giftCode, $user);
+            if ($message === true) {
+                // success
+                $messages[] = "Add code thành công cho tài khoản `{$name}`";
+            } else {
+                $messages[] = $message;
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * @param \T2G\Common\Models\GiftCode     $giftCode
+     * @param \T2G\Common\Models\AbstractUser $user
+     *
+     * @return bool|string
+     */
+    private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
+    {
+        if ($giftCode->isUserClaimed($user)) {
+            return "Tài khoản `{$user->name}` đã được add code này rồi";
+        }
+        // check code is_claimable or not
+        if ($giftCode->is_claimable) {
+            $this->claimCode($user, $giftCode);
+            return true;
+        }
+        $codeItem = $this->giftCodeItemRepo->getAvailableCodeForIssuing($giftCode);
+        if (!$codeItem) {
+            return "Không còn gift code để phát cho tài khoản `{$user->name}`";
+        }
+        $codeItem->issueForUser($user);
+
+        return true;
     }
 }

@@ -29,6 +29,9 @@ namespace T2G\Common\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|ClientTracking whereVersion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientTracking whereWifiMac($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\ClientTracking newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\ClientTracking newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\T2G\Common\Models\ClientTracking query()
  */
 class ClientTracking extends BaseEloquentModel
 {
