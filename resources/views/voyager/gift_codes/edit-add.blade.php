@@ -71,7 +71,13 @@
                     </form>
                 </div>
             </div>
-            @if($dataTypeContent->id && $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_PER_ACCOUNT)
+            @if(
+                $dataTypeContent->id
+                && (
+                    $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_PER_ACCOUNT
+                    || $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_PER_MONTH
+                    )
+                )
                 @include('t2g_common::voyager.gift_codes.details')
             @endif
         </div>

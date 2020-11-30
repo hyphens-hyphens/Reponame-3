@@ -41,12 +41,13 @@ interface GameApiClientInterface
     public function addGold($username, $knb = 0, $xu = 0, $orderId = null);
 
     /**
-     * @param $username
-     * @param $giftCode
+     * @param                             $username
+     * @param \T2G\Common\Models\GiftCode $giftCode
+     * @param bool                        $forceUpdate
      *
      * @return bool
      */
-    public function addGiftCode($username, GiftCode $giftCode);
+    public function addGiftCode($username, GiftCode $giftCode, $forceUpdate = false);
 
     /**
      * @return array

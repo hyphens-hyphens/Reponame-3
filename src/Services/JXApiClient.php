@@ -368,16 +368,22 @@ class JXApiClient implements GameApiClientInterface
     /**
      * @param                             $username
      * @param \T2G\Common\Models\GiftCode $giftCode
+     * @param bool                        $forceUpdate
      *
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \T2G\Common\Exceptions\GameApiException
      */
-    public function addGiftCode($username, GiftCode $giftCode)
+    public function addGiftCode($username, GiftCode $giftCode, $forceUpdate = false)
     {
         $sign = md5($this->apiKey . $giftCode->code_name . $username);
         $response = $this->post(self::ENDPOINT_ADD_CODE, [
-            'form_params' => ['code' => $giftCode->code_name, 'username' => $username, 'sign' => $sign]
+            'form_params' => [
+                'code'        => $giftCode->code_name,
+                'username'    => $username,
+                'sign'        => $sign,
+                'forceUpdate' => intval($forceUpdate),
+            ]
         ]);
         $body = $this->getResponseText($response);
         $data = json_decode($body, true);

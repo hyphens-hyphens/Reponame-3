@@ -39,6 +39,11 @@ class GiftCodeService
     protected $redis;
 
     /**
+     * @var \T2G\Common\Repository\UserRepository
+     */
+    protected $userRepo;
+
+    /**
      * GiftCodeService constructor.
      *
      * @param \T2G\Common\Repository\GiftCodeRepository     $giftCodeRepo
@@ -56,7 +61,7 @@ class GiftCodeService
         $this->giftCodeItemRepo = $giftCodeItemRepo;
         $this->userRepo = $userRepository;
         $this->gameApi = $gameApi;
-        $this->redis = app('redis.connection');;
+        $this->redis = app('redis.connection');
     }
 
     /**
@@ -104,14 +109,10 @@ class GiftCodeService
      */
     public function useCode(AbstractUser $user, GiftCodeItem $giftCodeItem)
     {
-//        if ($this->checkRaceCondition($giftCodeItem->code)) {
-//            return false;
-//        }
         if (!empty($giftCodeItem->issued_for) && $user->id != $giftCodeItem->issued_for) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
-
-        if ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem->gift_code_id)) {
+        if ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_CLAIMED, $giftCodeItem);
         }
 
@@ -124,7 +125,8 @@ class GiftCodeService
         }
 
         // add gift code
-        if (!$this->gameApi->addGiftCode($user->name, $giftCode)) {
+        $forceUpdate = $giftCode->type == GiftCode::TYPE_PER_MONTH;
+        if (!$this->gameApi->addGiftCode($user->name, $giftCode, $forceUpdate)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_API_ERROR, $giftCodeItem);
         }
         $this->giftCodeItemRepo->updateUsedCode($giftCodeItem, $user);
@@ -205,7 +207,7 @@ class GiftCodeService
     {
         $codes = $this->generateCode($giftCode, 1);
         $code = $codes[0];
-        /** @var \Illuminate\Database\Eloquent\Model $code */
+        /** @var GiftCodeItem $code */
         $code->fresh();
         $code->issued_for = $user->id;
         $code->save();

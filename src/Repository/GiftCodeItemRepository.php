@@ -84,18 +84,24 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
 
     /**
      * check if user claimed same type gift code
+     *
      * @param \T2G\Common\Models\AbstractUser $user
-     * @param                                 $giftCodeId
+     * @param \T2G\Common\Models\GiftCodeItem $giftCodeItem
      *
      * @return bool
      */
-    public function isUserClaimed(AbstractUser $user, $giftCodeId)
+    public function isUserClaimed(AbstractUser $user, GiftCodeItem $giftCodeItem)
     {
         $query = $this->query();
         $query->where([
             'user_id'      => $user->id,
-            'gift_code_id' => $giftCodeId,
+            'gift_code_id' => $giftCodeItem->gift_code_id,
         ]);
+        if ($giftCodeItem->giftCode->type === GiftCode::TYPE_PER_MONTH) {
+            // once code per month
+            $startOfMonth = date('Y-m-01 00:00');
+            $query->where('updated_at', '>', $startOfMonth);
+        }
 
         return $query->count() > 0;
     }
@@ -152,4 +158,5 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
 
         return $query->paginate($perPage);
     }
+
 }
