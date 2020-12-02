@@ -5,7 +5,7 @@
         </h3>
     </div>
     <div class="panel-body">
-        <form role="form" class="form-edit-add" action="{{ route('voyager.gift_code.use') }}" method="POST">
+        <form role="form" action="{{ route('voyager.gift_code.add_code') }}" method="POST">
             <!-- PUT Method if we are editing -->
             {{ csrf_field() }}
             @if (count($errors) > 0)

@@ -49,7 +49,7 @@ class GiftCodeRepository extends AbstractEloquentRepository
     {
         $query = $this->query();
         $codes = $query->where('status', 1)
-            ->orderBy('id', 'ASC')
+            ->orderBy('order', 'ASC')
             ->get();
         if (!$codes) {
             return [];

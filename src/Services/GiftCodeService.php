@@ -226,7 +226,7 @@ class GiftCodeService
     public function addCodeForUsers(GiftCode $giftCode, string $username, int $from = 0, int $to = 1)
     {
         $messages = [];
-        if ($from == $to) {
+        if ($from === $to) {
             $from = 0;
             $to = 1;
         }
@@ -267,6 +267,7 @@ class GiftCodeService
         // check code is_claimable or not
         if ($giftCode->is_claimable) {
             $this->claimCode($user, $giftCode);
+
             return true;
         }
         $codeItem = $this->giftCodeItemRepo->getAvailableCodeForIssuing($giftCode);

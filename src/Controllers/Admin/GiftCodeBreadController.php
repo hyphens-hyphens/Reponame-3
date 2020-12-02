@@ -131,7 +131,6 @@ class GiftCodeBreadController extends BaseVoyagerController
         $username = trim($request->get('username'));
         $from = intval($request->get('from'));
         $to = intval($request->get('to'));
-
         $giftCode = GiftCode::find($id);
         if (!$giftCode) {
             return back()->withErrors(['code' => "Loại Gift Code không hợp lệ"]);

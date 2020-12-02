@@ -76,10 +76,10 @@ Route::group(['middleware' => 'web'], function () {
         });
 
         Route::group(['as' => 'voyager.', 'middleware' => 'admin.user', 'namespace' => 'T2G\Common\Controllers'], function () {
-            Route::group(['as' => 'gift_code.', 'prefix' => '/gift-code'], function () {
+            Route::group(['as' => 'gift_code.', 'prefix' => '/gift-codes'], function () {
                 Route::post('/add', [
                     'uses' => 'Admin\GiftCodeBreadController@addCode',
-                    'as' => 'use',
+                    'as' => 'add_code',
                 ]);
             });
         });
