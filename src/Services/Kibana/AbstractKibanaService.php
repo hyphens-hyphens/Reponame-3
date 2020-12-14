@@ -3,6 +3,8 @@
 namespace T2G\Common\Services\Kibana;
 
 use Elasticsearch\ClientBuilder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use T2G\Common\Models\ElasticSearch\SearchResult;
 
 /**
@@ -51,5 +53,20 @@ abstract class AbstractKibanaService
         ]);
 
         return new SearchResult($data);
+    }
+
+    /**
+     * @param       $items
+     * @param null  $perPage
+     * @param null  $page
+     * @param array $options
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    protected function paginate($items, $total, $perPage = null, $page = null, $options = [])
+    : LengthAwarePaginator {
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+
+        return new LengthAwarePaginator($items, $total, $perPage, $page, $options);
     }
 }
