@@ -1,13 +1,13 @@
 ## Docs
-- huong dan setup mailbox config for MoMo alert with Webklex\IMAP
-- register commands in cronjobs
-- config middleware
+- Setup mailbox config for MoMo alert with Webklex\IMAP
+- Register commands in cronjobs
+- Configure middleware
 ```php
 // app/Http/Kernel.php
 't2g' => \T2G\Common\Middleware\T2GMiddleware::class,
 ```
 
-- config logging channel
+- Configure logging channel
 
 ```php
 // ./config/logging.php
@@ -57,21 +57,9 @@
 ```
 php artisan vendor:publish --provider="T2G\Common\ServiceProvider" --tag="config"
 ```
-after correct configs in `config/t2g_common.php` run these commands
+after correct configs in `config/t2g_common.php` run this commands
 ```
 php artisan migrate
-php artisan t2g_common:payment:update_profit
-```
-
-## Update database 
-```mysql
-UPDATE data_types SET model_name = REPLACE(model_name, 'App\\Models', 'T2G\\Common\\Models');
-
-UPDATE data_types SET policy_name = REPLACE(policy_name, 'App\\Models', 'T2G\\Common\\Models');
-
-insert into permissions (`key`, created_at, updated_at) values ('widget.user', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
-insert into permissions (`key`, created_at, updated_at) values ('widget.ccu', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
-insert into permissions (`key`, created_at, updated_at) values ('widget.payment', '2019-10-21 11:22:00', '2019-10-21 11:22:00');
 ```
 
 ## TODO
