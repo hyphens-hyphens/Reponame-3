@@ -53,9 +53,9 @@ Route::group(['middleware' => 'web'], function () {
 
             // ranking widget in dashboard
             Route::group(['prefix' => '/ranking', 'as' => 'ranking.'], function () {
-                Route::get('/toplist', [
+                Route::get('/top-user-list', [
                     'uses' => 'Admin\RankingController@getTopUserList',
-                    'as'   => 'toplist'
+                    'as'   => 'top_level'
                 ]);
             });
 

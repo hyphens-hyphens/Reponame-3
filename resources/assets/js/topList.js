@@ -1,18 +1,18 @@
 $(window).on('load', function () {
 
-    const firstServer = '.server-rank:first-child';
-    // Active First Sever
-    $(firstServer).addClass('active');
-    getTopList($(firstServer).data('url'),'phat-son');
+    // Active First Tab User Rank List
+    const firstServer = $('.server-rank:first-child');
+    firstServer.addClass('active');
+    getTopLevelUserList(firstServer.data('url'),firstServer.data('servername'));
 
-    // Active Sever rank
+    // Active Tab User Rank List
     $('.server-rank').click(function (e) {
         e.preventDefault();
         $('.server-rank').removeClass('active');
         $('#rank-loader').removeClass('active');
         $(this).addClass('active');
         let serverName = $(this).data('servername');
-        getTopList($(this).data('url'),serverName);
+        getTopLevelUserList($(this).data('url'),serverName);
     });
 
     //  PAGINATION USING AJAX
@@ -22,12 +22,12 @@ $(window).on('load', function () {
         const page = ($(this).attr('href').split('page=')[1]);
         if ($('.server-rank').hasClass('active')) {
             const server = $('.server-rank.active');
-            getTopList($(server).data('url'),server.data('servername'),page);
+            getTopLevelUserList($(server).data('url'),server.data('servername'),page);
         }
     });
 });
-    //  AJAX GET TOP LIST USER
-    function getTopList(action,serverName,page = 1) {
+    //  Ajax Get Top User Rank List
+    function getTopLevelUserList(action,serverName,page = 1) {
         $.ajax({
             type: 'GET',
             url: action,
@@ -46,7 +46,7 @@ $(window).on('load', function () {
             }
         })
     }
-    // LOADER HIDDEN
+    // Loader
     function  HideLoader () {
         setTimeout(function() {
             $('#rank-loader').addClass('active');

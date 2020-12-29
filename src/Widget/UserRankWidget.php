@@ -15,7 +15,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      * @var UserRepository
      */
     protected $repository;
-    const PAGE_SIZE_HOME_RANKING = 10;
+    const DEFAULT_RANKING_PAGE_SIZES = 10;
 
     public function __construct(UserRepository $userRepository)
     {
@@ -41,12 +41,10 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      */
     public function loadWidgetContent($serverName)
     {
-        if ($serverName === 'phat-son') {
-            $data = $this->getTopUserList('Phat-Son15');
-        } elseif ($serverName === 'tung-son') {
-            $data = $this->getTopUserList('Tung-Son14');
+        if ($serverName) {
+            $data = $this->getTopUserList($serverName);
         }
-        $data = $this->convertArrayToPaginate($data, self::PAGE_SIZE_HOME_RANKING);
+        $data = $this->PaginateData($data, self::DEFAULT_RANKING_PAGE_SIZES);
 
         return view('t2g_common::voyager.partials.top_user_list', ['data' => $data]);
     }
@@ -61,7 +59,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
               'user' => $name,
               'char' => 'cha1',
               'level' => 375,
-              'exp' => 188989100
+              'exp' => 1887670768
           ],
           2 => [
               'user' => $name,
@@ -93,19 +91,19 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
               'level' => 375,
               'exp' => 1887670768
           ], 7 => [
-                'user' => 'phatson',
+                'user' => $name,
                 'char' => 'cha7',
                 'level' => 375,
                 'exp' => 1887670768
             ],
           8 => [
-              'user' => 'phatson',
+              'user' => $name,
               'char' => 'cha8',
               'level' => 375,
               'exp' => 1887670768
           ],
           9 => [
-              'user' => 'phatson',
+              'user' => $name,
               'char' => 'cha9',
               'level' => 375,
               'exp' => 1887670768
@@ -118,56 +116,56 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
           ]
             ,
           11 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           12 => [
-              'user' => 'phatson',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           13 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           14 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           15 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           16 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           10 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
           ]
             ,
           17 => [
-              'user' => 'ma10',
+              'user' => $name,
               'char' => 'cha10',
               'level' => 375,
               'exp' => 1887670768
@@ -191,7 +189,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      * @param  array  $options
      * @return LengthAwarePaginator
      */
-    public function convertArrayToPaginate($items, $perPage = 5, $page = null, $options = [])
+    private function PaginateData($items, $perPage = 5, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
