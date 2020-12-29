@@ -32,10 +32,7 @@ trait GiftCodeControllerTrait
         $error = '';
         try {
             $giftCodeItem = $giftCodeService->getGiftCodeItem($data['code']);
-            $added = $giftCodeService->useCode($user, $giftCodeItem);
-            if (!$added) {
-                $error = trans("gift_code.race_condition_error");
-            }
+            $giftCodeService->useCode($user, $giftCodeItem);
         } catch (GiftCodeException $e) {
             $error = trans("gift_code." . $e->getMessage());
             if ($e->getCode() == GiftCodeException::ERROR_CODE_API_ERROR) {

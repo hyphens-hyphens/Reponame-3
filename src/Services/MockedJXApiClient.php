@@ -37,7 +37,7 @@ class MockedJXApiClient
             'options' => $options,
         ]);
         $response = "1: Success";
-        if (strpos($uri, 'ccu') !== false) {
+        if (strpos($uri, JXApiClient::ENDPOINT_CCU) !== false) {
             $response = json_encode(['N/A' => 0]);
         }
 
@@ -56,7 +56,15 @@ class MockedJXApiClient
             'uri'     => $uri,
             'options' => $options,
         ]);
+        $response = "1: Success";
+        if (strpos($uri, JXApiClient::ENDPOINT_ADD_CODE) !== false) {
+            $response = json_encode([
+                'success'     => true,
+                'message'     => "Add code thành công.",
+                'status_code' => 1,
+            ]);
+        }
 
-        return new Response(200, [], "1: Success");
+        return new Response(200, [], $response);
     }
 }

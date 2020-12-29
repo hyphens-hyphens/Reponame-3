@@ -95,7 +95,7 @@ class GiftCode extends BaseEloquentModel
      *
      * @return bool
      */
-    public function isUserClaimed(AbstractUser $user)
+    public function isUserClaimable(AbstractUser $user)
     {
         $query = $this
             ->where('id', $this->id)

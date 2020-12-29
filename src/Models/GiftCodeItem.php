@@ -40,6 +40,8 @@ class GiftCodeItem extends BaseEloquentModel
 
     protected $fillable = ['code', 'gift_code_id'];
 
+    protected $dates = ['used_at'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

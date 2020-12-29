@@ -89,9 +89,7 @@ class GiftCodeService
                 'code'         => $codeValue,
                 'gift_code_id' => $giftCode->id,
             ];
-            $id = GiftCodeItem::insertGetId($code);
-            $code['id'] = $id;
-            $giftCodeItem = new GiftCodeItem($code);
+            $giftCodeItem = $this->giftCodeItemRepo->create($code);
             $codes[] = $giftCodeItem;
             $existedCode[] = $codeValue;
             $created++;
@@ -109,6 +107,10 @@ class GiftCodeService
      */
     public function useCode(AbstractUser $user, GiftCodeItem $giftCodeItem)
     {
+        if ($giftCodeItem->isUsed()) {
+            throw new GiftCodeException(GiftCodeException::ERROR_CODE_USED, $giftCodeItem);
+        }
+
         if (!empty($giftCodeItem->issued_for) && $user->id != $giftCodeItem->issued_for) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
@@ -117,9 +119,6 @@ class GiftCodeService
         }
 
         $giftCode = $giftCodeItem->giftCode;
-        if ($giftCodeItem->isUsed()) {
-            throw new GiftCodeException(GiftCodeException::ERROR_CODE_USED, $giftCodeItem);
-        }
         if (!$giftCode->status) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_DISABLE, $giftCodeItem);
         }
@@ -261,7 +260,7 @@ class GiftCodeService
      */
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
-        if ($giftCode->isUserClaimed($user)) {
+        if ($this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode)) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }
         // check code is_claimable or not

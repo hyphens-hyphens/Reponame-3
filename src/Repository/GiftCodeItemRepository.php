@@ -79,6 +79,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
     public function updateUsedCode(GiftCodeItem $giftCodeItem, AbstractUser $user)
     {
         $giftCodeItem->user_id = $user->id;
+        $giftCodeItem->used_at = date('Y-m-d H:i:s');
         $giftCodeItem->save();
     }
 
@@ -136,6 +137,11 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         $query->where('gift_code_id', $giftCode->id)
             ->where('issued_for', $user->id)
         ;
+        if ($giftCode->type === GiftCode::TYPE_PER_MONTH) {
+            // once code per month
+            $startOfMonth = date('Y-m-01 00:00');
+            $query->where('updated_at', '>', $startOfMonth);
+        }
         /** @var GiftCodeItem $code */
         $code = $query->first();
 
