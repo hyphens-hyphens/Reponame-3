@@ -7,6 +7,8 @@ use T2G\Common\Repository\UserRepository;
 use T2G\Common\Widget\CCUWidget;
 use T2G\Common\Widget\PaymentWidget;
 use T2G\Common\Widget\UserWidget;
+use T2G\Common\Widget\UserRankWidget;
+
 
 /**
  * Class DashboardController
@@ -40,6 +42,10 @@ class DashboardController extends Controller
             'widgetCCU'     => $this->getCCUWidget(),
         ];
 
+        if (config('t2g_common.top_list_user_enable')) {
+            $data['widgetUserRankList'] = $this->getWidgetUserRankList();
+        }
+
         return voyager()->view('voyager::index', $data);
     }
 
@@ -69,6 +75,16 @@ class DashboardController extends Controller
     protected function getCCUWidget()
     {
         $widget = app(CCUWidget::class);
+
+        return $widget->render();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getWidgetUserRankList()
+    {
+        $widget = app(UserRankWidget::class);
 
         return $widget->render();
     }

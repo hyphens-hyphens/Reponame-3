@@ -8,6 +8,7 @@
             {!! $widgetUser !!}
             {!! $widgetPayment !!}
             {!! $widgetCCU !!}
+            {!! $widgetUserRankList ?? ''!!}
             <div class="clearfix"></div>
     </div>
 

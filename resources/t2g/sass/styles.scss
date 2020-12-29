@@ -1,0 +1,58 @@
+//Style table rank
+.tab-server-rank {
+  .server-rank {
+    cursor: pointer;
+    color: #0c0c0c;
+    display: inline-block;
+    width: 120px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background-color: #ddd9d5;
+    &.active {
+      background-color: #63A8E9;
+      color: #fff;
+  }
+}
+}
+
+.total-items {
+  text-transform: uppercase;
+  text-align: right;
+  color: #0c0c0c;
+}
+.rank-list-content {
+  margin-top: 20px;
+  width: 650px;
+  th {
+    color: #0c0c0c;
+}
+  tr {
+    border-bottom: 1px solid #ddd;
+}
+}
+.rank-list-content-ad {
+  padding-bottom: 80px;
+}
+// Styles Pagination
+ul.pagination {
+  margin-top: 20px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#rank-loader {
+  position: absolute;
+  bottom: 7%;
+  width: 100%;
+  left: 0;
+  background-color: #fff;
+  height: 58%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.active {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

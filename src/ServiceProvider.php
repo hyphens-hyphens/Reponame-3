@@ -60,6 +60,10 @@ class ServiceProvider extends LaravelServiceProvider
             __DIR__.'/../resources/views' => resource_path('views/vendor/t2g_common')
         ], 'view');
 
+        $this->publishes([
+            __DIR__.'/../resources/t2g' => resource_path('vendor/t2g')
+        ], 'public');
+
         $this->loadMigrationsFrom(__DIR__.'/../resources/migrations');
 
         $this->loadRoutesFrom(__DIR__.'/../resources/routes/routes.php');
