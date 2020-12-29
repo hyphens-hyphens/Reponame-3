@@ -260,7 +260,7 @@ class GiftCodeService
      */
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
-        if ($this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode)) {
+        if ($giftCode->type !== GiftCode::TYPE_PER_MONTH && $this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode)) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }
         // check code is_claimable or not
