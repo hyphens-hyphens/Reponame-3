@@ -111,22 +111,5 @@ return [
         'post_grouping_enabled' => false
     ],
     'top_list_user_enable'  => true,
-    'server_info' => [
-        'c01' => [
-            'name' => 'Phật Sơn',
-            'widget' => 'phat-son'
-        ],
-        'c02' => [
-            'name' => 'Tung Sơn',
-            'widget' => 'tung-son'
-        ],
-        'c03' => [
-            'name' => 'Thái Sơn',
-            'widget' => 'thai-son'
-        ],
-        'c04' => [
-            'name' => 'Đại Sơn',
-            'widget' => 'dai-son'
-        ]
-    ]
+    'server_info' => []
 ];
