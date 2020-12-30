@@ -20,6 +20,7 @@ class GiftCodeException extends \Exception
     const ERROR_CODE_NOT_AVAILABLE         = 105;
     const ERROR_CODE_ISSUER_NOT_MATCH      = 106;
     const ERROR_ISSUE_CODE_RANGE_NOT_VALID = 107;
+    const ERROR_CODE_PER_MONTH_EXPIRED     = 108;
 
     /**
      * @var \T2G\Common\Models\GiftCodeItem
@@ -52,6 +53,8 @@ class GiftCodeException extends \Exception
             self::ERROR_CODE_NOT_AVAILABLE         => "Out of Gift Code for issuing",
             self::ERROR_CODE_ISSUER_NOT_MATCH      => "This gift code was issued for another user",
             self::ERROR_ISSUE_CODE_RANGE_NOT_VALID => "The `from` and `to` arguments were not valid",
+            self::ERROR_CODE_PER_MONTH_EXPIRED     => "The gift code was expired",
+
         ];
 
         parent::__construct($messages[$code] ?? "Unknown Error", $code);

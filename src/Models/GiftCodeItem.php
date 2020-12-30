@@ -40,7 +40,7 @@ class GiftCodeItem extends BaseEloquentModel
 
     protected $fillable = ['code', 'gift_code_id'];
 
-    protected $dates = ['used_at'];
+    protected $dates = ['used_at', 'issued_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -96,6 +96,8 @@ class GiftCodeItem extends BaseEloquentModel
     public function issueForUser(AbstractUser $user)
     {
         $this->issued_for = $user->id;
+        $this->issued_at = date('Y-m-d H:i:s');
+
         return $this->save();
     }
 }

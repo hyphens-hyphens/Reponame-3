@@ -114,11 +114,16 @@ class GiftCodeService
         if (!empty($giftCodeItem->issued_for) && $user->id != $giftCodeItem->issued_for) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
-        if ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
+        $giftCode = $giftCodeItem->giftCode;
+        if ($giftCode->type === GiftCode::TYPE_PER_MONTH) {
+            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime("-10 days")) {
+                throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
+            }
+        } elseif ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_CLAIMED, $giftCodeItem);
         }
 
-        $giftCode = $giftCodeItem->giftCode;
+
         if (!$giftCode->status) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_DISABLE, $giftCodeItem);
         }
@@ -209,6 +214,7 @@ class GiftCodeService
         /** @var GiftCodeItem $code */
         $code->fresh();
         $code->issued_for = $user->id;
+        $this->issued_at = date('Y-m-d H:i:s');
         $code->save();
 
         return $code;
@@ -260,8 +266,12 @@ class GiftCodeService
      */
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
-        if ($giftCode->type !== GiftCode::TYPE_PER_MONTH && $this->giftCodeItemRepo->getIssuedCodeForUser($user, $giftCode)) {
+        $unusedCodes = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode);
+        if ($giftCode->type !== GiftCode::TYPE_PER_MONTH && $unusedCodes > 0) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
+        }
+        if ($giftCode->type === GiftCode::TYPE_PER_MONTH && $unusedCodes >= 2) {
+            return "Tài khoản `{$user->name}` còn 2 code chưa sử dụng";
         }
         // check code is_claimable or not
         if ($giftCode->is_claimable) {

@@ -98,11 +98,6 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
             'user_id'      => $user->id,
             'gift_code_id' => $giftCodeItem->gift_code_id,
         ]);
-        if ($giftCodeItem->giftCode->type === GiftCode::TYPE_PER_MONTH) {
-            // once code per month
-            $startOfMonth = date('Y-m-01 00:00');
-            $query->where('updated_at', '>', $startOfMonth);
-        }
 
         return $query->count() > 0;
     }
@@ -141,6 +136,23 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         $code = $query->first();
 
         return $code;
+    }
+
+    /**
+     * @param \T2G\Common\Models\AbstractUser $user
+     * @param \T2G\Common\Models\GiftCode     $giftCode
+     *
+     * @return int
+     */
+    public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode)
+    {
+        $query = $this->query();
+        $query->where('gift_code_id', $giftCode->id)
+            ->where('issued_for', $user->id)
+            ->where('user_id', null)
+        ;
+
+        return $query->count();
     }
 
     /**
