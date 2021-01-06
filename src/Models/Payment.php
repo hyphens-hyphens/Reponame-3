@@ -85,6 +85,7 @@ class Payment extends BaseEloquentModel
     const PAYMENT_TYPE_MOMO = 3;
     const PAYMENT_TYPE_BANK_TRANSFER = 4;
     const PAYMENT_TYPE_ADVANCE_DEBT = 5;
+    const PAYMENT_TYPE_ADD_XU_CTV = 6;
 
     const PAYMENT_STATUS_SUCCESS                 = 1;
     const PAYMENT_STATUS_PROCESSING              = 2;
@@ -100,6 +101,7 @@ class Payment extends BaseEloquentModel
     const PAY_METHOD_BANK_TRANSFER               = "Chuyển khoản";
     const PAY_METHOD_MOMO                        = "MoMo";
     const PAY_METHOD_ADVANCE_DEBT                = "Tạm ứng";
+    const PAY_METHOD_ADD_XU_CTV                  = "Add Xu Cho CTV";
 
     public $fillable = ['amount', 'note', 'payment_type', 'pay_from'];
 
@@ -149,6 +151,7 @@ class Payment extends BaseEloquentModel
             self::PAYMENT_TYPE_MOMO          => 'MoMo',
             self::PAYMENT_TYPE_BANK_TRANSFER => 'Chuyển khoản',
             self::PAYMENT_TYPE_ADVANCE_DEBT  => self::PAY_METHOD_ADVANCE_DEBT,
+            self::PAYMENT_TYPE_ADD_XU_CTV    => 'Add Xu Cho CTV',
         ];
     }
 
@@ -163,6 +166,7 @@ class Payment extends BaseEloquentModel
             self::PAY_METHOD_MOMO,
             self::PAY_METHOD_BANK_TRANSFER,
             self::PAY_METHOD_ZING_CARD,
+            self::PAY_METHOD_ADD_XU_CTV,
             self::PAY_METHOD_ADVANCE_DEBT,
         ];
     }
@@ -219,7 +223,6 @@ class Payment extends BaseEloquentModel
                         return self::PAYMENT_STATUS_GATEWAY_ADD_GOLD_ERROR; // Recard trả về OK nhưng không add được vàng cho user
                     }
                 }
-
             }
         }
 

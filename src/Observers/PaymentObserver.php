@@ -30,7 +30,10 @@ class PaymentObserver
             $payment->pay_method = Payment::PAY_METHOD_BANK_TRANSFER;
         } elseif(Payment::PAYMENT_TYPE_ADVANCE_DEBT == $payment->payment_type) {
             $payment->pay_method = Payment::PAY_METHOD_ADVANCE_DEBT;
+        } elseif(Payment::PAYMENT_TYPE_ADD_XU_CTV == $payment->payment_type) {
+            $payment->pay_method = Payment::PAY_METHOD_ADD_XU_CTV;
         }
+        // them 1 method cho việv adđ xu cho ctv
     }
 
     /**
