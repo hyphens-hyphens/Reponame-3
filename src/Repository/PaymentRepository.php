@@ -197,9 +197,12 @@ class PaymentRepository extends AbstractEloquentRepository
     {
         $knb = $xu = 0;
         $gameCoinAmount = round($moneyAmount / config('t2g_common.payment.game_gold.exchange_rate', 1000));
-        if (in_array($paymentType, [Payment::PAYMENT_TYPE_BANK_TRANSFER, Payment::PAYMENT_TYPE_MOMO, Payment::PAYMENT_TYPE_ADVANCE_DEBT,Payment::PAYMENT_TYPE_ADD_XU_CTV])) {
+        if (in_array($paymentType, [Payment::PAYMENT_TYPE_BANK_TRANSFER, Payment::PAYMENT_TYPE_MOMO, Payment::PAYMENT_TYPE_ADVANCE_DEBT])) {
             $xu = $gameCoinAmount + ceil($gameCoinAmount * config('t2g_common.payment.game_gold.bonus_rate', 10) / 100);
-        } else {
+        }elseif ($paymentType == Payment::PAYMENT_TYPE_ADD_XU_CTV){
+            $xu = $gameCoinAmount;
+        }
+        else {
             $knb = $gameCoinAmount;
         }
 
@@ -252,7 +255,7 @@ class PaymentRepository extends AbstractEloquentRepository
             DATE_FORMAT(`created_at`, '%d-%m') AS `date`, `pay_method`, SUM(`amount`)/1000 as `total`,
             SUM(`profit`)/1000 as `total_profit`
             ")
-            ->where('payment_type','!=' ,6)
+            ->where('payment_type','!=' ,Payment::PAYMENT_TYPE_ADD_XU_CTV)
             ->whereRaw(
                 "`created_at` BETWEEN ? AND ? AND `status_code` = ?",
                 [$fromDate . " 00:00:00", $toDate . " 23:59:59", 1]
@@ -313,7 +316,7 @@ class PaymentRepository extends AbstractEloquentRepository
         }
         $result = $query->selectRaw("SUM(amount) as total, SUM(profit) as profit, status_code")
             ->where('status_code', 1)
-            ->where('payment_type','!=' ,6)
+            ->where('payment_type','!=' ,Payment::PAYMENT_TYPE_ADD_XU_CTV)
             ->groupBy('status_code')
             ->first()
         ;
