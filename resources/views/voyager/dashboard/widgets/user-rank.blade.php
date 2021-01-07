@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-6 col-md-6">
+<div class="col-xs-12 col-sm-8 col-md-8">
     <div class="panel widget widget-small">
         <h3 class="panel-heading text-center">
             <span class="voyager-medal-rank-star"></span> Bảng Xếp Hạng
