@@ -5,21 +5,29 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use T2G\Common\Repository\UserRepository;
+use T2G\Common\Services\Kibana\AbstractRankingService;
 
 /**
  * Class UserRankWidget
  */
 class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
 {
+    const DEFAULT_RANKING_PAGE_SIZES = 10;
     /**
      * @var UserRepository
      */
     protected $repository;
-    const DEFAULT_RANKING_PAGE_SIZES = 10;
+
+    /**
+     * @var \T2G\Common\Services\Kibana\AbstractRankingService
+     */
+    protected $rankingService;
 
     public function __construct(UserRepository $userRepository)
     {
         $this->repository = $userRepository;
+        $serviceClass = config('t2g_common.widgets.ranking.service_class');
+        $this->rankingService = app($serviceClass);
     }
 
     /**
@@ -28,7 +36,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
     // view user rank
     public function loadWidget()
     {
-        $serverInfo = config('t2g_common.server_info');
+        $serverInfo = config('t2g_common.widgets.ranking.servers');
 
         return view('t2g_common::voyager.dashboard.widgets.user-rank',[
             'serverInfo' => $serverInfo
@@ -41,10 +49,11 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      */
     public function loadWidgetContent($serverName)
     {
+        $data = [];
+        $page = Paginator::resolveCurrentPage() ?: 1;
         if ($serverName) {
-            $data = $this->getTopUserList($serverName);
+            $data = $this->getTopUserList($serverName, $page);
         }
-        $data = $this->PaginateData($data, self::DEFAULT_RANKING_PAGE_SIZES);
 
         return view('t2g_common::voyager.partials.top_user_list', ['data' => $data]);
     }
@@ -52,126 +61,9 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      * @return array
      *
      */
-    public function getTopUserList($name)
+    public function getTopUserList($server, $page = 1)
     {
-        $data = [
-          1 => [
-              'user' => $name,
-              'char' => 'cha1',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          2 => [
-              'user' => $name,
-              'char' => 'cha2',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          3 => [
-              'user' => $name,
-              'char' => 'cha3',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          4 => [
-              'user' => $name,
-              'char' => 'cha4',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          5 => [
-              'user' => $name,
-              'char' => 'cha5',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          6 => [
-              'user' => $name,
-              'char' => 'cha6',
-              'level' => 375,
-              'exp' => 1887670768
-          ], 7 => [
-                'user' => $name,
-                'char' => 'cha7',
-                'level' => 375,
-                'exp' => 1887670768
-            ],
-          8 => [
-              'user' => $name,
-              'char' => 'cha8',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          9 => [
-              'user' => $name,
-              'char' => 'cha9',
-              'level' => 375,
-              'exp' => 1887670768
-          ],
-          10 => [
-              'user' => 'phatson0',
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          11 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          12 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          13 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          14 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          15 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          16 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          10 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-            ,
-          17 => [
-              'user' => $name,
-              'char' => 'cha10',
-              'level' => 375,
-              'exp' => 1887670768
-          ]
-        ];
-        return $data;
+        return $this->rankingService->getTopLevelList($server, self::DEFAULT_RANKING_PAGE_SIZES, $page);
     }
 
     /**
@@ -189,7 +81,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      * @param  array  $options
      * @return LengthAwarePaginator
      */
-    private function PaginateData($items, $perPage = 5, $page = null, $options = [])
+    private function paginate($items, $perPage = 5, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);

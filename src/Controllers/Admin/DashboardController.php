@@ -42,7 +42,7 @@ class DashboardController extends Controller
             'widgetCCU'     => $this->getCCUWidget(),
         ];
 
-        if (config('t2g_common.top_list_user_enable')) {
+        if (config('t2g_common.widgets.ranking.enabled')) {
             $data['widgetUserRankList'] = $this->getWidgetUserRankList();
         }
 

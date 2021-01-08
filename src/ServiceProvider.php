@@ -56,13 +56,13 @@ class ServiceProvider extends LaravelServiceProvider
             __DIR__.'/../resources/config/t2g_common.php' => config_path('t2g_common.php'),
         ], 'config');
 
-        $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/t2g_common')
-        ], 'view');
+//        $this->publishes([
+//            __DIR__.'/../resources/views' => resource_path('views/vendor/t2g_common')
+//        ], 'view');
 
-        $this->publishes([
-            __DIR__.'/../resources/assets' => resource_path('vendor/assets')
-        ], 'public');
+//        $this->publishes([
+//            __DIR__.'/../resources/assets' => resource_path('vendor/t2g_common')
+//        ], 'public');
 
         $this->loadMigrationsFrom(__DIR__.'/../resources/migrations');
 
@@ -91,6 +91,8 @@ class ServiceProvider extends LaravelServiceProvider
      *
      * @return void
      */
+
+
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../resources/config/t2g_common.php', 't2g_common');

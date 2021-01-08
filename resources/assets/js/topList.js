@@ -26,30 +26,30 @@ $(window).on('load', function () {
         }
     });
 });
-    //  Ajax Get Top User Rank List
-    function getTopLevelUserList(action,serverName,page = 1) {
-        $.ajax({
-            type: 'GET',
-            url: action,
-            data: {
-                page,
-                serverName
-            },
-            success: function (response) {
-                if (response != null) {
-                    HideLoader();
-                    $('.rank-list-content-ad').html(response);
-                }
-            },
-            error: function () {
-                $('#rank-loader').removeClass('active');
+//  Ajax Get Top User Rank List
+function getTopLevelUserList(action,serverName,page = 1) {
+    $.ajax({
+        type: 'GET',
+        url: action,
+        data: {
+            page,
+            serverName
+        },
+        success: function (response) {
+            if (response != null) {
+                HideLoader();
+                $('.rank-list-content-ad').html(response);
             }
-        })
-    }
-    // Loader
-    function  HideLoader () {
-        setTimeout(function() {
-            $('#rank-loader').addClass('active');
-        }, 500);
-    }
+        },
+        error: function () {
+            $('#rank-loader').removeClass('active');
+        }
+    })
+}
+// Loader
+function  HideLoader () {
+    setTimeout(function() {
+        $('#rank-loader').addClass('active');
+    }, 500);
+}
 
