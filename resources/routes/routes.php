@@ -51,6 +51,14 @@ Route::group(['middleware' => 'web'], function () {
                 ]);
             });
 
+            // ranking widget in dashboard
+            Route::group(['prefix' => '/ranking', 'as' => 'ranking.'], function () {
+                Route::get('/top-user-list', [
+                    'uses' => 'Admin\RankingController@getTopUserList',
+                    'as'   => 'top_level'
+                ]);
+            });
+
             Route::group(['as' => 'console_log_viewer.', 'prefix' => '/console_log'], function () {
                 Route::get('/kimyen', [
                     'uses' => 'Admin\ConsoleLogViewerController@viewLogKimYen',
