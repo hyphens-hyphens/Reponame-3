@@ -1,6 +1,13 @@
 <p class="h4">
     @php
-        $paymentTypeIconClass = $data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT ? 'label-danger' : 'label-info'
+
+        if ($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT)
+           $paymentTypeIconClass   = 'label-danger';
+        elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADD_XU_CTV)
+           $paymentTypeIconClass   = 'label-warning';
+        else
+           $paymentTypeIconClass   = 'label-info';
+
     @endphp
     <span class="label {{ $paymentTypeIconClass }}">
         <i class="{{ \T2G\Common\Util\CommonHelper::getIconForPaymentType($data->payment_type) }}"></i>
@@ -8,7 +15,7 @@
     </span>
     @if($data->amount > 0)
         &nbsp;
-    <span class="label label-success"><i class="voyager-dollar"></i>
+        <span class="label label-success"><i class="voyager-dollar"></i>
         {{ number_format($data->amount / 1000) }}K
     </span>
     @endif

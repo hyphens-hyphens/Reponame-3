@@ -71,6 +71,7 @@ class CommonHelper
             Payment::PAYMENT_TYPE_CARD          => 'voyager-credit-card',
             Payment::PAYMENT_TYPE_MOMO          => 'voyager-wallet',
             Payment::PAYMENT_TYPE_BANK_TRANSFER => 'voyager-receipt',
+            Payment::PAYMENT_TYPE_ADD_XU_CTV    => 'voyager-gift',
         ];
 
         return $icons[$paymentType] ?? 'voyager-exclamation';
