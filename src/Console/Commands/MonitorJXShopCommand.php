@@ -82,7 +82,7 @@ class MonitorJXShopCommand extends AbstractJXCommand
             $messages = [];
             foreach ($logs as $log) {
                 $cost = number_format($log['cost']);
-                $messages[] = "- {$log['user2']} <{$log['char2']}> mua Xu giá {$cost} lượng từ `{$log['user']} <{$log['char']}>`";
+                $messages[] = "- {$log['user']} <{$log['char']}> mua Xu giá {$cost} lượng từ `{$log['user2']} <{$log['char2']}>`";
             }
             if ($messages) {
                 $message = $prefix . implode("\r\n", $messages);
@@ -106,7 +106,7 @@ class MonitorJXShopCommand extends AbstractJXCommand
             $messages = [];
             foreach ($logs as $log) {
                 $cost = number_format($log['cost']);
-                $messages[] = "- {$log['user2']} <{$log['char2']}> mua {$log['item']} giá {$cost} lượng từ `{$log['user']} <{$log['char']}>`";
+                $messages[] = "- {$log['user']} <{$log['char']}> mua {$log['item']} giá {$cost} lượng từ `{$log['user2']} <{$log['char2']}>`";
             }
             if ($messages) {
                 $message = $prefix . implode("\r\n", $messages);
