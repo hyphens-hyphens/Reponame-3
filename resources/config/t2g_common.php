@@ -117,4 +117,7 @@ return [
             'servers'       => [],
         ],
     ],
+    'giftcode' => [
+        'expried_days' => '-10 days'
+    ]
 ];

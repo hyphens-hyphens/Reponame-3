@@ -116,7 +116,7 @@ class GiftCodeService
         }
         $giftCode = $giftCodeItem->giftCode;
         if ($giftCode->type === GiftCode::TYPE_PER_MONTH) {
-            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime("-10 days")) {
+            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime(config('t2g_common.giftcode.expried_days'))) {
                 throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
             }
         } elseif ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
