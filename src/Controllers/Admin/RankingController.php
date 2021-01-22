@@ -13,10 +13,10 @@ class RankingController extends  VoyagerBaseController
 
     public function getTopUserList(\Illuminate\Http\Request $request)
     {
-        $data   = $request->all();
+        $server = $request->get('serverName');
         $widget = app(UserRankWidget::class);
 
-        return $widget->loadWidgetContent($data['serverName']);
+        return $widget->loadWidgetContent($server);
     }
 
 }

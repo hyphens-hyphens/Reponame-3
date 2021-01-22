@@ -23,7 +23,7 @@ class LogLanQueryService extends AbstractKibanaService
      */
     public function getIpLanByUsernames(array $usernames, $server = null, \DateTime $time = null)
     {
-        $query = $this->getIpLabByUsernamesAggregation($usernames, 1);
+        $query = $this->getIpLanByUsernamesAggregation($usernames, 1);
         if ($time) {
             $query['aggs']['filter_data']['filter']['bool']['filter'][] = [
                 'range' => [
@@ -68,7 +68,7 @@ class LogLanQueryService extends AbstractKibanaService
      *
      * @return array
      */
-    protected function getIpLabByUsernamesAggregation(array $usernames, int $size = 1)
+    protected function getIpLanByUsernamesAggregation(array $usernames, int $size = 1)
     {
         return $query = [
             "size" => 0,
