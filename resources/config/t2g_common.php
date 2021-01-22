@@ -115,11 +115,4 @@ return [
     'features' => [
         'post_grouping_enabled' => false
     ],
-    'widgets' => [
-        'ranking' => [
-            'enabled'       => true,
-            'service_class' => \T2G\Common\Services\Kibana\JXRankingService::class,
-            'servers'       => [],
-        ],
-    ],
 ];
