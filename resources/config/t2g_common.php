@@ -79,13 +79,17 @@ return [
     'discord'  => [
         'webhooks' => [
             // thông báo giao dịch từ email (MoMo), SMS webhook
-            'payment_alert'  => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
+            'payment_alert'         => env('DISCORD_PAYMENT_ALERT_WEBHOOK_URL'),
             // thông báo khi QTV add vàng từ admincp
-            'add_gold'       => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
-            'police'         => env('DISCORD_POLICE_WEBHOOK_URL'),
-            'multiple_pc'    => env('DISCORD_MULTIPLE_PC_WEBHOOK_URL'),
-            'multiple_login' => env('DISCORD_MULTIPLE_LOGIN_WEBHOOK_URL'),
-            'kimyen'         => env('DISCORD_KIMYEN_WEBHOOK_URL'),
+            'add_gold'              => env('DISCORD_ADD_GOLD_WEBHOOK_URL'),
+            'police'                => env('DISCORD_POLICE_WEBHOOK_URL'),
+            'multiple_pc'           => env('DISCORD_MULTIPLE_PC_WEBHOOK_URL'),
+            'multiple_login'        => env('DISCORD_MULTIPLE_LOGIN_WEBHOOK_URL'),
+            'kimyen'                => env('DISCORD_KIMYEN_WEBHOOK_URL'),
+            'monitor_gold_trading'  => env('DISCORD_MONITOR_GOLD_TRADING_WEBHOOK_URL'),
+            'monitor_gold'          => env('DISCORD_MONITOR_GOLD_WEBHOOK_URL'),
+            'monitor_gold_gm'       => env('DISCORD_MONITOR_GOLD_GM_WEBHOOK_URL'),
+            'monitor_money_trading' => env('DISCORD_MONITOR_MONEY_TRADING_WEBHOOK_URL'),
         ],
     ],
     'kibana' => [
@@ -109,13 +113,6 @@ return [
     ],
     'features' => [
         'post_grouping_enabled' => false
-    ],
-    'widgets' => [
-        'ranking' => [
-            'enabled'       => true,
-            'service_class' => \T2G\Common\Services\Kibana\JXRankingService::class,
-            'servers'       => [],
-        ],
     ],
     'gift_code' => [
         'type_fancung' => [

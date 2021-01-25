@@ -5,7 +5,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use T2G\Common\Repository\UserRepository;
-use T2G\Common\Services\Kibana\AbstractRankingService;
 
 /**
  * Class UserRankWidget
@@ -26,7 +25,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
     public function __construct(UserRepository $userRepository)
     {
         $this->repository = $userRepository;
-        $serviceClass = config('t2g_common.widgets.ranking.service_class');
+        $serviceClass = config('t2g_common_widgets.ranking.service_class');
         $this->rankingService = app($serviceClass);
     }
 
@@ -36,9 +35,9 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
     // view user rank
     public function loadWidget()
     {
-        $serverInfo = config('t2g_common.widgets.ranking.servers');
+        $serverInfo = config('t2g_common_widgets.ranking.servers');
 
-        return view('t2g_common::voyager.dashboard.widgets.user-rank',[
+        return view('t2g_common::voyager.dashboard.widgets.user-rank', [
             'serverInfo' => $serverInfo
         ]);
     }
@@ -61,7 +60,7 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
      * @return array
      *
      */
-    public function getTopUserList($server, $page = 1)
+    private function getTopUserList($server, $page = 1)
     {
         return $this->rankingService->getTopLevelList($server, self::DEFAULT_RANKING_PAGE_SIZES, $page);
     }
@@ -72,19 +71,5 @@ class UserRankWidget extends \T2G\Common\Widget\AbstractWidget
     protected function getViewPermission()
     {
         return 'widget.user';
-    }
-
-    /**
-     * @param $items
-     * @param  int  $perPage
-     * @param  null  $page
-     * @param  array  $options
-     * @return LengthAwarePaginator
-     */
-    private function paginate($items, $perPage = 5, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

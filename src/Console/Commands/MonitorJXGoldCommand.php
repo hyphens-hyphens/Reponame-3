@@ -31,7 +31,9 @@ class MonitorJXGoldCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.police'));
+        $webHookConfigs = config('t2g_common.discord.webhooks');
+        $webhookUrl = $webHookConfigs['monitor_gold'] ?: $webHookConfigs['police'];
+        $this->discord = new DiscordWebHookClient($webhookUrl);
     }
 
     /**

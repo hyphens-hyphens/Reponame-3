@@ -4,7 +4,7 @@
             <span class="voyager-medal-rank-star"></span> Bảng Xếp Hạng
         </h3>
         <div class="tab-server-rank">
-            @foreach($serverInfo as $key => $server)
+            @foreach($serverInfo as $server)
                 <h5 data-url="{{ route('voyager.ranking.top_level') }}" class="server-rank {{ $server }}" data-servername="{{ $server }}" >{{ $server }}</h5>
             @endforeach
         </div>
