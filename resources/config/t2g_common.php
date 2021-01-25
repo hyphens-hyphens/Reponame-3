@@ -117,7 +117,9 @@ return [
             'servers'       => [],
         ],
     ],
-    'giftcode' => [
-        'expried_days' => '-10 days'
+    'gift_code' => [
+        'type_fancung' => [
+            'expried_days' => '-10 days',
+        ]
     ]
 ];

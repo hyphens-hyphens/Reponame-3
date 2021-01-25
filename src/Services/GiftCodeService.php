@@ -115,8 +115,8 @@ class GiftCodeService
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
         $giftCode = $giftCodeItem->giftCode;
-        if ($giftCode->type === GiftCode::TYPE_PER_MONTH) {
-            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime(config('t2g_common.giftcode.expried_days'))) {
+        if ($giftCode->type === GiftCode::TYPE_FAN_CUNG) {
+            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime(config('t2g_common.giftcode.type_fancung.expried_days'))) {
                 throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
             }
         } elseif ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
@@ -129,7 +129,7 @@ class GiftCodeService
         }
 
         // add gift code
-        $forceUpdate = $giftCode->type == GiftCode::TYPE_PER_MONTH;
+        $forceUpdate = $giftCode->type == GiftCode::TYPE_FAN_CUNG;
         if (!$this->gameApi->addGiftCode($user->name, $giftCode, $forceUpdate)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_API_ERROR, $giftCodeItem);
         }
@@ -267,10 +267,10 @@ class GiftCodeService
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
         $unusedCodes = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode);
-        if ($giftCode->type !== GiftCode::TYPE_PER_MONTH && $unusedCodes > 0) {
+        if ($giftCode->type !== GiftCode::TYPE_FAN_CUNG && $unusedCodes > 0) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }
-        if ($giftCode->type === GiftCode::TYPE_PER_MONTH && $unusedCodes >= 2) {
+        if ($giftCode->type == GiftCode::TYPE_FAN_CUNG && $unusedCodes >= 2) {
             return "Tài khoản `{$user->name}` còn 2 code chưa sử dụng";
         }
         // check code is_claimable or not

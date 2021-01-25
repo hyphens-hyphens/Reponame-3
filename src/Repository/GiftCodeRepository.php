@@ -27,7 +27,7 @@ class GiftCodeRepository extends AbstractEloquentRepository
         return [
 //            GiftCode::TYPE_PER_SERVER    => "Code theo server",
             GiftCode::TYPE_PER_ACCOUNT => "Code theo account",
-            GiftCode::TYPE_PER_MONTH   => "Code tháng",
+            GiftCode::TYPE_FAN_CUNG    => "Code Fan Cứng",
         ];
     }
 

@@ -42,7 +42,6 @@ class GiftCodeItem extends BaseEloquentModel
 
     protected $dates = ['used_at', 'issued_at'];
 
-    const ID_GIFTCODE_FANCUNG = 4;
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -107,10 +106,12 @@ class GiftCodeItem extends BaseEloquentModel
      */
     public function isGiftCodeFCExpried()
     {
-        if (($this->issued_at != null) && $this->gift_code_id === self::ID_GIFTCODE_FANCUNG && $this->issued_at->gettimestamp() < strtotime(config('t2g_common.giftcode.expried_days')))
+        $typeGiftCode = $this->giftCode->type;
+
+        if (($this->issued_at != null) && $typeGiftCode === GiftCode::TYPE_FAN_CUNG && $this->issued_at->gettimestamp() < strtotime(config('t2g_common.gift_code.type_fancung.expried_days')))
         {
             return true;
         }
-        return  false;
+        return false;
     }
 }

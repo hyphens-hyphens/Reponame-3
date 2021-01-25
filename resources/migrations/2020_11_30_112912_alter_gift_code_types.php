@@ -20,6 +20,7 @@ class AlterGiftCodeTypes extends Migration
                 GiftCode::TYPE_PER_SERVER,
                 GiftCode::TYPE_PER_CHARACTER,
                 GiftCode::TYPE_PER_MONTH,
+                GiftCode::TYPE_FAN_CUNG,
             ])->change();
         });
 
