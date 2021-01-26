@@ -36,7 +36,7 @@ class AlertGiftCodeAddTypeFancung extends Migration
                 GiftCode::TYPE_PER_ACCOUNT,
                 GiftCode::TYPE_PER_SERVER,
                 GiftCode::TYPE_PER_CHARACTER,
-                GiftCode::TYPE_FAN_CUNG,
+                GiftCode::TYPE_PER_MONTH,
             ])->change();
         });
     }
