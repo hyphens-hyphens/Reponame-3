@@ -115,8 +115,9 @@ class GiftCodeService
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
         $giftCode = $giftCodeItem->giftCode;
+        $expire = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
         if ($giftCode->type === GiftCode::TYPE_FAN_CUNG) {
-            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime(config('t2g_common.giftcode.type_fancung.expried_days'))) {
+            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime($expire)) {
                 throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
             }
         } elseif ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {

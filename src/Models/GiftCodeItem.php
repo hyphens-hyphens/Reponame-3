@@ -104,12 +104,15 @@ class GiftCodeItem extends BaseEloquentModel
     /**
      * @return bool
      */
-    public function isGiftCodeFCExpried()
+    public function isExpired()
     {
         $typeGiftCode = $this->giftCode->type;
-
-        if (($this->issued_at != null) && $typeGiftCode === GiftCode::TYPE_FAN_CUNG && $this->issued_at->gettimestamp() < strtotime(config('t2g_common.gift_code.type_fancung.expried_days')))
-        {
+        $expire = config('t2g_common.gift_code.fancung.expired_days', '-10 days');
+        if (
+            ($this->issued_at != null)
+            && $typeGiftCode === GiftCode::TYPE_FAN_CUNG
+            && $this->issued_at->gettimestamp() < strtotime($expire)
+        ) {
             return true;
         }
         return false;

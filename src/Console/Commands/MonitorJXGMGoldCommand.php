@@ -29,7 +29,9 @@ class MonitorJXGMGoldCommand extends AbstractJXCommand
     public function __construct()
     {
         parent::__construct();
-        $this->discord = new DiscordWebHookClient(config('t2g_common.discord.webhooks.police'));
+        $webHookConfigs = config('t2g_common.discord.webhooks');
+        $webhookUrl = $webHookConfigs['monitor_gold_gm'] ?: $webHookConfigs['police'];
+        $this->discord = new DiscordWebHookClient($webhookUrl);
     }
 
     /**
