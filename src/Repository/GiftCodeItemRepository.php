@@ -142,16 +142,21 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
      * @param  \T2G\Common\Models\AbstractUser  $user
      * @param  \T2G\Common\Models\GiftCode  $giftCode
      *
-     * @param $dateExpire
      * @return int
      */
-    public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode,$dateExpire)
+    public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode)
     {
         $query = $this->query();
         $query->where('gift_code_id', $giftCode->id)
             ->where('issued_for', $user->id)
-            ->whereDate('issued_at','>', $dateExpire)
             ->where('user_id', null);
+
+        if ($giftCode->type == $giftCode::TYPE_FAN_CUNG)
+        {
+            $expire     = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
+            $dateExpire = date('Y-m-d H:i:s ',strtotime($expire));
+            $query->whereDate('issued_at','>', $dateExpire);
+        }
 
         return $query->count();
     }
