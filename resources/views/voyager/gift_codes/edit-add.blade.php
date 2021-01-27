@@ -75,7 +75,7 @@
                 $dataTypeContent->id
                 && (
                     $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_PER_ACCOUNT
-                    || $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_PER_MONTH
+                    || $dataTypeContent->type == \T2G\Common\Models\GiftCode::TYPE_FAN_CUNG
                     )
                 )
                 @include('t2g_common::voyager.gift_codes.details')
