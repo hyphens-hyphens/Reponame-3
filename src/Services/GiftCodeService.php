@@ -267,7 +267,10 @@ class GiftCodeService
      */
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
-        $unusedCodes = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode);
+        $expire = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
+        $dateExpire = date('Y-m-d H:i:s ',strtotime($expire));
+
+        $unusedCodes = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode,$dateExpire);
         if ($giftCode->type !== GiftCode::TYPE_FAN_CUNG && $unusedCodes > 0) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }

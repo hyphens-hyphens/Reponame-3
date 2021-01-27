@@ -139,18 +139,19 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
     }
 
     /**
-     * @param \T2G\Common\Models\AbstractUser $user
-     * @param \T2G\Common\Models\GiftCode     $giftCode
+     * @param  \T2G\Common\Models\AbstractUser  $user
+     * @param  \T2G\Common\Models\GiftCode  $giftCode
      *
+     * @param $dateExpire
      * @return int
      */
-    public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode)
+    public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode,$dateExpire)
     {
         $query = $this->query();
         $query->where('gift_code_id', $giftCode->id)
             ->where('issued_for', $user->id)
-            ->where('user_id', null)
-        ;
+            ->whereDate('issued_at','>', $dateExpire)
+            ->where('user_id', null);
 
         return $query->count();
     }
