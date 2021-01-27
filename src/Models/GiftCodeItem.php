@@ -107,7 +107,7 @@ class GiftCodeItem extends BaseEloquentModel
     public function isExpired()
     {
         $typeGiftCode = $this->giftCode->type;
-        $expire = config('t2g_common.gift_code.type_fancung.expried_days', '-10 days');
+        $expire = config('t2g_common.gift_code.fancung.expired_days', '-10 days');
         if (
             ($this->issued_at != null)
             && $typeGiftCode === GiftCode::TYPE_FAN_CUNG

@@ -115,8 +115,8 @@ return [
         'post_grouping_enabled' => false
     ],
     'gift_code' => [
-        'type_fancung' => [
-            'expried_days' => '-10 days',
+        'fancung' => [
+            'expired_days' => '-10 days',
         ]
     ]
 ];
