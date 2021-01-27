@@ -114,4 +114,9 @@ return [
     'features' => [
         'post_grouping_enabled' => false
     ],
+    'gift_code' => [
+        'fancung' => [
+            'expired_days' => '-10 days',
+        ]
+    ]
 ];
