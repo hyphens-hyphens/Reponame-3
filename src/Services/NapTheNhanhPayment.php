@@ -13,11 +13,12 @@ use Illuminate\Http\Request;
  */
 class NapTheNhanhPayment extends AbstractCardPayment
 {
-    const ENDPOINT = "/api/charging-wcb";
-    const BASE_URL = "http://sys.napthenhanh.com";
-    const CARD_TYPE_VIETTEL = 'VIETTEL';
-    const CARD_TYPE_MOBIFONE = 'MOBIFONE';
+    const ENDPOINT            = "/api/charging-wcb";
+    const BASE_URL            = "http://sys.napthenhanh.com";
+    const CARD_TYPE_VIETTEL   = 'VIETTEL';
+    const CARD_TYPE_MOBIFONE  = 'MOBIFONE';
     const CARD_TYPE_VINAPHONE = 'VINAPHONE';
+    const CARD_TYPE_ZING      = 'ZING';
 
     public static $callbackReason = [
         0 => "Thẻ không hợp lệ",
@@ -113,6 +114,8 @@ class NapTheNhanhPayment extends AbstractCardPayment
                 return self::CARD_TYPE_MOBIFONE;
             case MobileCard::TYPE_VINAPHONE:
                 return self::CARD_TYPE_VINAPHONE;
+            case MobileCard::TYPE_ZING:
+                return self::CARD_TYPE_ZING;
         }
 
         return false;
