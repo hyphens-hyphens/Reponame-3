@@ -50,11 +50,19 @@ if (!function_exists( 'staticUrl')) {
     function staticUrl($path, $useMix = false) {
         $root = config('t2g_common.asset.base_url');
         if ($useMix) {
-            $path = mix($path);
+            try {
+                $path = mix($path);
+            } catch (\Exception $e) {}
         }
         $generator = app(\Illuminate\Routing\UrlGenerator::class);
 
-        return $root ? $generator->assetFrom($root, $path) : $generator->asset($path);
+        $url = $root ? $generator->assetFrom($root, $path) : $generator->asset($path);
+        if (strpos($url, '?') === false) {
+            $version = config('t2g_common.asset.version');
+            $url .= "?v={$version}";
+        }
+
+        return $url;
     }
 }
 
