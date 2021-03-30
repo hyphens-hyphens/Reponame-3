@@ -57,6 +57,7 @@ class GiftCode extends BaseEloquentModel
     const TYPE_PER_SERVER    = 'per-server';
     const TYPE_PER_CHARACTER = 'per-character';
     const TYPE_PER_MONTH     = 'per-month';
+    const TYPE_FAN_CUNG      = 'fan-cung';
 
     /** @var array  */
     protected $fillable = ['name', 'prefix', 'type', 'expired_at', 'code_name'];

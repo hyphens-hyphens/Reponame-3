@@ -208,20 +208,17 @@ class Payment extends BaseEloquentModel
                         return self::PAYMENT_STATUS_ADVANCE_DEBT_SUCCESS;
                     }
                 } else {
-                    if ($payment->card_type != MobileCard::TYPE_ZING &&  empty($payment->transaction_id)) {
+                    if (empty($payment->transaction_id)) {
                         return self::PAYMENT_STATUS_CARD_GATEWAY_NOT_ACCEPT;
                     }
                     return self::PAYMENT_STATUS_PROCESSING; // đang xử lý
                 }
             } else {
-                if ($payment->card_type != MobileCard::TYPE_ZING) {
-
-                    if($payment->gateway_status === 2) {
-                        return self::PAYMENT_STATUS_GATEWAY_RESPONSE_ERROR; // Recard trả về lỗi
-                    }
-                    if($payment->gateway_status === 1 && !$payment->gold_added) {
-                        return self::PAYMENT_STATUS_GATEWAY_ADD_GOLD_ERROR; // Recard trả về OK nhưng không add được vàng cho user
-                    }
+                if($payment->gateway_status === 2) {
+                    return self::PAYMENT_STATUS_GATEWAY_RESPONSE_ERROR; // Recard trả về lỗi
+                }
+                if($payment->gateway_status === 1 && !$payment->gold_added) {
+                    return self::PAYMENT_STATUS_GATEWAY_ADD_GOLD_ERROR; // Recard trả về OK nhưng không add được vàng cho user
                 }
             }
         }
@@ -293,7 +290,7 @@ class Payment extends BaseEloquentModel
             case Payment::PAY_METHOD_RECARD:
                 return $money * ( 100 - config('t2g_common.payment.revenue_rate.recard', 32)) / 100;
             case Payment::PAY_METHOD_NAPTHENHANH:
-                return $money * ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh', 28)) / 100;
+                return $money * ( 100 - config('t2g_common.payment.revenue_rate.napthenhanh', 31)) / 100;
             case Payment::PAY_METHOD_ZING_CARD:
                 return $money * ( 100 - config('t2g_common.payment.revenue_rate.zing', 30)) / 100;
             case Payment::PAY_METHOD_BANK_TRANSFER:

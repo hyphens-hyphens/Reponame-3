@@ -112,7 +112,7 @@ class GiftCodeBreadController extends BaseVoyagerController
         $giftCode->save();
         if (
             $request->get('quantity')
-            && ($giftCode->type == GiftCode::TYPE_PER_ACCOUNT || $giftCode->type == GiftCode::TYPE_PER_MONTH )
+            && ($giftCode->type == GiftCode::TYPE_PER_ACCOUNT || $giftCode->type == GiftCode::TYPE_FAN_CUNG )
        ) {
             app(GiftCodeService::class)->generateCode($giftCode, $request->get('quantity'));
         }

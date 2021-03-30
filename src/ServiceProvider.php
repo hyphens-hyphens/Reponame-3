@@ -13,6 +13,7 @@ use T2G\Common\Console\Commands\MonitorJXGMGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldCommand;
 use T2G\Common\Console\Commands\MonitorJXGoldTradingCommand;
 use T2G\Common\Console\Commands\MonitorJXMoneyTradingCommand;
+use T2G\Common\Console\Commands\MonitorJXShopCommand;
 use T2G\Common\Console\Commands\MonitorKimYenKeoXeCommand;
 use T2G\Common\Console\Commands\MonitorMultipleLoginCommand;
 use T2G\Common\Console\Commands\MonitorMultiplePCCommand;
@@ -207,6 +208,7 @@ class ServiceProvider extends LaravelServiceProvider
                 MonitorJXGMGoldCommand::class,
                 MonitorMultipleLoginCommand::class,
                 MonitorKimYenKeoXeCommand::class,
+                MonitorJXShopCommand::class,
                 ExportMultipleLoginCommand::class
             ]);
         }

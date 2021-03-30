@@ -56,16 +56,15 @@ class PaymentController extends BaseFrontController
         $cardPayment = $this->getCardPaymentService();
         list($knb, $soxu) = $paymentRepository->exchangeGamecoin($card->getAmount(), Payment::PAYMENT_TYPE_CARD);
         $payment = $paymentRepository->createCardPayment($user, $card, $knb, $this->getPayMethod($card, $cardPayment));
-        if ($card->getType() == MobileCard::TYPE_ZING){
-            $this->discord->send("`{$user->name}` vừa submit 1 thẻ Zing `" . $card->getAmount() / 1000 . "k`");
+//        if ($card->getType() == MobileCard::TYPE_ZING){
+//            $this->discord->send("`{$user->name}` vừa submit 1 thẻ Zing `" . $card->getAmount() / 1000 . "k`");
+//        }
+        $result = $cardPayment->useCard($card, $payment->getKey());
+        if ($result->isSuccess() && $transactionCode = $result->getTransactionCode()) {
+            $paymentRepository->updateCardPayment($payment, $transactionCode);
         } else {
-            $result = $cardPayment->useCard($card, $payment->getKey());
-            if ($result->isSuccess() && $transactionCode = $result->getTransactionCode()) {
-                $paymentRepository->updateCardPayment($payment, $transactionCode);
-            } else {
-                $cardPayment->logCardPaymentError($result);
-                return response()->json(["error" => implode('<br/>', $result->getErrors())]);
-            }
+            $cardPayment->logCardPaymentError($result);
+            return response()->json(["error" => implode('<br/>', $result->getErrors())]);
         }
 
         return response()->json(["msg" => 'Thẻ đang được xử lý... Vui lòng đợi vài phút, hệ thống sẽ tự cộng Xu nếu xử lý thành công.']);
@@ -269,10 +268,6 @@ class PaymentController extends BaseFrontController
      */
     protected function getPayMethod(MobileCard $card, CardPaymentInterface $cardPayment)
     {
-        if ($card->getType() == MobileCard::TYPE_ZING) {
-            return Payment::PAY_METHOD_ZING_CARD;
-        }
-
         return $cardPayment->getPartnerName() == CardPaymentInterface::PARTNER_NAPTHENHANH ? Payment::PAY_METHOD_NAPTHENHANH : Payment::PAY_METHOD_RECARD;
     }
 }

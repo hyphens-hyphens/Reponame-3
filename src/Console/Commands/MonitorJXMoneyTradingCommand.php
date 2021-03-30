@@ -43,7 +43,7 @@ class MonitorJXMoneyTradingCommand extends Command
         parent::__construct();
         $webHookConfigs = config('t2g_common.discord.webhooks');
         $webhookUrl = $webHookConfigs['monitor_money_trading'] ?: $webHookConfigs['police'];
-        $this->discord = new DiscordWebHookClient(config($webhookUrl));
+        $this->discord = new DiscordWebHookClient($webhookUrl);
         $this->kibana  = app(TradingMonitoringService::class);
         $this->accountService = app(AccountService::class);
     }
