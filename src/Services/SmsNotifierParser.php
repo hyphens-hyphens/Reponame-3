@@ -79,6 +79,23 @@ class SmsNotifierParser
     }
 
     /**
+     * @param        $message
+     * @param        $message
+     * @param        $createdAt
+     *
+     * @return string|null
+     */
+    public function parseMomoNotify($sender, $message, $createdAt)
+    {
+        $cfgSender = config('t2g_common.momo.mailbox', 'serder');
+
+        if($cfgSender == $sender){
+            $alert = "[MoMo] $message vào lúc {$createdAt}";
+            return $alert;
+        }
+    }
+
+    /**
      * @param $message
      *
      * @return bool
