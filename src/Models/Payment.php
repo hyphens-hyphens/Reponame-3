@@ -144,15 +144,21 @@ class Payment extends BaseEloquentModel
     /**
      * @return array
      */
-    public static function getPaymentTypes()
+    public static function getPaymentTypes($isAdmin = true)
     {
-        return [
+        $types = [
             self::PAYMENT_TYPE_CARD          => 'Thẻ cào',
             self::PAYMENT_TYPE_MOMO          => 'MoMo',
             self::PAYMENT_TYPE_BANK_TRANSFER => 'Chuyển khoản',
             self::PAYMENT_TYPE_ADVANCE_DEBT  => self::PAY_METHOD_ADVANCE_DEBT,
             self::PAYMENT_TYPE_ADD_XU_CTV    => 'Add Xu Cho CTV',
         ];
+        if (!$isAdmin) {
+            // display PAYMENT_TYPE_ADD_XU_CTV as PAYMENT_TYPE_BANK_TRANSFER in frontend
+            $types[self::PAYMENT_TYPE_ADD_XU_CTV] = 'Chuyển khoản';
+        }
+
+        return $types;
     }
 
     /**
@@ -231,9 +237,9 @@ class Payment extends BaseEloquentModel
      *
      * @return mixed|string
      */
-    public static function displayPaymentType($paymentType)
+    public static function displayPaymentType($paymentType, $isAdmin = true)
     {
-        $types = self::getPaymentTypes();
+        $types = self::getPaymentTypes($isAdmin);
 
         return $types[$paymentType] ?? "Unknown";
     }
