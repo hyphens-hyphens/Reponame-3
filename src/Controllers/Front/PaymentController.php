@@ -29,7 +29,7 @@ class PaymentController extends BaseFrontController
 
     public function index()
     {
-       return redirect(route('front.static.nap_the_cao'));
+        return redirect(route('front.static.nap_the_cao'));
     }
 
     /**
@@ -56,9 +56,9 @@ class PaymentController extends BaseFrontController
         $cardPayment = $this->getCardPaymentService();
         list($knb, $soxu) = $paymentRepository->exchangeGamecoin($card->getAmount(), Payment::PAYMENT_TYPE_CARD);
         $payment = $paymentRepository->createCardPayment($user, $card, $knb, $this->getPayMethod($card, $cardPayment));
-//        if ($card->getType() == MobileCard::TYPE_ZING){
-//            $this->discord->send("`{$user->name}` vừa submit 1 thẻ Zing `" . $card->getAmount() / 1000 . "k`");
-//        }
+        //        if ($card->getType() == MobileCard::TYPE_ZING){
+        //            $this->discord->send("`{$user->name}` vừa submit 1 thẻ Zing `" . $card->getAmount() / 1000 . "k`");
+        //        }
         $result = $cardPayment->useCard($card, $payment->getKey());
         if ($result->isSuccess() && $transactionCode = $result->getTransactionCode()) {
             $paymentRepository->updateCardPayment($payment, $transactionCode);
@@ -79,7 +79,7 @@ class PaymentController extends BaseFrontController
      */
     protected function validateCard(MobileCard $card, PaymentRepository $paymentRepository)
     {
-        if(!$card->getCode() || !$card->getSerial() || !$card->getType() || !$card->getAmount()){
+        if (!$card->getCode() || !$card->getSerial() || !$card->getType() || !$card->getAmount()) {
             return "Vui lòng điền đầy đủ thông tin.";
         }
         // check đúng định dạng the Mobi: seri 15, ma 12. Zing: seri 12, ma:9. vcoin 12-12
@@ -107,7 +107,7 @@ class PaymentController extends BaseFrontController
         if (!$checkCardFormat) {
             return "Thẻ định dạng không đúng. Vui lòng kiểm tra lại.";
         }
-        if($paymentRepository->isCardExisted($card)){
+        if ($paymentRepository->isCardExisted($card)) {
             return  "Thẻ đã có trong hệ thống.";
         }
 
@@ -153,16 +153,15 @@ class PaymentController extends BaseFrontController
     {
         $type   = trim(request('card_type'));
         $amount = intval(trim(request('card_amount')));
-        $serial = str_replace(" ","",trim(request('card_serial')));
-        $serial = str_replace("-","",$serial);
-        $pin = str_replace(" ","",trim(request('card_pin')));
-        $pin = str_replace("-","",$pin);
+        $serial = str_replace(" ", "", trim(request('card_serial')));
+        $serial = str_replace("-", "", $serial);
+        $pin = str_replace(" ", "", trim(request('card_pin')));
+        $pin = str_replace("-", "", $pin);
         $card = new MobileCard();
         $card->setType($type)
             ->setCode($pin)
             ->setSerial($serial)
-            ->setAmount($amount)
-        ;
+            ->setAmount($amount);
 
         return $card;
     }
@@ -174,15 +173,21 @@ class PaymentController extends BaseFrontController
      */
     public function alertTransaction(SmsNotifierParser $parser)
     {
+        $sender = request('sender');
         $message = request('message');
         $createdAt = request('createdAt');
         if (!$message) {
             exit();
         }
         \Log::info("SMS Received.", [$message, $createdAt]);
+
         $stkDongA = config('t2g_common.payment.banking_account_dong_a');
         $stkVCB = config('t2g_common.payment.banking_account_vietcombank');
-        if ($stkDongA && strpos($message, "TK {$stkDongA}") !== false) {
+        $momoSender = config('t2g_common.momo.android_package');
+
+        if ($sender == $momoSender) {
+            $alert = $parser->parseMomoNotify($message, $createdAt);
+        } elseif ($stkDongA && strpos($message, "TK {$stkDongA}") !== false) {
             $alert = $parser->parseDongABankSms($message, $createdAt);
         } elseif ($stkVCB && strpos($message, "TK {$stkVCB}") !== false) {
             $alert = $parser->parseVietcomBankSms($stkVCB, $message, $createdAt);
