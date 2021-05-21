@@ -92,7 +92,7 @@ class SmsNotifierParser
             $parts = explode("|", $message);
             $amount = explode(" ", $parts[0])[1];
             $amount = str_replace($amount, "`$amount`", $parts[0]);
-            $content = implode(" ", array_slice($parts, 1));
+            $content = str_replace("Nhấn để xem chi tiết.", "", implode(" ", array_slice($parts, 1)));
             $alert = "[MoMo] $amount vào lúc `{$createdAt}` Nội dung: `$content`";
             return $alert;
         }
