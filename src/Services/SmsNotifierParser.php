@@ -19,7 +19,7 @@ class SmsNotifierParser
     {
         //DongA Bank thong bao: TK 0110666501 da thay doi: +200,000 VND. Nop tien mat(NGUYEN VAN LOI NOP TM-LONG NHAN 11). So du hien tai la:...
         $checkReceivedMoney = strpos($message, 'da thay doi: +');
-        if($checkReceivedMoney === false) {
+        if ($checkReceivedMoney === false) {
             return null;
         }
         $beginOfAmount = $checkReceivedMoney + 14;
@@ -43,7 +43,7 @@ class SmsNotifierParser
     {
         //SD TK 0071001400512 +200,000VND luc 19-06-2019 20:50:40. SD 83,157,241VND. Ref IBVCB.1906190052065001.dangthanhhai
         $checkReceivedMoney = strpos($message, "TK {$stkVCB} +");
-        if($checkReceivedMoney === false) {
+        if ($checkReceivedMoney === false) {
             return null;
         }
 
@@ -85,14 +85,15 @@ class SmsNotifierParser
      *
      * @return string|null
      */
-    public function parseMomoNotify($sender, $message, $createdAt)
+    public function parseMomoNotify($message, $createdAt)
     {
-        $cfgSender = config('t2g_common.momo.mailbox', 'serder');
-
-        if($cfgSender == $sender){
+        $pattern = "/^(Nhận)(.*)(từ)(.*)/igm";
+        if (preg_match($pattern, $message) > 0) {
             $alert = "[MoMo] $message vào lúc {$createdAt}";
             return $alert;
         }
+
+        return null;
     }
 
     /**
