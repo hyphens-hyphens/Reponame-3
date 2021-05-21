@@ -17,7 +17,7 @@ class SmsNotifierParser
      */
     public function parseDongABankSms($message, $createdAt)
     {
-        //DongA Bank thong bao: TK 0110666501 da thay doi: +200,000 VND. Nop tien mat(NGUYEN VAN LOI NOP TM-LONG NHAN 11). So du hien tai la:...
+        //DongA Bank thong bao: TK TK_DONG_A_NUMBER da thay doi: +200,000 VND. Nop tien mat(NGUYEN VAN LOI NOP TM-LONG NHAN 11). So du hien tai la:...
         $checkReceivedMoney = strpos($message, 'da thay doi: +');
         if ($checkReceivedMoney === false) {
             return null;
@@ -41,7 +41,7 @@ class SmsNotifierParser
      */
     public function parseVietcomBankSms($stkVCB, $message, $createdAt)
     {
-        //SD TK 0071001400512 +200,000VND luc 19-06-2019 20:50:40. SD 83,157,241VND. Ref IBVCB.1906190052065001.dangthanhhai
+        //SD TK TK_VCB_NUMBER +200,000VND luc 19-06-2019 20:50:40. SD 83,157,241VND. Ref IBVCB.1906190052065001.dangthanhhai
         $checkReceivedMoney = strpos($message, "TK {$stkVCB} +");
         if ($checkReceivedMoney === false) {
             return null;
@@ -87,9 +87,13 @@ class SmsNotifierParser
      */
     public function parseMomoNotify($message, $createdAt)
     {
-        $pattern = "/^(Nhận)(.*)(từ)(.*)/igm";
-        if (preg_match($pattern, $message) > 0) {
-            $alert = "[MoMo] $message vào lúc {$createdAt}";
+        $pattern = "/^(Nhận)(.*)(từ)(.*)/i";
+        if (preg_match_all($pattern, $message) > 0) {
+            $parts = explode("|", $message);
+            $amount = explode(" ", $parts[0])[1];
+            $amount = str_replace($amount, "`$amount`", $parts[0]);
+            $content = implode(" ", array_slice($parts, 1));
+            $alert = "[MoMo] $amount vào lúc `{$createdAt}` Nội dung: `$content`";
             return $alert;
         }
 
