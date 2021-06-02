@@ -115,16 +115,21 @@ class GiftCodeService
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_ISSUER_NOT_MATCH, $giftCodeItem);
         }
         $giftCode = $giftCodeItem->giftCode;
-        $expire = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
+        $expired = config('t2g_common.gift_code.fancung.expired', '-10 days');
+        $enableCodeFCInC02 = config('t2g_common.gift_code.fancung_c02.enable_expired_in_month', false);
         if ($giftCode->type === GiftCode::TYPE_FAN_CUNG) {
-            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime($expire)) {
+            if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime($expired)) {
                 throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
+            } elseif($enableCodeFCInC02) {
+                $expiredCodeFcInC02 = config('t2g_common.fancung_c02.expired', '-30 days');
+                if ($this->giftCodeItemRepo->getCodeWasUsedInMonth($user, $giftCodeItem,$expiredCodeFcInC02) > 0)
+                {
+                    throw new GiftCodeException(GiftCodeException::ERROR_CODE_WAS_USED_ONCE_IN_MONTH, $giftCodeItem);
+                }
             }
         } elseif ($claimed = $this->giftCodeItemRepo->isUserClaimed($user, $giftCodeItem)) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_CLAIMED, $giftCodeItem);
         }
-
-
         if (!$giftCode->status) {
             throw new GiftCodeException(GiftCodeException::ERROR_CODE_DISABLE, $giftCodeItem);
         }

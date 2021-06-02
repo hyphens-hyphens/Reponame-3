@@ -178,4 +178,15 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         return $query->paginate($perPage);
     }
 
+    public function getCodeWasUsedInMonth(AbstractUser $user, GiftCodeItem $giftCodeItem,$expired)
+    {
+        $dateExpire = date('Y-m-d H:i:s', strtotime($expired));
+        $query = $this->query();
+        $query->where('gift_code_id', $giftCodeItem->gift_code_id)
+            ->where('user_id', $user->id)
+            ->whereDate('used_at', '>' , $dateExpire);
+
+        return $query->count();
+    }
+
 }
