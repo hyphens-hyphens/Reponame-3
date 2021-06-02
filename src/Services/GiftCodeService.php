@@ -116,12 +116,13 @@ class GiftCodeService
         }
         $giftCode = $giftCodeItem->giftCode;
         $expired = config('t2g_common.gift_code.fancung.expired', '-10 days');
-        $enableGiftcodeFC = config('t2g_common.gift_code.fancung.enable', false);
+        $enableCodeFCInC02 = config('t2g_common.gift_code.fancung_c02.enable_expired_in_month', false);
         if ($giftCode->type === GiftCode::TYPE_FAN_CUNG) {
             if ($giftCodeItem->issued_at && $giftCodeItem->issued_at->getTimestamp() < strtotime($expired)) {
                 throw new GiftCodeException(GiftCodeException::ERROR_CODE_PER_MONTH_EXPIRED, $giftCodeItem);
-            } elseif($enableGiftcodeFC) {
-                if ($this->giftCodeItemRepo->getCodeWasUsedInMonth($user, $giftCodeItem,$expired) > 0)
+            } elseif($enableCodeFCInC02) {
+                $expiredCodeFcInC02 = config('t2g_common.fancung_c02.expired', '-30 days');
+                if ($this->giftCodeItemRepo->getCodeWasUsedInMonth($user, $giftCodeItem,$expiredCodeFcInC02) > 0)
                 {
                     throw new GiftCodeException(GiftCodeException::ERROR_CODE_WAS_USED_ONCE_IN_MONTH, $giftCodeItem);
                 }
