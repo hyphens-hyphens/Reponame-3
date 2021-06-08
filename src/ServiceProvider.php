@@ -192,7 +192,7 @@ class ServiceProvider extends LaravelServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                // MoMoTransactionNotifierCommand::class,
+                MoMoTransactionNotifierCommand::class,
                 MysqlBackupCommand::class,
                 UpdatePaymentStatusCodeCommand::class,
                 UpdatePaymentProfitCommand::class,
