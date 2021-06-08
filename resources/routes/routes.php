@@ -101,4 +101,11 @@ Route::group(['middleware' => 'web'], function () {
         Route::get('/start-detect', ['uses' => 'Front\ClientTrackingController@start', 'as' => 'start_detect']);
     });
 
+    Route::group(['prefix' => 'api', 'as' => 'api.', 'namespace' => 'T2G\Common\Controllers'], function () {
+        Route::group(['prefix' => 'customer-ip'], function () {
+            Route::get('/', ['uses' => 'Api\CustomerIPController@index', 'as' => 'ips']);
+            Route::post('/', ['uses' => 'Api\CustomerIPController@store', 'as' => 'add_ip']);
+            Route::delete('/', ['uses' => 'Api\CustomerIPController@delete', 'as' => 'delete_ip']);
+        });
+    });
 });
