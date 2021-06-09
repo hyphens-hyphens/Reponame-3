@@ -35,7 +35,7 @@ class IpCustomerRepository extends AbstractEloquentRepository
                 foreach ($exiteds as $item) {
                     $item->forceDelete();
                 }
-                $exiteds = null;
+                $exiteds = collect([]);
             }
 
             $ip = $data['ip'];
