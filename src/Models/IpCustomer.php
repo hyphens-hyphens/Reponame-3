@@ -15,7 +15,9 @@ class IpCustomer extends BaseEloquentModel
     protected $table = 'ip_customers';
     protected $fillable = [
         'ip',
-        'status'
+        'status',
+        'hwid',
+        'note'
     ];
     use SoftDeletes;
 }
