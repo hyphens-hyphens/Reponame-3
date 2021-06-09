@@ -21,22 +21,39 @@ class IpCustomerRepository extends AbstractEloquentRepository
         return IpCustomer::class;
     }
 
-    public function exists($ip)
+    public function createOrUpdate($data)
     {
-        $query = $this->query();
-        $query->where('ip', $ip);
-        $exited = $query->get()->count() > 0;
-        return $exited;
-    }
+        try {
+            $ip = $data['ip'];
+            $hwid = $data['hwid'];
+            $query = $this->query();
+            $query->where('hwid', $hwid)->orWhere('ip', $ip);
+            $exiteds = $query->get();
 
-    public function createIfNotExists($data)
-    {
-        $ip = $data['ip'];
-        if ($this->exists($ip)) {
+            // Cleanup if dupliacte
+            if ($exiteds->count() > 1) {
+                foreach ($exiteds as $item) {
+                    $item->forceDelete();
+                }
+                $exiteds = null;
+            }
+
+            $ip = $data['ip'];
+            if (!is_null($exiteds)) {
+                $current = $exiteds->first();
+                if ($current->ip != $ip) {
+                    $this->update($data, $current->ip);
+                }
+                return true;
+            }
+
+            $this->create($data);
             return true;
+        } catch (\Exception $ex) {
+            throw $ex;
+        } finally {
+            return false;
         }
-
-        $this->create($data);
     }
 
     public function paginate($limit = self::DEFAULT_PER_PAGE)

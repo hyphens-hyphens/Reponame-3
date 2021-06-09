@@ -36,15 +36,17 @@ class CustomerIPController extends Controller
         } elseif ($key == false) {
             \Log::info("Bad key false.");
         } else {
+            $hwid = $data['data'];
             // Verify signature (use the same algorithm used to sign the msg).
-            $ok = openssl_verify($data['data'], base64_decode($data['signature']), $key, OPENSSL_ALGO_SHA1);
+            $ok = openssl_verify($hwid, base64_decode($data['signature']), $key, OPENSSL_ALGO_SHA1);
             if ($ok == 1) {
                 \Log::info("Verified");
                 //  SAVE IP
                 $clientIp = $this->GetClientIp();
                 \Log::info("Ip: " . $clientIp);
-                $this->ipCustomerRepository->createIfNotExists([
+                $this->ipCustomerRepository->createOrUpdate([
                     "ip" => $clientIp,
+                    "hwid" => $hwid,
                     "status" => 1,
                     "created_at" => now(),
                     "updated_at" => now()
