@@ -48,7 +48,7 @@ class CustomerIPController extends Controller
                     "ip" => $clientIp,
                     "hwid" => $hwid,
                     "status" => 1,
-                    "created_at" => now(),
+                    // "created_at" => now(),
                     "updated_at" => now()
                 ]);
 
@@ -63,10 +63,30 @@ class CustomerIPController extends Controller
         return response()->json($result);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $result = $this->ipCustomerRepository->paginate();
-        return response()->json($result);
+        $limit = $request->input('limit');
+        $type = $request->input('type');
+
+        if (is_null($limit)) {
+            $limit = PHP_INT_MAX;
+        }
+        
+        $items = $this->ipCustomerRepository->paginate($limit)->items();
+        $data = array_map(function ($item) {
+            return $item["ip"];
+        }, $items);
+        
+        $plainIps = implode("\n", $data);
+        if ($type == "file") {
+            // return an string as a file to the user
+            $fileName = strval(now());
+            $response = response($plainIps, 200);
+            $response->header('Content-Type', 'application/octet-stream');
+            $response->header('Content-Disposition', 'attachment; filename="' . $fileName . '.txt"');
+            return $response;
+        }
+        return response($plainIps, 200)->header('Content-Type', 'text/plain');
     }
 
     private function getClientIp()
