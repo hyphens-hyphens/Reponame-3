@@ -45,7 +45,8 @@ class IpCustomerRepository extends AbstractEloquentRepository
                 }
                 return true;
             }
-
+            
+            $data["created_at"] = now();
             $this->create($data);
             return true;
         } catch (\Exception $ex) {
