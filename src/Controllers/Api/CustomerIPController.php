@@ -65,18 +65,25 @@ class CustomerIPController extends Controller
 
     public function index(Request $request)
     {
+        $clientIp = $this->GetClientIp();
+        $partners_ip = config('t2g_common.customers_ip.partners_ip');
+
+        if (!is_null($partners_ip) && count($partners_ip) > 0 && !in_array($clientIp, $partners_ip)) {
+            return response('Unauthorized.', 401);
+        }
+
         $limit = $request->input('limit');
         $type = $request->input('type');
 
         if (is_null($limit)) {
             $limit = PHP_INT_MAX;
         }
-        
+
         $items = $this->ipCustomerRepository->paginate($limit)->items();
         $data = array_map(function ($item) {
             return $item["ip"];
         }, $items);
-        
+
         $plainIps = implode("\n", $data);
         if ($type == "file") {
             // return an string as a file to the user
