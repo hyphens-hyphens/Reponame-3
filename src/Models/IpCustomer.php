@@ -19,5 +19,4 @@ class IpCustomer extends BaseEloquentModel
         'hwid',
         'note'
     ];
-    use SoftDeletes;
 }
