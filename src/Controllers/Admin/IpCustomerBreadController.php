@@ -34,9 +34,11 @@ class IpCustomerBreadController extends BaseVoyagerController
         foreach ($arrIpCustomer as $IpCustomer) {
             $checkRegexIpv4 = preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/', $IpCustomer);
             if ($checkRegexIpv4) {
-                ipCustomer::updateOrCreate([
+                $IpCustomer =  ipCustomer::updateOrCreate([
                     'ip' => $IpCustomer,
                 ]);
+                $IpCustomer->note = $request->note;
+                $IpCustomer->save();
             }else {
                 return back()->withErrors(sprintf('IP %s bạn nhập không phải định dạng IPV4',$IpCustomer));
             }
