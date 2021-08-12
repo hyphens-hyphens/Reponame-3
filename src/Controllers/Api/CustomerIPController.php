@@ -98,20 +98,35 @@ class CustomerIPController extends Controller
 
     private function getClientIp()
     {
-        $ip_address = "";
-        //whether ip is from share internet
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip_address = $_SERVER['HTTP_CLIENT_IP'];
-        }
-        //whether ip is from proxy
-        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-        //whether ip is from remote address
-        else {
-            $ip_address = $_SERVER['REMOTE_ADDR'];
+        $all_ip = "";
+        $client_ip = "";
+
+        if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+            $all_ip = $_SERVER["HTTP_CLIENT_IP"];
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $all_ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED"])) {
+            $all_ip = $_SERVER["HTTP_X_FORWARDED"];
+        } elseif (isset($_SERVER["HTTP_FORWARDED_FOR"])) {
+            $all_ip = $_SERVER["HTTP_FORWARDED_FOR"];
+        } elseif (isset($_SERVER["HTTP_FORWARDED"])) {
+            $all_ip = $_SERVER["HTTP_FORWARDED"];
+        } else {
+            $all_ip = $_SERVER["REMOTE_ADDR"];
         }
 
-        return $ip_address;
+        // Get ip v4 if avalibel
+        $ips = explode(" ", $all_ip);
+        if (count($ips) > 0) {
+            $client_ip = $ips[0];
+            foreach ($ips as $key => $value) {
+                if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    $client_ip = $value;
+                    break;
+                }
+            }
+        }
+
+        return $client_ip;
     }
 }
