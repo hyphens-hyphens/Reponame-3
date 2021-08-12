@@ -41,7 +41,7 @@ class IpCustomerRepository extends AbstractEloquentRepository
             if ($exiteds->count() == 1) {
                 $current = $exiteds->first();
                 if ($current->ip != $ip) {
-                    $this->update($data, $current->ip);
+                    $this->update($data, $current->id);
                 }
                 return true;
             }
