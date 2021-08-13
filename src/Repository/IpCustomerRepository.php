@@ -26,18 +26,19 @@ class IpCustomerRepository extends AbstractEloquentRepository
         try {
             $ip = $data['ip'];
             $hwid = $data['hwid'];
-            $query = $this->query();
-            // $query->where('hwid', $hwid)->orWhere('ip', $ip);
-            $query->where('hwid', $hwid);
-            $exiteds = $query->get();
 
-            // // Cleanup if dupliacte
-            // if ($exiteds->count() > 1) {
-            //     foreach ($exiteds as $item) {
-            //         $item->forceDelete();
-            //     }
-            //     $exiteds = collect([]);
-            // }
+            // Check exactly same
+            $exitedQuery = $this->query();
+            $exited = $exitedQuery->where('hwid', $hwid)->where('ip', $ip);
+            if($exited->count() > 0){
+                return true;
+            }
+
+            // mutilple (4) ip for 1 hwid 
+            $query = $this->query();
+            $query->where('hwid', $hwid);
+            $query->orderBy('updated_at', 'asc');
+            $exiteds = $query->get();
 
             if ($exiteds->count() > 3) {
                 $current = $exiteds->first();
@@ -61,7 +62,7 @@ class IpCustomerRepository extends AbstractEloquentRepository
     {
         $query = $this->query()->select('ip');
         $result = $query->where('status', 1)
-            ->orderBy('updated_at', 'desc')
+            ->groupBy('ip')
             ->paginate($limit);
         return $result;
     }
