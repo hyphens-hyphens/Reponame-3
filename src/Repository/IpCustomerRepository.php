@@ -27,18 +27,19 @@ class IpCustomerRepository extends AbstractEloquentRepository
             $ip = $data['ip'];
             $hwid = $data['hwid'];
             $query = $this->query();
-            $query->where('hwid', $hwid)->orWhere('ip', $ip);
+            // $query->where('hwid', $hwid)->orWhere('ip', $ip);
+            $query->where('hwid', $hwid);
             $exiteds = $query->get();
 
-            // Cleanup if dupliacte
-            if ($exiteds->count() > 1) {
-                foreach ($exiteds as $item) {
-                    $item->forceDelete();
-                }
-                $exiteds = collect([]);
-            }
+            // // Cleanup if dupliacte
+            // if ($exiteds->count() > 1) {
+            //     foreach ($exiteds as $item) {
+            //         $item->forceDelete();
+            //     }
+            //     $exiteds = collect([]);
+            // }
 
-            if ($exiteds->count() == 1) {
+            if ($exiteds->count() > 3) {
                 $current = $exiteds->first();
                 if ($current->ip != $ip) {
                     $this->update($data, $current->id);
