@@ -40,10 +40,8 @@ class CustomerIPController extends Controller
             // Verify signature (use the same algorithm used to sign the msg).
             $ok = openssl_verify($hwid, base64_decode($data['signature']), $key, OPENSSL_ALGO_SHA1);
             if ($ok == 1) {
-                \Log::info("Verified");
                 //  SAVE IP
                 $clientIp = $this->GetClientIp();
-                \Log::info("Ip: " . $clientIp);
                 $this->ipCustomerRepository->createOrUpdate([
                     "ip" => $clientIp,
                     "hwid" => $hwid,
@@ -54,7 +52,8 @@ class CustomerIPController extends Controller
 
                 $result = true;
             } elseif ($ok == 0) {
-                \Log::info("Unverified");
+                $clientIp = $this->GetClientIp();
+                \Log::info("ip: " . $clientIp . " Unverified");
             } else {
                 \Log::info("Unknown verification response");
             }
