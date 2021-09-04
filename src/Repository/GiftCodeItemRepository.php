@@ -146,17 +146,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
      */
     public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode)
     {
-        $query = $this->query();
-        $query->where('gift_code_id', $giftCode->id)
-            ->where('issued_for', $user->id)
-            ->where('user_id', null);
-
-        if ($giftCode->type === $giftCode::TYPE_FAN_CUNG)
-        {
-            $expire     = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
-            $dateExpire = date('Y-m-d H:i:s', strtotime($expire));
-            $query->whereDate('issued_at', '>' , $dateExpire);
-        }
+        $query = $this->getQueryCodeOfUser($giftCode, $user);
 
         return $query->count();
     }
@@ -188,5 +178,39 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
 
         return $query->count();
     }
+
+    /**
+     * @param  AbstractUser  $user
+     * @param  GiftCode  $giftCode
+     * @return Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getCodeWasAddLatest(AbstractUser $user, GiftCode $giftCode)
+    {
+        $query = $this->getQueryCodeOfUser($giftCode, $user);
+
+        return $query->latest('updated_at')->first();
+    }
+
+    /**
+     * @param  GiftCode  $giftCode
+     * @param  AbstractUser  $user
+     * @return Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function getQueryCodeOfUser(GiftCode $giftCode, AbstractUser $user)
+    {
+        $query = $this->query();
+        $query->where('gift_code_id', $giftCode->id)
+            ->where('issued_for', $user->id)
+            ->where('user_id', null);
+
+        if ($giftCode->type === $giftCode::TYPE_FAN_CUNG) {
+            $expire = config('t2g_common.giftcode.fancung.expired_days', '-10 days');
+            $dateExpire = date('Y-m-d H:i:s', strtotime($expire));
+            $query->whereDate('issued_at', '>', $dateExpire);
+        }
+
+        return $query;
+    }
+
 
 }
