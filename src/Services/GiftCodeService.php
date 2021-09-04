@@ -283,7 +283,7 @@ class GiftCodeService
         if ($giftCode->type !== GiftCode::TYPE_FAN_CUNG && $unusedCodes > 0) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }
-        if ($giftCode->type == GiftCode::TYPE_FAN_CUNG && $unusedCodes >= 1 && $flagCodeAddInWeek) {
+        if ($giftCode->type == GiftCode::TYPE_FAN_CUNG && $flagCodeAddInWeek) {
             return "Tài khoản `{$user->name}` trong vòng 7 ngày qua đã được add 1 code `{$giftCode->type}`  rồi";
         }
         // check code is_claimable or not
