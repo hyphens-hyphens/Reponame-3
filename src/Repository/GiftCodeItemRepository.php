@@ -188,7 +188,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
     {
         $query = $this->getQueryCodeOfUser($giftCode, $user);
 
-        return $query->latest('updated_at')->first();
+        return $query->latest('issued_at')->first();
     }
 
     /**
