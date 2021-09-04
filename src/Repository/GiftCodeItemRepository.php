@@ -146,7 +146,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
      */
     public function getUnusedCodes(AbstractUser $user, GiftCode $giftCode)
     {
-        $query = $this->getQueryCodeOfUser($giftCode, $user);
+        $query = $this->getQueryCodeOfUser($giftCode, $user)->where('user_id', null);
 
         return $query->count();
     }
