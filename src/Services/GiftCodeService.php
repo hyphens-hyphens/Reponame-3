@@ -264,19 +264,27 @@ class GiftCodeService
     }
 
     /**
-     * @param \T2G\Common\Models\GiftCode     $giftCode
-     * @param \T2G\Common\Models\AbstractUser $user
-     *
+     * @param  GiftCode  $giftCode
+     * @param  AbstractUser  $user
      * @return bool|string
      */
     private function _addCodeForUser(GiftCode $giftCode, AbstractUser $user)
     {
-        $unusedCodes = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode);
+        $unusedCodes        = $this->giftCodeItemRepo->getUnusedCodes($user, $giftCode);
+        $codeWasAdd         = $this->giftCodeItemRepo->getCodeWasAddLatest($user, $giftCode);
+        $expiredCanAddCode  = config('t2g_common.gift_code.fancung.time_to_add_code_again', '-1 week');
+        $flagCodeAddInWeek  = false;
+
+        // flag code type fan-cung is_was_add in week
+        if (!empty($codeWasAdd) && $giftCode->type === GiftCode::TYPE_FAN_CUNG) {
+            $flagCodeAddInWeek = $codeWasAdd->issued_at->getTimestamp() > strtotime($expiredCanAddCode);
+        }
+        // check code is_was_add minus type fan-cung
         if ($giftCode->type !== GiftCode::TYPE_FAN_CUNG && $unusedCodes > 0) {
             return "Tài khoản `{$user->name}` đã được add code này rồi";
         }
-        if ($giftCode->type == GiftCode::TYPE_FAN_CUNG && $unusedCodes >= 2) {
-            return "Tài khoản `{$user->name}` còn 2 code chưa sử dụng";
+        if ($giftCode->type == GiftCode::TYPE_FAN_CUNG && $unusedCodes >= 1 && $flagCodeAddInWeek) {
+            return "Tài khoản `{$user->name}` trong vòng 7 ngày qua đã được add 1 code `{$giftCode->type}`  rồi";
         }
         // check code is_claimable or not
         if ($giftCode->is_claimable) {
