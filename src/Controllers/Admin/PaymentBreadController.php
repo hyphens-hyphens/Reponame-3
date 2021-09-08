@@ -211,9 +211,9 @@ class PaymentBreadController extends BaseVoyagerController
             if ($data->finished && config('t2g_common.alert_vip_level_up')) {
                 $newVip         = VipSystemService::getVipLevelThenPaid($user, $userVipLevel, $data->amount);
                 $userVipLevel   = sprintf('<span class="h3"><span class="label label-warning" id="moneyText">VIP %u</span></span>', $userVipLevel);
-                $amount = number_format($data->amount / 1000) . 'k';
+                $amount         = number_format($data->amount / 1000) . 'k';
                 if ($newVip) {
-                    $newVip       = sprintf('<span class="h3"><span class="label label-warning" id="moneyText">Vip %u</span></span>', $newVip);
+                    $newVip = sprintf('<span class="h3"><span class="label label-warning" id="moneyText">VIP %u</span></span>', $newVip);
                     $messgerForVip['message'] = sprintf('Tài Khoản %s vừa được nạp %s và đã thăng cấp từ %s lên VIP %s !!!', $user->name, $amount, $userVipLevel, $newVip);
                 } else {
                     $messgerForVip['message'] = sprintf('Tài Khoản %s vừa được nạp %s và hiện tại đang có %s !!!', $user->name, $amount, $userVipLevel);
