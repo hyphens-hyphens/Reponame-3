@@ -59,4 +59,36 @@ class VipSystemService
 
         return $vip;
     }
+
+    /**
+     * @param  \T2G\Common\Models\AbstractUser  $user
+     * @param $vip
+     * @param $totalPaid
+     * @return mixed
+     */
+    public static function getVipLevelThenPaid(\T2G\Common\Models\AbstractUser $user, $vip, $totalAddPaid)
+    {
+        $totalPaid = self::getTotalVipPaidOfUser($user) + $totalAddPaid;
+        $newVip    = self::getVipLevelByPaid($totalPaid);
+        if ($newVip > $vip) {
+            return $newVip;
+        }
+
+        return null;
+    }
+
+    public static function getVipLevelByPaid($paid)
+    {
+        $totalPaid = $paid;
+        $vipLevels = config('t2g_common.vip_system.levels');
+        $vip = last(array_keys($vipLevels)) + 1;
+        foreach ($vipLevels as $level => $amount) {
+            if ($totalPaid < $amount) {
+                $vip = $level;
+                break;
+            }
+        }
+
+        return $vip;
+    }
 }
