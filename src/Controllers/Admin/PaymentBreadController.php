@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataUpdated;
+use T2G\Common\Services\VipSystemService;
+
 
 /**
  * Class PaymentAdminController
@@ -161,9 +163,12 @@ class PaymentBreadController extends BaseVoyagerController
      */
     public function store(Request $request)
     {
+        $userRepository = app(UserRepository::class);
+        $user           = $userRepository->find($request->user_id);
+        $userVipLevel   = $user->getVipLevel();
+
         $slug = $this->getSlug($request);
         $dataType = voyager()->model('DataType')->where('slug', '=', $slug)->first();
-
         // Check permission
         $this->authorize('add', app($dataType->model_name));
         $rules = [
@@ -201,9 +206,24 @@ class PaymentBreadController extends BaseVoyagerController
 
             event(new BreadDataAdded($dataType, $data));
 
+            $messgerForVip = [];
+
+            if ($data->finished && config('t2g_common.alert_vip_level_up')) {
+                $newVip         = VipSystemService::getVipLevelThenPaid($user, $userVipLevel, $data->amount);
+                $userVipLevel   = sprintf('<span class="h3"><span class="label label-warning" id="moneyText">VIP %u</span></span>', $userVipLevel);
+                $amount         = number_format($data->amount / 1000) . 'k';
+                if ($newVip) {
+                    $newVip = sprintf('<span class="h3"><span class="label label-warning" id="moneyText">VIP %u</span></span>', $newVip);
+                    $messgerForVip['message'] = sprintf('Tài Khoản %s vừa được nạp %s và đã thăng cấp từ %s lên VIP %s !!!', $user->name, $amount, $userVipLevel, $newVip);
+                } else {
+                    $messgerForVip['message'] = sprintf('Tài Khoản %s vừa được nạp %s và hiện tại đang có %s !!!', $user->name, $amount, $userVipLevel);
+                }
+            }
+
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'data' => $data]);
             }
+
 
             return redirect()
                 ->route("voyager.{$dataType->slug}.index")
@@ -213,6 +233,7 @@ class PaymentBreadController extends BaseVoyagerController
                                 'voyager::generic.successfully_added_new'
                             ) . " {$dataType->display_name_singular}",
                         'alert-type' => 'success',
+                        'isForVip'   => $messgerForVip
                     ]
                 );
         }
