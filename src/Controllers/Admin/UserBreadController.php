@@ -6,6 +6,8 @@ use T2G\Common\Models\Revision;
 use T2G\Common\Repository\PaymentRepository;
 use T2G\Common\Repository\UserRepository;
 use Illuminate\Http\Request;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Models\DataType;
 
 /**
  * Class UserBreadController
@@ -17,6 +19,70 @@ class UserBreadController extends BaseVoyagerController
     protected $searchable = [
         'name', 'phone', 'note', 'id', 'email'
     ];
+
+    public function index(Request $request)
+    {
+        // GET THE SLUG, ex. 'posts', 'pages', etc.
+        $slug = $this->getSlug($request);
+
+        // GET THE DataType based on the slug
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        // Check permission
+        $this->authorize('browse', app($dataType->model_name));
+
+        $getter = $dataType->server_side ? 'paginate' : 'get';
+
+        $search = (object) ['value' => $request->get('s'), 'key' => $request->get('key'), 'filter' => $request->get('filter')];
+        $searchable = $this->getSearchableFields($dataType);
+        $orderBy = $request->get('order_by');
+        $sortOrder = $request->get('sort_order', null);
+
+        $stringSearch = str_replace(' ', '', $search->value);
+        $arrSearch    = explode(',',$stringSearch);
+
+        // Next Get or Paginate the actual content from the MODEL that corresponds to the slug DataType
+        if (strlen($dataType->model_name) != 0) {
+            $relationships = $this->getRelationships($dataType);
+
+            $model = app($dataType->model_name);
+            $query = $this->getBreadBrowseEloquentQuery($dataType, $model, $search, $orderBy, $sortOrder, $arrSearch);
+            $this->alterBreadBrowseEloquentQuery($query, $request);
+        } else {
+            // If Model doesn't exist, get data from table name
+            $model = false;
+            $query = $this->getBreadBrowseDbQuery($dataType);
+            $this->alterBreadBrowseDbQuery($query, $request);
+        }
+
+        $dataTypeContent = call_user_func([$query, $getter]);
+        if (strlen($dataType->model_name) != 0) {
+            // Replace relationships' keys for labels and create READ links if a slug is provided.
+            $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
+        }
+
+        // Check if BREAD is Translatable
+        if (($isModelTranslatable = is_bread_translatable($model))) {
+            $dataTypeContent->load('translations');
+        }
+
+        // Check if server side pagination is enabled
+        $isServerSide = isset($dataType->server_side) && $dataType->server_side;
+
+        $view = Voyager::getBreadView('browse', $slug);
+
+        return Voyager::view($view, compact(
+            'dataType',
+            'dataTypeContent',
+            'isModelTranslatable',
+            'search',
+            'orderBy',
+            'sortOrder',
+            'searchable',
+            'isServerSide'
+        ));
+    }
+
 
     public function edit(Request $request, $id)
     {
@@ -217,5 +283,64 @@ class UserBreadController extends BaseVoyagerController
                 'message'    => 'Phục hồi thành công. User #' . $user->name,
                 'alert-type' => 'success',
             ]);
+    }
+
+    /**
+     * @param  DataType  $dataType
+     * @param $model
+     * @param $search
+     * @param  null  $orderBy
+     * @param  null  $sortOrder
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getBreadBrowseEloquentQuery(
+        DataType $dataType,
+        $model,
+        $search,
+        $orderBy = null,
+        $sortOrder = null,
+        $arrSearch = null
+    ) {
+        $relationships = $this->getRelationships($dataType);
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
+        $query = $model::select('*');
+        $query->with($relationships);
+        // If a column has a relationship associated with    it, we do not want to show that field
+        $this->removeRelationshipField($dataType, 'browse');
+        if ($search->value && $search->key && $search->filter) {
+            if (!empty($arrSearch)) {
+                if ($search->filter == 'contains') {
+                    $search_filter    = 'LIKE';
+                    $firstValueSearch = '%'.array_shift($arrSearch).'%';
+                    $query->where($search->key, $search_filter, $firstValueSearch);
+                    if (!empty($arrSearch)) {
+                        foreach ($arrSearch as $searchValue) {
+                            $searchValue = '%'.$searchValue.'%';
+                            $query->orWhere($search->key, $search_filter, $searchValue);
+                        }
+                    }
+                }else {
+                    $search_filter    = '=';
+                    $firstValueSearch = array_shift($arrSearch);
+                    $query->where($search->key, $search_filter, $firstValueSearch);
+                   if(!empty($arrSearch)) {
+                       foreach ($arrSearch as $searchValue) {
+                           $query->orWhere($search->key, $search_filter, $searchValue);
+                       }
+                   }
+                }
+            }
+        }
+
+        if ($orderBy && in_array($orderBy, $dataType->fields())) {
+            $querySortOrder = (!empty($sortOrder)) ? $sortOrder : 'DESC';
+            $query->orderBy($orderBy, $querySortOrder);
+        } elseif ($model->timestamps) {
+            $query->latest($model::CREATED_AT);
+        } else {
+            $query->orderBy($model->getKeyName(), 'DESC');
+        }
+
+        return $query;
     }
 }
