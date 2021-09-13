@@ -38,9 +38,8 @@ class UserBreadController extends BaseVoyagerController
         $orderBy = $request->get('order_by');
         $sortOrder = $request->get('sort_order', null);
 
-        $stringSearch = str_replace(' ', '', $search->value);
-        $arrSearch    = explode(',',$stringSearch);
-
+        $stringSearch = str_replace(' ', ',', $search->value);
+        $arrSearch    = array_filter(explode(',',$stringSearch), function($value) { return !is_null($value) && $value !== ''; });
         // Next Get or Paginate the actual content from the MODEL that corresponds to the slug DataType
         if (strlen($dataType->model_name) != 0) {
             $relationships = $this->getRelationships($dataType);
