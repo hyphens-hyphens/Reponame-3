@@ -195,7 +195,7 @@ class PaymentController extends BaseFrontController
 
         if(!empty($t2gAlertKey) && $t2gAlertKey != $alertKey){
             $hackFromIp = $this->getClientIp();
-            \Log::critical("Hack notify.", ["Detected hack notify {$hackFromIp}", $createdAt, $alertKey]);
+            \Log::critical("Hack notify.", ["Detected hack notify {$hackFromIp}", $message, $createdAt, $alertKey]);
             exit();
         }
 
