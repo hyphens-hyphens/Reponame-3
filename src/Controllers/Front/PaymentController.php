@@ -195,6 +195,12 @@ class PaymentController extends BaseFrontController
             $alert = $parser->parseFptShopSms($message, $createdAt);
         }
 
+        // Bypass testing message to discord
+        if($message == 'testing'){
+            $this->discord->send($message);
+            sleep(1);
+        }
+
         if ($alert && !$parser->isSkippedMessage($message)) {
             $this->discord->send($alert);
         }
