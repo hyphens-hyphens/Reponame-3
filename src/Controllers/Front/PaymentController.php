@@ -188,14 +188,14 @@ class PaymentController extends BaseFrontController
         }
 
         if ($sender == $momoSender) {
-            \Log::info("MOMO Received.", [$message, $createdAt, $alertKey]);
+            \Log::info("MOMO Received.", [$message, $createdAt]);
         } else {
-            \Log::info("SMS Received.", [$message, $createdAt, $alertKey]);
+            \Log::info("SMS Received.", [$message, $createdAt]);
         }
 
         if(!empty($t2gAlertKey) && $t2gAlertKey != $alertKey){
             $hackFromIp = $this->getClientIp();
-            \Log::critical("Hack notify.", ["Detected hack notify {$hackFromIp}", $message, $createdAt, $alertKey]);
+            \Log::critical("Hack notify received.", ["Detected hack notify {$hackFromIp}", $message, $createdAt, $alertKey]);
             exit();
         }
 
