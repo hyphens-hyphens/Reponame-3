@@ -173,17 +173,31 @@ class PaymentController extends BaseFrontController
      */
     public function alertTransaction(SmsNotifierParser $parser)
     {
-        $sender = request('sender');
-        $message = request('message');
-        $createdAt = request('createdAt');
-        if (!$message) {
-            exit();
-        }
-        \Log::info("SMS Received.", [$message, $createdAt]);
-
         $stkDongA = config('t2g_common.payment.banking_account_dong_a');
         $stkVCB = config('t2g_common.payment.banking_account_vietcombank');
         $momoSender = config('t2g_common.momo.android_package');
+        $t2gAlertKey = config('t2g_common.payment.t2g_alert_key');
+
+        $alertKey = request('alertKey');
+        $sender = request('sender');
+        $message = request('message');
+        $createdAt = request('createdAt');
+
+        if (!$message) {
+            exit();
+        }
+
+        if ($sender == $momoSender) {
+            \Log::info("MOMO Received.", [$message, $createdAt]);
+        } else {
+            \Log::info("SMS Received.", [$message, $createdAt]);
+        }
+
+        if(!empty($t2gAlertKey) && $t2gAlertKey != $alertKey){
+            $hackFromIp = $this->getClientIp();
+            \Log::critical("Hack notify received.", ["Detected hack notify {$hackFromIp}", $message, $createdAt, $alertKey]);
+            exit();
+        }
 
         if ($sender == $momoSender) {
             $alert = $parser->parseMomoNotify($message, $createdAt);
@@ -196,7 +210,7 @@ class PaymentController extends BaseFrontController
         }
 
         // Bypass testing message to discord
-        if($message == 'testing'){
+        if ($message == 'testing') {
             $this->discord->send($message);
             sleep(1);
         }
@@ -280,5 +294,39 @@ class PaymentController extends BaseFrontController
     protected function getPayMethod(MobileCard $card, CardPaymentInterface $cardPayment)
     {
         return $cardPayment->getPartnerName() == CardPaymentInterface::PARTNER_NAPTHENHANH ? Payment::PAY_METHOD_NAPTHENHANH : Payment::PAY_METHOD_RECARD;
+    }
+
+    private function getClientIp()
+    {
+        $all_ip = "";
+        $client_ip = "";
+
+        if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+            $all_ip = $_SERVER["HTTP_CLIENT_IP"];
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $all_ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED"])) {
+            $all_ip = $_SERVER["HTTP_X_FORWARDED"];
+        } elseif (isset($_SERVER["HTTP_FORWARDED_FOR"])) {
+            $all_ip = $_SERVER["HTTP_FORWARDED_FOR"];
+        } elseif (isset($_SERVER["HTTP_FORWARDED"])) {
+            $all_ip = $_SERVER["HTTP_FORWARDED"];
+        } else {
+            $all_ip = $_SERVER["REMOTE_ADDR"];
+        }
+
+        // Get ip v4 if avalibel
+        $ips = explode(" ", $all_ip);
+        if (count($ips) > 0) {
+            $client_ip = $ips[0];
+            foreach ($ips as $key => $value) {
+                if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    $client_ip = $value;
+                    break;
+                }
+            }
+        }
+
+        return $client_ip;
     }
 }
