@@ -68,10 +68,11 @@ class CommonHelper
     public static function getIconForPaymentType($paymentType)
     {
         $icons = [
-            Payment::PAYMENT_TYPE_CARD          => 'voyager-credit-card',
-            Payment::PAYMENT_TYPE_MOMO          => 'voyager-wallet',
-            Payment::PAYMENT_TYPE_BANK_TRANSFER => 'voyager-receipt',
-            Payment::PAYMENT_TYPE_ADD_XU_CTV    => 'voyager-gift',
+            Payment::PAYMENT_TYPE_CARD                => 'voyager-credit-card',
+            Payment::PAYMENT_TYPE_MOMO                => 'voyager-wallet',
+            Payment::PAYMENT_TYPE_BANK_TRANSFER       => 'voyager-receipt',
+            Payment::PAYMENT_TYPE_ADD_XU_CTV          => 'voyager-gift',
+            Payment::PAYMENT_TYPE_TRAO_THUONG_XU_CTV  => 'voyager-wallet',
         ];
 
         return $icons[$paymentType] ?? 'voyager-exclamation';

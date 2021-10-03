@@ -86,6 +86,7 @@ class Payment extends BaseEloquentModel
     const PAYMENT_TYPE_BANK_TRANSFER = 4;
     const PAYMENT_TYPE_ADVANCE_DEBT = 5;
     const PAYMENT_TYPE_ADD_XU_CTV = 6;
+    const PAYMENT_TYPE_TRAO_THUONG_XU_CTV = 7;
 
     const PAYMENT_STATUS_SUCCESS                 = 1;
     const PAYMENT_STATUS_PROCESSING              = 2;
@@ -102,6 +103,7 @@ class Payment extends BaseEloquentModel
     const PAY_METHOD_MOMO                        = "MoMo";
     const PAY_METHOD_ADVANCE_DEBT                = "Tạm ứng";
     const PAY_METHOD_ADD_XU_CTV                  = "Add Xu Cho CTV";
+    const PAY_METHOD_TRAO_THUONG_XU_CTV          = "Trao Thưởng Xu Cho CTV";
 
     public $fillable = ['amount', 'note', 'payment_type', 'pay_from'];
 
@@ -147,15 +149,17 @@ class Payment extends BaseEloquentModel
     public static function getPaymentTypes($isAdmin = true)
     {
         $types = [
-            self::PAYMENT_TYPE_CARD          => 'Thẻ cào',
-            self::PAYMENT_TYPE_MOMO          => 'MoMo',
-            self::PAYMENT_TYPE_BANK_TRANSFER => 'Chuyển khoản',
-            self::PAYMENT_TYPE_ADVANCE_DEBT  => self::PAY_METHOD_ADVANCE_DEBT,
-            self::PAYMENT_TYPE_ADD_XU_CTV    => 'Add Xu Cho CTV',
+            self::PAYMENT_TYPE_CARD                 => 'Thẻ cào',
+            self::PAYMENT_TYPE_MOMO                 => 'MoMo',
+            self::PAYMENT_TYPE_BANK_TRANSFER        => 'Chuyển khoản',
+            self::PAYMENT_TYPE_ADVANCE_DEBT         => self::PAY_METHOD_ADVANCE_DEBT,
+            self::PAYMENT_TYPE_ADD_XU_CTV           => 'Add Xu Cho CTV',
+            self::PAYMENT_TYPE_TRAO_THUONG_XU_CTV   => 'Trao Thưởng Xu Cho CTV',
         ];
         if (!$isAdmin) {
             // display PAYMENT_TYPE_ADD_XU_CTV as PAYMENT_TYPE_BANK_TRANSFER in frontend
-            $types[self::PAYMENT_TYPE_ADD_XU_CTV] = 'Chuyển khoản';
+            $types[self::PAYMENT_TYPE_ADD_XU_CTV]         = 'Chuyển khoản';
+            $types[self::PAYMENT_TYPE_TRAO_THUONG_XU_CTV] = 'Chuyển khoản';
         }
 
         return $types;
