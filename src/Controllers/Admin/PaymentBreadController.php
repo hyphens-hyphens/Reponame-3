@@ -35,6 +35,7 @@ class PaymentBreadController extends BaseVoyagerController
         voyager()->onLoadingView('voyager::payments.browse', function ($view, &$params) {
             $types = Payment::getPaymentTypes();
             unset($types[Payment::PAYMENT_TYPE_CARD]);
+            unset($types[Payment::PAYMENT_TYPE_TRAO_THUONG_XU]);
             $params['paymentTypes'] = $types;
             $params['payMethods'] = Payment::getPayMethods();
             $params['statuses'] = Payment::getStatusCodes();
