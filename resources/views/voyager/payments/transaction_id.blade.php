@@ -1,13 +1,13 @@
 <p class="h4">
     @php
-
         if ($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADVANCE_DEBT)
            $paymentTypeIconClass   = 'label-danger';
         elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADD_XU_CTV)
            $paymentTypeIconClass   = 'label-warning';
+        elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_TRAO_THUONG_XU)
+           $paymentTypeIconClass   = 'label-primary';
         else
            $paymentTypeIconClass   = 'label-info';
-
     @endphp
     <span class="label {{ $paymentTypeIconClass }}">
         <i class="{{ \T2G\Common\Util\CommonHelper::getIconForPaymentType($data->payment_type) }}"></i>
