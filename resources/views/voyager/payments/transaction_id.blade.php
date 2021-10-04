@@ -4,7 +4,7 @@
            $paymentTypeIconClass   = 'label-danger';
         elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_ADD_XU_CTV)
            $paymentTypeIconClass   = 'label-warning';
-        elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_TRAO_THUONG_XU_CTV)
+        elseif($data->payment_type == \T2G\Common\Models\Payment::PAYMENT_TYPE_TRAO_THUONG_XU)
            $paymentTypeIconClass   = 'label-primary';
         else
            $paymentTypeIconClass   = 'label-info';

@@ -72,7 +72,7 @@ class CommonHelper
             Payment::PAYMENT_TYPE_MOMO                => 'voyager-wallet',
             Payment::PAYMENT_TYPE_BANK_TRANSFER       => 'voyager-receipt',
             Payment::PAYMENT_TYPE_ADD_XU_CTV          => 'voyager-gift',
-            Payment::PAYMENT_TYPE_TRAO_THUONG_XU_CTV  => 'voyager-wallet',
+            Payment::PAYMENT_TYPE_TRAO_THUONG_XU      => 'voyager-wallet',
         ];
 
         return $icons[$paymentType] ?? 'voyager-exclamation';
