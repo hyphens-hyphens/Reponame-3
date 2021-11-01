@@ -174,7 +174,7 @@ class GiftCodeItemRepository extends AbstractEloquentRepository
         $query = $this->query();
         $query->where('gift_code_id', $giftCodeItem->gift_code_id)
             ->where('user_id', $user->id)
-            ->whereDate('used_at', '>' , $dateExpireOnceMonth);
+            ->where('used_at', '>' , $dateExpireOnceMonth);
 
         return $query->count();
     }
