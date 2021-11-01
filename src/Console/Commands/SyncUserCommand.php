@@ -11,7 +11,7 @@ class SyncUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 't2g_common:sync:user {username=""} {--date=}';
+    protected $signature = "t2g_common:sync:user {--username=} {--date=}";
 
     /**
      * The console command description.
@@ -35,12 +35,16 @@ class SyncUserCommand extends Command
      */
     public function handle()
     {
-        $username = $this->input->getArgument('username');
+        $username = $this->input->getOption('username');
         /** @var \Eloquent $userModel */
         $userModel = app(config('t2g_common.models.user_model_class'));
         if (!$username) {
             $from = $this->input->getOption('date');
-            $query = $userModel->where('updated_at', '>', $from);
+            if (!$from) {
+                $query = $userModel->where('id', '<', 0);
+            } else {
+                $query = $userModel->where('created_at', '>', $from);
+            }
         } else {
             $query = $userModel->where('name', $username);
         }

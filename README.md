@@ -62,4 +62,14 @@ after correct configs in `config/t2g_common.php` run this commands
 php artisan migrate
 ```
 
+# Sync user to game server
+## sync single user
+```
+php artisan t2g_common:sync:user --username=username01
+```
+## sync users by date after [ex: meaning from '2021-10-14' to present]
+```
+php artisan t2g_common:sync:user --date=2021-10-13
+```
+
 ## TODO
